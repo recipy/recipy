@@ -1,4 +1,5 @@
 import wrapt
+import imp
 
 def recursive_getattr(obj, attr):
     prev_part = obj
@@ -29,3 +30,21 @@ def create_wrapper(function, arg_loc, source):
         return wrapped(*args, **kwargs)
 
     return f
+
+def recursive_find_module(name, path):
+    subnames = name.split(".")
+    #print subnames
+    #print path
+    for subname in subnames[:-1]:
+        #print subname
+        file_obj, pathname, desc = imp.find_module(subname, path)
+        #print subname, file_obj, pathname, desc
+        try:
+            mod = imp.load_module(subname, file_obj, pathname, desc)
+            path = mod.__path__
+        finally:
+            if file_obj:
+                file_obj.close()
+
+    return imp.find_module(subnames[-1], path)
+

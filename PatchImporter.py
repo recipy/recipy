@@ -2,15 +2,16 @@ import sys
 import imp
 
 import functools
-from datetime import timedelta 
+from utils import *
 
 class PatchImporter(object):
-    modulename = 'pandas'
+    modulename = ''
 
     def find_module(self, fullname, path=None):
         """Module finding method. It tells Python to use our hook
-        only for the pytz package.
+        only for the package we want.
         """
+        #print "Find module: %s" % fullname
         if fullname == self.modulename:
             self.path = path
             return self
@@ -20,13 +21,16 @@ class PatchImporter(object):
         """Module loading method. It imports pytz normally
         and then enhances it with our generic timezones.
         """
+        #print "Loading module: %s" % name
         if name != self.modulename:
             raise ImportError("%s can only be used to import pandas!",
                               self.__class__.__name__)
         if name in sys.modules:
             return sys.modules[name]    # already imported
         
-        file_obj, pathname, desc = imp.find_module(name, self.path)
+        file_obj, pathname, desc = recursive_find_module(name, sys.path)
+
+        #file_obj, pathname, desc = imp.find_module(name, self.path)
         try:
             mod = imp.load_module(name, file_obj, pathname, desc)
         finally:
@@ -41,5 +45,7 @@ class PatchImporter(object):
     
     def patch(self, mod):
         return mod
+
+
 
 #sys.meta_path = [PatchImporter()]
