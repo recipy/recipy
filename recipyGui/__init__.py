@@ -10,7 +10,7 @@ Bootstrap(recipyGui)
 recipyGui.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
 
 # MongoDB settings
-recipyGui.config["MONGODB_SETTINGS"] = {'DB': "test_database"}
+recipyGui.config["MONGODB_SETTINGS"] = {'DB': "recipies"}
 recipyGui.config["SECRET_KEY"] = "geheim"
 
 db = MongoEngine(recipyGui)
