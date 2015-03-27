@@ -27,16 +27,20 @@
 
   <div class="container">
     <div class="row">
+      <form role="form" action="{{ url_for('search') }}" method="post" name="search">
       <div id="custom-search-input">
         <div class="input-group col-md-12">
-          <input type="text" class="form-control input-lg" placeholder="Search runs" />
+          <input type="text" class="form-control input-lg" placeholder="Search runs" id="query">
+            {{ query }}
+          </input>
             <span class="input-group-btn">
-              <button class="btn btn-info btn-lg" type="button">
+              <button type="submit" class="btn btn-info btn-lg">
                 <i class="glyphicon glyphicon-search"></i>
               </button>
             </span>
           </div>
         </div>
+      </form>
 
       <div>
         <table class="table table-hover">
