@@ -19,4 +19,9 @@ recipyGui.jinja_env.globals['static'] = (
     lambda filename: url_for('static', filename = filename)
 )
 
-from recipyGui import views
+def register_blueprints(app):
+    # Prevents circular imports
+    from recipyGui.views import runs
+    recipyGui.register_blueprint(runs)
+
+register_blueprints(recipyGui)

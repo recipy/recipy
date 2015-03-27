@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block body %}
+    {% for run in runs %}
+      <h2>{{ run.title }}</h2>
+    {% endfor %}
+{% endblock %}
