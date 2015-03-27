@@ -2,6 +2,8 @@ from pymongo import MongoClient
 import wrapt
 import os
 import datetime
+import sys
+import getpass
 
 RUN_ID = {}
 
@@ -17,12 +19,12 @@ def log_init():
     recipies = db.recipies
 
     # Get env info, etc
-    run = {"author": "Robin",
-        "description": "Baking cakes...",
+    run = {"author": getpass.getuser(),
+        "description": "",
         "inputs": [],
         "outputs": [],
-        "script": "example_script.py",
-        "command": "python example_script.py",
+        "script": " ".join(sys.argv),
+        "command": " ".join(sys.argv),
         "gitrepo": "https://github.com/recipy/recipy.git",
         "gitcommit": "6a8b3c06c9b5c66b1bb48ba0dd3928d8ef748f84",
         "gituser": "robintw",
