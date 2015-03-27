@@ -1,3 +1,4 @@
 flask
 flask-mongoengine
 Flask-Script
+flask_bootstrap
