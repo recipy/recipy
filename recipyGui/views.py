@@ -13,6 +13,7 @@ class ListView(MethodView):
 
     def get(self):
         runs = Run.objects.all()
+        print runs
         return render_template('runs/list.html', runs=runs)
 
 # Register urls

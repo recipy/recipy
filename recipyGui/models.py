@@ -15,6 +15,8 @@ class Run(db.Document):
     gitcommit = db.StringField(max_length=255)
     date = db.DateTimeField(default=datetime.datetime.now, required=True)
 
+    meta = {'collection': 'recipies'}
+
     def get_absolute_url(self):
         return url_for('run', kwargs={title: self.title})
 
