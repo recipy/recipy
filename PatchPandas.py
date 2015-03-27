@@ -23,4 +23,22 @@ class PatchMPL(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'matplotlib')
     output_wrapper = create_wrapper(log_output, 0, 'matplotlib')
 
-sys.meta_path = [PatchPandas(), PatchMPL()]
+class PatchNumpy(PatchSimple):
+    modulename = 'numpy'
+
+    input_functions = ['genfromtxt', 'loadtxt', 'load', 'fromfile']
+    output_functions = ['save', 'savez', 'savez_compressed', 'savetxt']
+
+    input_wrapper = create_wrapper(log_input, 0, 'numpy')
+    output_wrapper = create_wrapper(log_output, 0, 'numpy')
+
+class PatchGDAL(PatchSimple):
+    modulename = 'gdal'
+
+    input_functions = ['Open']
+    output_functions = ['Driver.Create', 'Driver.CreateCopy']
+
+    input_wrapper = create_wrapper(log_input, 0, 'gdal')
+    output_wrapper = create_wrapper(log_output, 0, 'gdal')
+
+sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(), PatchGDAL()]
