@@ -42,4 +42,10 @@ class PatchImporter(object):
     def patch(self, mod):
         return mod
 
+    def patch_function(self, mod, function, wrapper):
+        old_f_name = '_%s' % function.replace(".", "_")
+        setattr(mod, old_f_name, recursive_getattr(mod, function))
+
+        recursive_setattr(mod, function, wrapper(getattr(mod, old_f_name)))
+
 #sys.meta_path = [PatchImporter()]

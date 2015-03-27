@@ -1,3 +1,5 @@
+import PatchPandas
+
 import pandas as pd
 from matplotlib.pyplot import *
 
