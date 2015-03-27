@@ -1,5 +1,10 @@
 import wrapt
 
+def log_init():
+	# Get env info
+	# Come up with ID
+	# Put basics into DB
+	pass
 
 
 def log_input(filename, source):
