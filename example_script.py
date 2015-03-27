@@ -1,4 +1,4 @@
-import PatchPandas
+import recipy
 
 import pandas as pd
 from matplotlib.pyplot import *

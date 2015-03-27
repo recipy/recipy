@@ -1,0 +1,22 @@
+#!/usr/local/bin/python
+
+from pymongo import MongoClient
+import sys
+from pprint import pprint
+
+if len(sys.argv) != 2:
+	print "Run as: recipy-cmd <outputfile>"
+	sys.exit()
+
+filename = sys.argv[1]
+
+client = MongoClient()
+
+#Access database named 'test_database'
+db = client.recipyDB
+
+#Create images collection
+recipies = db.recipies
+
+for r in recipies.find({'outputs':filename}):
+	pprint(r)
