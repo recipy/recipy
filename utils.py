@@ -24,7 +24,7 @@ def patch_function(mod, function, wrapper):
 
 def create_wrapper(function, arg_loc, source):
     @wrapt.decorator
-    def f(wrapped, instance, args, kwargs):
+    def f(self, wrapped, instance, args, kwargs):
         function(args[arg_loc], source)
         return wrapped(*args, **kwargs)
 
