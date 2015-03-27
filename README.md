@@ -19,6 +19,8 @@ If you want to run the example scripts that come with recipy then you'll also ne
 
 You'll also need to install MongoDB (`brew install mongodb` if you're running OS X) and run it locally with the command `mongod`.
 
+You may want to install [recipy-gui](https://github.com/recipy/recipy-gui) for a nice way to view the data.
+
 # Usage
 Simply add the following line to the top of your Python script:
 
