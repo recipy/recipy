@@ -8,6 +8,10 @@ RecipyGui is a Flask application. To install all requirements:
 
 ```pip install -r requirements.txt```
 
+Populate the database:
+
+```python create_database.py```
+
 ## Usage
 
 To start the local webserver, run:
