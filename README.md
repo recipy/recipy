@@ -1,5 +1,9 @@
-# What is it?
+# What is it and who cares?
+Have you ever run some Python scripts to produce some outputs - such as graphs or output CSV files - and then forgotten exactly how you created them? For example, you have a lovely graph in plot.pdf, but you don't know how you created it, and therefore can't use it in a journal paper.
 
+Recipy (from *recipe* and *python*) will come to your rescue! With almost no extra work (literally the addition of a single line of code to your Python script), it will monitor the inputs and outputs of the script and store this information in a database so you can easily query it.
+
+It's great!
 
 # Installation:
 You will need to install the following python packages:
