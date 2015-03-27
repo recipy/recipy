@@ -3,24 +3,32 @@ from patch_generic import PatchImporter
 import wrapt
 
 from log import *
+from utils import *
 
 class PatchPandas(PatchImporter):
 
     def patch_function(self, mod, function, wrapper):
-        setattr(mod, '_%s' % function.__name__, function)
-        setattr(mod, function.__name__, wrapper(getattr(mod, '_%s' % function.__name__)))
-        # eval("{0}._{1} = {0}.{1}".format(mod, function))
-        # #eval("{0}.{1} = {2}")
+        old_f_name = '_%s' % function.replace(".", "_")
+        setattr(mod, old_f_name, recursive_getattr(mod, function))
+
+        recursive_setattr(mod, function, wrapper(getattr(mod, old_f_name)))
 
     def patch(self, mod):
-        # mod._read_csv = mod.read_csv
-        # mod.read_csv = log_input(mod.read_csv)
-        self.patch_function(mod, mod.read_csv, self.log_pandas_read)
+        input_functions = ['read_csv', 'read_table', 'read_excel', 'read_hdf', 'read_pickle', 'read_stata']
+        for f in input_functions:
+            self.patch_function(mod, f, self.log_pandas_read)
+
+        self.patch_function(mod, 'DataFrame.to_csv', self.log_pandas_write) 
         return mod
 
     @wrapt.decorator
     def log_pandas_read(self, wrapped, instance, args, kwargs):
         log_input(args[0], 'pandas')
+        return wrapped(*args, **kwargs)
+
+    @wrapt.decorator
+    def log_pandas_write(self, wrapped, instance, args, kwargs):
+        log_output(args[0], 'pandas')
         return wrapped(*args, **kwargs)
 
 sys.meta_path = [PatchPandas()]

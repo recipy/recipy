@@ -1,6 +1,7 @@
 import wrapt
 
 
+
 def log_input(filename, source):
 	print "Input from %s using %s" % (filename, source)
 
