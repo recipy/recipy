@@ -12,10 +12,12 @@ def index():
     query = request.args.get('query', '')
 
     if not query:
-        runs = [r for r in mongo.db.recipies.find({})]
+        # Return all runs, ordered by date (oldest run first)
+        runs = [r for r in mongo.db.recipies.find({}).sort('date', -1)]
     else:
-        # TODO: search runs using the query string
-        runs = []
+        # Search runs using the query string
+        q = { '$text': { '$search': query} }
+        runs = [r for r in mongo.db.recipies.find(q)]
 
     print 'runs:', runs
     print 'query:', query
