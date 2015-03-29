@@ -19,11 +19,13 @@ import sys
 from pprint import pprint
 
 def print_result(r):
+    r['environment'] = ",".join(r['environment'])
+
     if args['--verbose']:
         pprint(r)
     else:
         intro = """Created by {author} on {date}
-Ran {command} using {environment[0]}
+Ran {command} using {environment}
 Inputs:
 """.format(**r)
 
