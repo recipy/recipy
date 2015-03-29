@@ -1,6 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField
 
 class SearchForm(Form):
-    search = StringField('search', validators=[DataRequired()])
+    query = StringField('query')

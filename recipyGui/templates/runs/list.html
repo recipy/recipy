@@ -1,82 +1,81 @@
-{% extends "bootstrap/base.html" %}
-
-{% block title %}This is an example page{% endblock %}
-
-{% block navbar %}
-  <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">RecipyGui</a>
-          </div>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Runs</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-      </nav>
-{% endblock %}
-
-{% block content %}
-
-  <div class="container">
-    <div class="row">
-      <form role="form" action="{{ url_for('search') }}" method="post" name="search">
-      <div id="custom-search-input">
-        <div class="input-group col-md-12">
-          <input type="text" class="form-control input-lg" placeholder="Search runs" id="query">
-            {{ query }}
-          </input>
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-info btn-lg">
-                <i class="glyphicon glyphicon-search"></i>
-              </button>
-            </span>
-          </div>
-        </div>
-      </form>
-
-      <div>
-        <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Title</th>
-                <th>Command</th>
-                <th>Script</th>
-                <th>Input</th>
-                <th>Output</th>
-                <th>Environment</th>
-                <th>Git repo</th>
-                <th>Git user</th>
-                <th>Git commit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for run in runs %}
-                <tr>
-                  <td>{{ run.date }}</td>
-                  <td>{{ run.title }}</td>
-                  <td>{{ run.command }}</td>
-                  <td>{{ run.script }}</td>
-                  <td>{{ run.inputs | join(' ') }}</td>
-                  <td>{{ run.outputs | join(' ') }}</td>
-                  <td>{{ run.environment | join(' ') }}</td>
-                  <td>{{ run.gitrepo }}</td>
-                  <td>{{ run.gituser }}</td>
-                  <td>{{ run.gitcommit }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
+{% extends "bootstrap/base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% import "bootstrap/utils.html" as utils %} {% block title %}This is an example page{% endblock %} {% block navbar %}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">RecipyGui</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Runs</a></li>
+      </ul>
+    </div>
+    <!--/.nav-collapse -->
   </div>
+  <!--/.container-fluid -->
+</nav>
+{% endblock %} {% block content %}
+
+<div class="container">
+  <div class="row">
+
+    <!-- Search bar -->
+    <form class="form" role="form" action="{{ url_for('index') }}" method="get">
+      <div class="input-group col-md-12">
+        <input type="text"
+               class="form-control input-lg"
+               placeholder="Search runs"
+               id="query"
+               name="query"
+               value="{{ query }}" />
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-info btn-lg">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </span>
+      </div>
+    </form>
+
+    <div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Command</th>
+            <th>Script</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Environment</th>
+            <th>Git repo</th>
+            <th>Git user</th>
+            <th>Git commit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in runs %}
+          <tr>
+            <td>{{ run.date }}</td>
+            <td>{{ run.title }}</td>
+            <td>{{ run.command }}</td>
+            <td>{{ run.script }}</td>
+            <td>{{ run.inputs | join(' ') }}</td>
+            <td>{{ run.outputs | join(' ') }}</td>
+            <td>{{ run.environment | join(' ') }}</td>
+            <td>{{ run.gitrepo }}</td>
+            <td>{{ run.gituser }}</td>
+            <td>{{ run.gitcommit }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
   </div>
 
-{% endblock %}
+  {% endblock %}
