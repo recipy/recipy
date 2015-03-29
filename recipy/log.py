@@ -6,11 +6,21 @@ import sys
 import getpass
 import platform
 import sys
+from git import Repo
 
 RUN_ID = {}
 
+def get_origin(repo):
+    try:
+        return repo.remotes.origin.url
+    except:
+        return None
+
 def log_init():
     global RUN_ID
+    scriptpath = os.path.realpath(sys.argv[0])
+
+    repo = Repo(scriptpath, search_parent_directories=True)
     #Start mongoDB client
     client = MongoClient()
 
@@ -25,11 +35,11 @@ def log_init():
         "description": "",
         "inputs": [],
         "outputs": [],
-        "script": " ".join(sys.argv),
-        "command": " ".join(sys.argv),
-        "gitrepo": "https://github.com/recipy/recipy.git",
-        "gitcommit": "6a8b3c06c9b5c66b1bb48ba0dd3928d8ef748f84",
-        "gituser": "robintw",
+        "script": scriptpath,
+        "command": sys.executable,
+        "gitrepo": repo.working_dir,
+        "gitorigin": get_origin(repo),
+        "gitcommit": repo.head.commit.hexsha,
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow()}
 
