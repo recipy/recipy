@@ -1,22 +1,61 @@
 #!/usr/local/bin/python
+"""recipy - a frictionless provenance tool for Python
 
+Usage:
+  recipy-cmd [options] <outputfile>
+  recipy-cmd (-h | --help)
+  recipy-cmd --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  -a --all      Show all results (otherwise just latest result given)
+  -v --verbose  Be verbose.
+
+"""
+from docopt import docopt
 from pymongo import MongoClient
 import sys
 from pprint import pprint
 
-if len(sys.argv) != 2:
-	print "Run as: recipy-cmd <outputfile>"
-	sys.exit()
+def print_result(r):
+    if args['--verbose']:
+        pprint(r)
+    else:
+        intro = """Created by {author} on {date}
+Ran {command} using {environment[0]}
+Inputs:
+""".format(**r)
 
-filename = sys.argv[1]
+        indented_inputs = map(lambda x: "  "+x, r['inputs'])
+        indented_outputs = map(lambda x: "  "+x, r['outputs'])
+        inputs = "\n".join(indented_inputs)
+        outputs = "\n".join(indented_outputs)
 
-client = MongoClient()
+        print intro + inputs + "\nOutputs:\n" + outputs
 
-#Access database named 'test_database'
-db = client.recipyDB
+if __name__ == '__main__':
+    args = docopt(__doc__, version='recipy-cmd v0.1')
+    print(args)
 
-#Create images collection
-recipies = db.recipies
+    filename = args['<outputfile>']
 
-for r in recipies.find({'outputs':filename}):
-	pprint(r)
+    client = MongoClient()
+
+    db = client.recipyDB
+
+    #Create images collection
+    recipies = db.recipies
+
+    results = recipies.find({'outputs':filename}, sort=[('date', -1)])
+    if results.count() == 0:
+        print "No results found"
+    else:
+        if args['--all']:
+            for r in results:
+                print_result(r)
+                print "-"*40
+        else:
+            print_result(results[0])
+            if results.count() > 1:
+                print "** Previous runs creating this output have been found. Run with --all to show. **"
