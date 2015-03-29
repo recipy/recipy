@@ -12,7 +12,7 @@ Bootstrap(recipyGui)
 recipyGui.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
 
 # MongoDB settings
-recipyGui.config['MONGO_DBNAME'] = 'test_database'
+recipyGui.config['MONGO_DBNAME'] = 'recipyDB'
 
 mongo = PyMongo(recipyGui)
 
