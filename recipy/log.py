@@ -4,6 +4,8 @@ import os
 import datetime
 import sys
 import getpass
+import platform
+import sys
 
 RUN_ID = {}
 
@@ -28,8 +30,8 @@ def log_init():
         "gitrepo": "https://github.com/recipy/recipy.git",
         "gitcommit": "6a8b3c06c9b5c66b1bb48ba0dd3928d8ef748f84",
         "gituser": "robintw",
-        "environment": ["python3.2", "PyMongo2.8", "MAC OS 10.10.02"],
-        "date": "datetime.datetime.utcnow()"}
+        "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
+        "date": datetime.datetime.utcnow()}
 
 
     # Put basics into DB
