@@ -17,7 +17,9 @@ def index():
     else:
         # Search runs using the query string
         q = { '$text': { '$search': query} }
-        runs = [r for r in mongo.db.recipies.find(q)]
+        score = { 'score': { '$meta': 'textScore' } }
+        score_sort = [('score', {'$meta': 'textScore'})]
+        runs = [r for r in mongo.db.recipies.find(q, score).sort(score_sort)]
 
     print 'runs:', runs
     print 'query:', query
