@@ -1,4 +1,4 @@
 flask
-flask-mongoengine
+flask-pymongo
 Flask-Script
 flask_bootstrap

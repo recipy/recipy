@@ -1,19 +1,20 @@
 from flask import Flask, url_for
 import os
-from flask.ext.mongoengine import MongoEngine
+from flask.ext.pymongo import PyMongo
 from flask_bootstrap import Bootstrap
 
 recipyGui = Flask(__name__)
+recipyGui.config['SECRET_KEY'] = 'geheim'
+
 Bootstrap(recipyGui)
 
 # Determines the destination of the build. Only usefull if you're using Frozen-Flask
 recipyGui.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
 
 # MongoDB settings
-recipyGui.config["MONGODB_SETTINGS"] = {'DB': "recipies"}
-recipyGui.config["SECRET_KEY"] = "geheim"
+recipyGui.config['MONGO_DBNAME'] = 'test_database'
 
-db = MongoEngine(recipyGui)
+mongo = PyMongo(recipyGui)
 
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
