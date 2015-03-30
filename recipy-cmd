@@ -26,7 +26,8 @@ def print_result(r):
         pprint(r)
     else:
         intro = """Created by {author} on {date}
-Ran {command} using {environment}
+Ran {script} using {command}
+Environment: {environment}
 Inputs:
 """.format(**r)
 
