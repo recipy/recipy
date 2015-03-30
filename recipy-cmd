@@ -12,39 +12,45 @@ Options:
   -a --all      Show all results (otherwise just latest result given)
   -v --verbose  Be verbose
   -d --diff     Show diff
+  --debug       Turn on debugging mode
 
 """
 from docopt import docopt
 from pymongo import MongoClient
 import sys
 from pprint import pprint
+from jinja2 import Template
+
+
 
 def print_result(r):
-    r['environment'] = ", ".join(r['environment'])
-
-    if args['--verbose']:
-        pprint(r)
-    else:
-        intro = """Created by {author} on {date}
-Ran {script} using {command}
-"""
-        if r.has_key('gitcommit') and r.has_key('gitrepo') and r.has_key('gitorigin'):
-            intro += "Git: commit {gitcommit}, in repo {gitrepo}, with origin {gitorigin}\n".format(**r)
-
-        intro += """Environment: {environment}
+    template = """Created by {{ author }} on {{ date }}
+Ran {{ script }} using {{ command }}
+{% if gitcommit is defined %}
+Git: commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
+{% endif %}
+Environment: {{ environment|join(", ") }}
+{% if inputs|length == 0 %}
+Inputs: none
+{% else %}
 Inputs:
-""".format(**r)
+{% for input in inputs %}
+  {{ input }}
+{% endfor %}
+{% endif %}
 
-        indented_inputs = map(lambda x: "  "+x, r['inputs'])
-        indented_outputs = map(lambda x: "  "+x, r['outputs'])
-        inputs = "\n".join(indented_inputs)
-        outputs = "\n".join(indented_outputs)
-
-        print intro + inputs + "\nOutputs:\n" + outputs
+Outputs:
+{% for output in outputs %}
+  {{ output }}
+{% endfor %}"""
+    template = Template(template, trim_blocks=True)
+    print template.render(**r)
 
 if __name__ == '__main__':
     args = docopt(__doc__, version='recipy-cmd v0.1')
-    print(args)
+
+    if args['--debug']:
+        print(args)
 
     filename = args['<outputfile>']
 
