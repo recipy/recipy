@@ -1,0 +1,5 @@
+wrapt
+pymongo
+jinja2
+docopt
+
