@@ -20,14 +20,18 @@ import sys
 from pprint import pprint
 
 def print_result(r):
-    r['environment'] = ",".join(r['environment'])
+    r['environment'] = ", ".join(r['environment'])
 
     if args['--verbose']:
         pprint(r)
     else:
         intro = """Created by {author} on {date}
 Ran {script} using {command}
-Environment: {environment}
+"""
+        if r.has_key('gitcommit') and r.has_key('gitrepo') and r.has_key('gitorigin'):
+            intro += "Git: commit {gitcommit}, in repo {gitrepo}, with origin {gitorigin}\n".format(**r)
+
+        intro += """Environment: {environment}
 Inputs:
 """.format(**r)
 
