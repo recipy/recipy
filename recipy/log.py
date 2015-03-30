@@ -48,7 +48,7 @@ def log_init():
         run["gitorigin"] = get_origin(repo)
 
         whole_diff = ''
-        if True:
+        if store_diff:
             diffs = repo.index.diff(None, create_patch=True)
             for diff in diffs:
                 whole_diff += "\n\n\n" + diff.diff
