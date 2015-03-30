@@ -7,10 +7,11 @@ Usage:
   recipy-cmd --version
 
 Options:
-  -h --help     Show this screen.
-  --version     Show version.
+  -h --help     Show this screen
+  --version     Show version
   -a --all      Show all results (otherwise just latest result given)
-  -v --verbose  Be verbose.
+  -v --verbose  Be verbose
+  -d --diff     Show diff
 
 """
 from docopt import docopt
@@ -61,3 +62,7 @@ if __name__ == '__main__':
             print_result(results[0])
             if results.count() > 1:
                 print "** Previous runs creating this output have been found. Run with --all to show. **"
+
+            if args['--diff']:
+                print "\n\n"
+                print results[0]['diff']

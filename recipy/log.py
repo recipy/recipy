@@ -9,6 +9,7 @@ import sys
 from git import Repo
 
 RUN_ID = {}
+store_diff = True
 
 def get_origin(repo):
     try:
@@ -16,11 +17,11 @@ def get_origin(repo):
     except:
         return None
 
+
 def log_init():
     global RUN_ID
     scriptpath = os.path.realpath(sys.argv[0])
 
-    repo = Repo(scriptpath, search_parent_directories=True)
     #Start mongoDB client
     client = MongoClient()
 
@@ -37,12 +38,24 @@ def log_init():
         "outputs": [],
         "script": scriptpath,
         "command": sys.executable,
-        "gitrepo": repo.working_dir,
-        "gitorigin": get_origin(repo),
-        "gitcommit": repo.head.commit.hexsha,
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow()}
 
+    try:
+        repo = Repo(scriptpath, search_parent_directories=True)
+        run["gitrepo"] = repo.working_dir
+        run["gitcommit"] =  repo.head.commit.hexsha
+        run["gitorigin"] = get_origin(repo)
+
+        whole_diff = ''
+        if True:
+            diffs = repo.index.diff(None, create_patch=True)
+            for diff in diffs:
+                whole_diff += "\n\n\n" + diff.diff
+
+            run['diff'] = whole_diff
+    except:
+        pass
 
     # Put basics into DB
     RUN_ID = recipies.insert(run)
