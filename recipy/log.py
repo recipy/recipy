@@ -63,6 +63,7 @@ def log_init():
     client.close()
 
 def log_input(filename, source):
+    filename = os.path.abspath(filename)
     print "Input from %s using %s" % (filename, source)
     #Update object in DB
 
@@ -77,6 +78,7 @@ def log_input(filename, source):
     client.close()
 
 def log_output(filename, source):
+    filename = os.path.abspath(filename)
     print "Output to %s using %s" % (filename, source)
     client = MongoClient()
 
