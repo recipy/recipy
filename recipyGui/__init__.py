@@ -2,6 +2,7 @@ from flask import Flask, url_for
 import os
 from flask.ext.pymongo import PyMongo
 from flask_bootstrap import Bootstrap
+import re
 
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
@@ -28,3 +29,15 @@ def register_blueprints(app):
     recipyGui.register_blueprint(runs)
 
 register_blueprints(recipyGui)
+
+# Custom filters
+@recipyGui.template_filter()
+def highlight(text, query=None):
+    """Filter to highlight query terms in search results."""
+    if query:
+        replacement = r'<mark>\1</mark>'
+        for q in query.split(' '):
+            text = re.sub(r'(?i)({})'.format(q), replacement, text)
+    return text
+
+recipyGui.jinja_env.filters['highlight'] = highlight

@@ -62,14 +62,14 @@
           <tr>
             <td>{{ run.date }}</td>
             <td>{{ run.title }}</td>
-            <td>{{ run.command }}</td>
-            <td>{{ run.script }}</td>
-            <td>{{ run.inputs | join(' ') }}</td>
-            <td>{{ run.outputs | join(' ') }}</td>
-            <td>{{ run.environment | join(' ') }}</td>
-            <td>{{ run.gitrepo }}</td>
+            <td>{{ run.command | highlight(query) | safe }}</td>
+            <td>{{ run.script | highlight(query) | safe }}</td>
+            <td>{{ run.inputs | join(' ') | highlight(query) | safe }}</td>
+            <td>{{ run.outputs | join(' ') | highlight(query) | safe }}</td>
+            <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
+            <td>{{ run.gitrepo | highlight(query) | safe }}</td>
             <td>{{ run.gituser }}</td>
-            <td>{{ run.gitcommit }}</td>
+            <td>{{ run.gitcommit | highlight(query) | safe }}</td>
           </tr>
           {% endfor %}
         </tbody>
