@@ -41,3 +41,10 @@ def highlight(text, query=None):
     return text
 
 recipyGui.jinja_env.filters['highlight'] = highlight
+
+@recipyGui.template_filter()
+def datetimefilter(value, format='%Y/%m/%d %H:%M'):
+    """convert a datetime to a different format."""
+    return value.strftime(format)
+
+recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter

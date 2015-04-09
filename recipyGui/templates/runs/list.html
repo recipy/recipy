@@ -60,7 +60,7 @@
         <tbody>
           {% for run in runs %}
           <tr>
-            <td>{{ run.date }}</td>
+            <td>{{ run.date | datetimefilter }}</td>
             <td>{{ run.title }}</td>
             <td>{{ run.command | highlight(query) | safe }}</td>
             <td>{{ run.script | highlight(query) | safe }}</td>
