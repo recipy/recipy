@@ -15,6 +15,7 @@ Options:
   --debug       Turn on debugging mode
 
 """
+import os
 from docopt import docopt
 from pymongo import MongoClient
 import sys
@@ -61,7 +62,8 @@ if __name__ == '__main__':
     #Create images collection
     recipies = db.recipies
 
-    results = recipies.find({'outputs':filename}, sort=[('date', -1)])
+    results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
+
     if results.count() == 0:
         print "No results found"
     else:
