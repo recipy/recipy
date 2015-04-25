@@ -10,12 +10,15 @@ Options:
   -h --help     Show this screen
   --version     Show version
   -a --all      Show all results (otherwise just latest result given)
+  -f --fuzzy    Use fuzzy searching on filename
+  -r --regex    Use regex searching on filename
   -v --verbose  Be verbose
   -d --diff     Show diff
   --debug       Turn on debugging mode
 
 """
 import os
+import re
 from docopt import docopt
 from pymongo import MongoClient
 import sys
@@ -53,8 +56,6 @@ if __name__ == '__main__':
     if args['--debug']:
         print(args)
 
-    filename = args['<outputfile>']
-
     client = MongoClient()
 
     db = client.recipyDB
@@ -62,7 +63,15 @@ if __name__ == '__main__':
     #Create images collection
     recipies = db.recipies
 
-    results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
+    filename = args['<outputfile>']
+
+    if args['--fuzzy']:
+      results = recipies.find({'outputs': re.compile(".+%s.+" % filename)}, sort=[('date', -1)])
+    elif args['--regex']:
+      results = recipies.find({'outputs': re.compile(filename)}, sort=[('date', -1)])
+    else:
+      results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
+
 
     if results.count() == 0:
         print "No results found"
