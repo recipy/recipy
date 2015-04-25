@@ -59,4 +59,14 @@ class PatchSKLearn(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'sklearn')
     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
 
-sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(), PatchGDAL(), PatchSKLearn()]
+class PatchSKImage(PatchSimple):
+    modulename = 'skimage'
+
+    input_functions = ['io.imread', 'io.load_sift', 'io.load_surf', 'external.tifffile.imread']
+    output_functions = ['io.imsave', 'external.tifffile.imsave']
+
+    input_wrapper = create_wrapper(log_input, 0, 'sklearn')
+    output_wrapper = create_wrapper(log_output, 0, 'sklearn')
+
+sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(),
+                 PatchGDAL(), PatchSKLearn(), PatchSKImage()]
