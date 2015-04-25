@@ -68,5 +68,16 @@ class PatchSKImage(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'sklearn')
     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
 
+class PatchPillow(PatchSimple):
+    modulename = 'skimage'
+
+    input_functions = ['Image.open']
+    output_functions = ['Image.save']
+
+    input_wrapper = create_wrapper(log_input, 0, 'Pillow')
+    output_wrapper = create_wrapper(log_output, 0, 'Pillow')
+
+
 sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(),
-                 PatchGDAL(), PatchSKLearn(), PatchSKImage()]
+                 PatchGDAL(), PatchSKLearn(), PatchSKImage(),
+                 PatchPillow()]
