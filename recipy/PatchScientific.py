@@ -50,4 +50,13 @@ class PatchGDAL(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'gdal')
     output_wrapper = create_wrapper(log_output, 0, 'gdal')
 
-sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(), PatchGDAL()]
+class PatchSKLearn(PatchSimple):
+    modulename = 'sklearn'
+
+    input_functions = ['datasets.load_svmlight_file']
+    output_functions = ['datasets.dump_svmlight_file']
+
+    input_wrapper = create_wrapper(log_input, 0, 'sklearn')
+    output_wrapper = create_wrapper(log_output, 0, 'sklearn')
+
+sys.meta_path = [PatchPandas(), PatchMPL(), PatchNumpy(), PatchGDAL(), PatchSKLearn()]
