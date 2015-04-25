@@ -27,7 +27,10 @@ from jinja2 import Template
 
 
 
+
+
 def print_result(r):
+  # Print a single result from the search
     template = """Created by {{ author }} on {{ date }}
 Ran {{ script }} using {{ command }}
 {% if gitcommit is defined %}
@@ -86,5 +89,6 @@ if __name__ == '__main__':
                 print "** Previous runs creating this output have been found. Run with --all to show. **"
 
             if args['--diff']:
+              if 'diff' in results[0]:
                 print "\n\n"
                 print results[0]['diff']

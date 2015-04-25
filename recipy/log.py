@@ -6,9 +6,12 @@ import sys
 import getpass
 import platform
 import sys
+from ConfigParser import SafeConfigParser
 from git import Repo
 
+
 RUN_ID = {}
+CONFIG = None
 store_diff = True
 
 def get_origin(repo):
@@ -17,9 +20,16 @@ def get_origin(repo):
     except:
         return None
 
+def option(name):
+    return not CONFIG.has_option('ignored metadata', name)
 
 def log_init():
-    global RUN_ID
+    global RUN_ID, CONFIG
+
+    CONFIG = SafeConfigParser(allow_no_value=True)
+    CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipyrc")])
+
+
     scriptpath = os.path.realpath(sys.argv[0])
 
     #Start mongoDB client
@@ -41,21 +51,22 @@ def log_init():
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow()}
 
-    try:
-        repo = Repo(scriptpath, search_parent_directories=True)
-        run["gitrepo"] = repo.working_dir
-        run["gitcommit"] =  repo.head.commit.hexsha
-        run["gitorigin"] = get_origin(repo)
+    if option('git'):
+        try:
+            repo = Repo(scriptpath, search_parent_directories=True)
+            run["gitrepo"] = repo.working_dir
+            run["gitcommit"] =  repo.head.commit.hexsha
+            run["gitorigin"] = get_origin(repo)
 
-        whole_diff = ''
-        if store_diff:
-            diffs = repo.index.diff(None, create_patch=True)
-            for diff in diffs:
-                whole_diff += "\n\n\n" + diff.diff
+            if option('diff'):
+                whole_diff = ''
+                diffs = repo.index.diff(None, create_patch=True)
+                for diff in diffs:
+                    whole_diff += "\n\n\n" + diff.diff
 
-            run['diff'] = whole_diff
-    except:
-        pass
+                run['diff'] = whole_diff
+        except:
+            pass
 
     # Put basics into DB
     RUN_ID = recipies.insert(run)
