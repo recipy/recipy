@@ -1,4 +1,10 @@
-{% extends "bootstrap/base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% import "bootstrap/utils.html" as utils %} {% block title %}This is an example page{% endblock %} {% block navbar %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block title %}ReciPy{% endblock %} 
+
+{% block navbar %}
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -19,8 +25,9 @@
   </div>
   <!--/.container-fluid -->
 </nav>
-{% endblock %} {% block content %}
+{% endblock %}
 
+{% block content %}
 <div class="container">
   <div class="row">
 
