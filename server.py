@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 from recipyGui import recipyGui
-import random, threading, webbrowser
+import threading, webbrowser, socket
 
-port = 5000 + random.randint(0, 999)
+def get_free_port():
+    s = socket.socket()
+    s.bind(('', 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
+
+port = get_free_port()
 url = "http://127.0.0.1:{0}".format(port)
 
 # Give the application some time before it starts
