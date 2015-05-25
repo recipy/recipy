@@ -27,8 +27,6 @@ from jinja2 import Template
 
 
 
-
-
 def print_result(r):
   # Print a single result from the search
     template = """Created by {{ author }} on {{ date }}
