@@ -30,27 +30,44 @@ Note that this must be the *very top* line of your script, before you import any
 
 Then just run your script as usual, and all of the data will be logged into the MongoDB database. You can use the `recipy-cmd` script to quickly query the database to find out what run of your code produced what output file. So, for example, if you add `import recipy` to the top of 'example_script3.py' and then run:
 
-    python example_script3.py
+    python example_script.py
     
-it will produce an output called `ALongTimeAgo.npy`. To find out the details of the run which created this file you can search using
+it will produce an output called `newplot.pdf`. To find out the details of the run which created this file you can search using
 
-    ./recipy-cmd ALongTimeAgo.npy
+    ./recipy-cmd newplot.pdf
 
 and it will display information like the following:
 
-    {u'_id': ObjectId('55156a7bfdfff4038857d6ea'),
-    u'author': u'robin',
-     u'command': u'example_script3.py',
-     u'date': datetime.datetime(2015, 3, 27, 14, 34, 35, 24000),
-     u'description': u'',
-     u'environment': [u'python3.2', u'PyMongo2.8', u'MAC OS 10.10.02'],
-     u'gitcommit': u'6a8b3c06c9b5c66b1bb48ba0dd3928d8ef748f84',
-     u'gitrepo': u'https://github.com/recipy/recipy.git',
-     u'gituser': u'robintw',
-     u'inputs': [u'/Users/robin/code/recipy/data.csv'],
-     u'outputs': [u'ALongTimeAgo.npy'],
-     u'script': u'example_script3.py'}
+    Created by robin on 2015-05-25 19:00:15.631000
+	Ran /Users/robin/code/recipy/example_script.py using /usr/local/opt/python/bin/python2.7
+	Git: commit 91a245e5ea82f33ae58380629b6586883cca3ac4, in repo /Users/robin/code/recipy, with origin git@github.com:recipy/recipy.git
+	Environment: Darwin-14.3.0-x86_64-i386-64bit, python 2.7.9 (default, Feb 10 2015, 03:28:08)
+	Inputs:
+	  /Users/robin/code/recipy/data.csv
+
+	Outputs:
+	  /Users/robin/code/recipy/newplot.pdf
+
+	** Previous runs creating this output have been found. Run with --all to show. **
     
+Run `./recipy-cmd --help` to see the other options: you can view diffs, all runs that created a file with that name, and more:
+
+	recipy - a frictionless provenance tool for Python
+
+	Usage:
+	  recipy-cmd [options] <outputfile>
+	  recipy-cmd (-h | --help)
+	  recipy-cmd --version
+
+	Options:
+	  -h --help     Show this screen
+	  --version     Show version
+	  -a --all      Show all results (otherwise just latest result given)
+	  -f --fuzzy    Use fuzzy searching on filename
+	  -r --regex    Use regex searching on filename
+	  -v --verbose  Be verbose
+	  -d --diff     Show diff
+	  --debug       Turn on debugging mode
 
 # How it works
 When you import recipy it adds a number of classes to `sys.meta_path`. These are then used by Python as part of the importing procedure for modules. The classes that we add are classes derived from `PatchImporter`, often using the easier interface provided by `PatchSimple`, which allow us to wrap functions that do input/output in a function that calls recipy first to log the information.
