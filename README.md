@@ -12,10 +12,6 @@ Make sure you have a MongoDB instance running with ```mongostat```, or else star
 
 ```mongod```
 
-Populate the database:
-
-```python create_database.py```
-
 ## Usage
 
 To start the local webserver, run:
