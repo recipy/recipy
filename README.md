@@ -8,9 +8,8 @@ RecipyGui is a Flask application. To install all requirements:
 
 ```pip install -r requirements.txt```
 
-Make sure you have a MongoDB instance running with ```mongostat```, or else start it now:
-
-```mongod```
+Make sure you have a MongoDB instance running with ```mongostat```, or else
+start it now with command ```mongod```.
 
 ## Usage
 
@@ -18,4 +17,4 @@ To start the local webserver, run:
 
 ```python recipy-gui.py```
 
-You can find the gui at http://localhost:5000/
+The GUI automatically opens in a new tab in the browser. 
