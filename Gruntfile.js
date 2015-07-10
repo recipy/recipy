@@ -27,20 +27,6 @@ module.exports = function( grunt ) {
       }
     },
 
-    // compile .scss/.sass to .css using Compass
-    compass: {
-      dist: {
-        // http://compass-style.org/help/tutorials/configuration-reference/#configuration-properties
-        options: {
-          css_dir: 'recipyGui/static/css',
-          sass_dir: 'recipyGui/static/css',
-          images_dir: 'recipyGui/static/img',
-          javascripts_dir: 'recipyGui/static/js',
-          force: true
-        }
-      }
-    },
-
     // generate application cache manifest
     manifest:{
       dest: ''
@@ -56,12 +42,6 @@ module.exports = function( grunt ) {
       coffee: {
         files: 'recipyGui/static/js/*.coffee',
         tasks: 'coffee reload'
-      },
-      compass: {
-        files: [
-          'recipyGui/static/css/*.{scss,sass}'
-        ],
-        tasks: 'compass reload'
       },
       reload: {
         files: [
