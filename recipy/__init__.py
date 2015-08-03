@@ -1,5 +1,3 @@
-import PatchBaseScientific
-import PatchScientific
-from log import *
+from .log import *
 
 log_init()

@@ -2,7 +2,7 @@ import sys
 import imp
 
 import functools
-from utils import *
+from .utils import *
 
 class PatchImporter(object):
     modulename = ''
@@ -37,7 +37,7 @@ class PatchImporter(object):
             if file_obj:
                 file_obj.close()
         
-        print "Patching %s" % mod.__name__
+        print("Patching %s" % mod.__name__)
         mod = self.patch(mod)
         sys.modules[name] = mod
         return mod

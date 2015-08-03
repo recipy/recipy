@@ -1,9 +1,9 @@
 import sys
-from PatchImporter import PatchImporter
+from .PatchImporter import PatchImporter
 import wrapt
 
-from log import *
-from utils import *
+from .log import *
+from .utils import *
 
 class PatchSimple(PatchImporter):
     def patch(self, mod):

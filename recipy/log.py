@@ -6,7 +6,10 @@ import sys
 import getpass
 import platform
 import sys
-from ConfigParser import SafeConfigParser
+try:
+    from ConfigParser import SafeConfigParser
+except:
+    from configparser import SafeConfigParser
 from git import Repo
 
 
@@ -70,12 +73,12 @@ def log_init():
 
     # Put basics into DB
     RUN_ID = recipies.insert(run)
-    print "Run recipy inserted %s" % (RUN_ID)
+    print("recipy run inserted, with ID %s" % (RUN_ID))
     client.close()
 
 def log_input(filename, source):
     filename = os.path.abspath(filename)
-    print "Input from %s using %s" % (filename, source)
+    print("Input from %s using %s" % (filename, source))
     #Update object in DB
 
     client = MongoClient()
@@ -90,7 +93,7 @@ def log_input(filename, source):
 
 def log_output(filename, source):
     filename = os.path.abspath(filename)
-    print "Output to %s using %s" % (filename, source)
+    print("Output to %s using %s" % (filename, source))
     client = MongoClient()
 
     #Access database named 'test_database'

@@ -1,10 +1,9 @@
 import sys
-from PatchImporter import PatchImporter
-from PatchSimple import PatchSimple
-import wrapt
+from .PatchImporter import PatchImporter
+from .PatchSimple import PatchSimple
 
-from log import *
-from utils import *
+from .log import *
+from .utils import *
 
 class PatchGDAL(PatchSimple):
     modulename = 'gdal'

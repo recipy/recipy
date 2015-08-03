@@ -1,7 +1,8 @@
 import recipy
-import numpy as np
+import numpy
 
-arr = np.arange(10)
-arr = arr + 5
+arr = numpy.arange(10)
+arr = arr + 500
+# We've made a fairly big change here!
 
-np.save('test2.npy', arr)
+numpy.save('testNGCM_2.npy', arr)

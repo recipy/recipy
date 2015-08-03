@@ -1,10 +1,10 @@
 import sys
-from PatchImporter import PatchImporter
-from PatchSimple import PatchSimple
+from .PatchImporter import PatchImporter
+from .PatchSimple import PatchSimple
 import wrapt
 
-from log import *
-from utils import *
+from .log import *
+from .utils import *
 
 class PatchPandas(PatchSimple):
     modulename = 'pandas'
