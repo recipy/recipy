@@ -1,4 +1,3 @@
-from pymongo import MongoClient
 import wrapt
 import os
 import datetime
@@ -6,16 +5,19 @@ import sys
 import getpass
 import platform
 import sys
+from tinydb import TinyDB, where
+
 try:
     from ConfigParser import SafeConfigParser
 except:
     from configparser import SafeConfigParser
 from git import Repo
 
-
+DBFILE = 'recipyDB.json'
 RUN_ID = {}
 CONFIG = None
 store_diff = True
+
 
 def get_origin(repo):
     try:
@@ -35,14 +37,8 @@ def log_init():
 
     scriptpath = os.path.realpath(sys.argv[0])
 
-    #Start mongoDB client
-    client = MongoClient()
-
-    #Access database named 'test_database'
-    db = client.recipyDB
-
-    #Create images collection
-    recipies = db.recipies
+    #Set up TinyDB database
+    db = TinyDB(DBFILE)
 
     # Get env info, etc
     run = {"author": getpass.getuser(),
@@ -72,34 +68,28 @@ def log_init():
             pass
 
     # Put basics into DB
-    RUN_ID = recipies.insert(run)
+    RUN_ID = db.insert(run)
     print("recipy run inserted, with ID %s" % (RUN_ID))
-    client.close()
 
 def log_input(filename, source):
     filename = os.path.abspath(filename)
     print("Input from %s using %s" % (filename, source))
     #Update object in DB
-
-    client = MongoClient()
-
-    #Access database named 'test_database'
-    db = client.recipyDB
-
-    #Create images collection
-    recipies = db.recipies
-    recipies.find_and_modify(query={'_id':RUN_ID}, update={"$push": {'inputs': filename}}, upsert=False, full_response=True)
-    client.close()
+    db = TinyDB(DBFILE)
+    db.update({"inputs": filename}, where('') == RUN_ID)
 
 def log_output(filename, source):
     filename = os.path.abspath(filename)
     print("Output to %s using %s" % (filename, source))
-    client = MongoClient()
+    #Update object in DB
+    db = TinyDB(DBFILE)
+    db.update({"outputs": filename}, where('') == RUN_ID)
 
-    #Access database named 'test_database'
-    db = client.recipyDB
 
-    #Create images collection
-    recipies = db.recipies
-    recipies.find_and_modify(query={'_id':RUN_ID}, update={"$push": {'outputs': filename}}, upsert=False, full_response=True)
-    client.close()
+def log_update(field, filename, source):
+    filename = os.path.abspath(filename)
+    print("Adding %s to %s using $s" % (field, filename, source))
+    db = TinyDB(DBFILE)
+    db.update({field: filename}, where('') == RUN_ID)
+
+
