@@ -13,6 +13,8 @@ except:
     from configparser import SafeConfigParser
 from git import Repo
 
+from tinydb_serialization import serialization
+
 DBFILE = 'recipyDB.json'
 RUN_ID = {}
 CONFIG = None
@@ -38,7 +40,7 @@ def log_init():
     scriptpath = os.path.realpath(sys.argv[0])
 
     #Set up TinyDB database
-    db = TinyDB(DBFILE)
+    db = TinyDB(DBFILE, storage=serialization)
 
     # Get env info, etc
     run = {"author": getpass.getuser(),
