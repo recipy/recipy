@@ -5,7 +5,7 @@ import sys
 import getpass
 import platform
 import sys
-from tinydb import TinyDB, where
+from tinydb import TinyDB
 
 try:
     from ConfigParser import SafeConfigParser
