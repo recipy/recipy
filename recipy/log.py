@@ -78,20 +78,30 @@ def log_input(filename, source):
     print("Input from %s using %s" % (filename, source))
     #Update object in DB
     db = TinyDB(DBFILE)
-    db.update({"inputs": filename}, where('') == RUN_ID)
+    db.update(append("inputs", filename), eids=[RUN_ID])
 
 def log_output(filename, source):
     filename = os.path.abspath(filename)
     print("Output to %s using %s" % (filename, source))
     #Update object in DB
     db = TinyDB(DBFILE)
-    db.update({"outputs": filename}, where('') == RUN_ID)
+    db.update(append("outputs", filename), eids=[RUN_ID])
 
 
 def log_update(field, filename, source):
     filename = os.path.abspath(filename)
     print("Adding %s to %s using $s" % (field, filename, source))
     db = TinyDB(DBFILE)
-    db.update({field: filename}, where('') == RUN_ID)
+    db.update(append(field, filename), eids=[RUN_ID])
+
+def append(field, value):
+    """
+    Append a given value to a given array field.
+    Keep an eye on https://github.com/msiemens/tinydb/issues/66
+    """
+    def transform(element):
+        element[field].append(value)
+
+    return transform
 
 
