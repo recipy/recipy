@@ -1,6 +1,5 @@
 matplotlib
 setuptools
 wrapt
-pymongo
 GitPython
-
+tinydb
