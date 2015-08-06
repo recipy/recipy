@@ -20,7 +20,7 @@ Options:
 import os
 import re
 from docopt import docopt
-from pymongo import MongoClient
+from tinydb import TinyDB, where
 import sys
 from pprint import pprint
 from jinja2 import Template
@@ -53,28 +53,25 @@ Outputs:
 
 if __name__ == '__main__':
     args = docopt(__doc__, version='recipy-cmd v0.1')
-
+    
     if args['--debug']:
         print(args)
 
-    client = MongoClient()
-
-    db = client.recipyDB
-
-    #Create images collection
-    recipies = db.recipies
+    db = TinyDB('recipyDB.json') 
 
     filename = args['<outputfile>']
 
     if args['--fuzzy']:
-      results = recipies.find({'outputs': re.compile(".+%s.+" % filename)}, sort=[('date', -1)])
+        results = db.search({'outputs': re.compile(".+%s.+" % filename)}, sort=[('date', -1)])
     elif args['--regex']:
-      results = recipies.find({'outputs': re.compile(filename)}, sort=[('date', -1)])
+        results = recipies.find({'outputs': re.compile(filename)}, sort=[('date', -1)])
+    elif args['--all']:
+        results = db.all();
     else:
-      results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
+        results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
 
 
-    if results.count() == 0:
+    if len(results) == 0:
         print "No results found"
     else:
         if args['--all']:
@@ -90,3 +87,5 @@ if __name__ == '__main__':
               if 'diff' in results[0]:
                 print "\n\n"
                 print results[0]['diff']
+
+    db.close()
