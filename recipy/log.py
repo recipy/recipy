@@ -72,6 +72,7 @@ def log_init():
     # Put basics into DB
     RUN_ID = db.insert(run)
     print("recipy run inserted, with ID %s" % (RUN_ID))
+    db.close()
 
 def log_input(filename, source):
     filename = os.path.abspath(filename)
@@ -79,6 +80,7 @@ def log_input(filename, source):
     #Update object in DB
     db = TinyDB(DBFILE)
     db.update(append("inputs", filename), eids=[RUN_ID])
+    db.close()
 
 def log_output(filename, source):
     filename = os.path.abspath(filename)
@@ -86,13 +88,14 @@ def log_output(filename, source):
     #Update object in DB
     db = TinyDB(DBFILE)
     db.update(append("outputs", filename), eids=[RUN_ID])
-
+    db.close()
 
 def log_update(field, filename, source):
     filename = os.path.abspath(filename)
     print("Adding %s to %s using $s" % (field, filename, source))
     db = TinyDB(DBFILE)
     db.update(append(field, filename), eids=[RUN_ID])
+    db.close()
 
 def append(field, value):
     """
