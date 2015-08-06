@@ -62,13 +62,13 @@ if __name__ == '__main__':
     filename = args['<outputfile>']
 
     if args['--fuzzy']:
-        results = db.search({'outputs': re.compile(".+%s.+" % filename)}, sort=[('date', -1)])
+        results = db.search(where('outputs') == re.compile(".+%s.+" % filename))
     elif args['--regex']:
-        results = recipies.find({'outputs': re.compile(filename)}, sort=[('date', -1)])
+        results = db.search(where('outputs') == re.compile(filename))
     elif args['--all']:
         results = db.all();
     else:
-        results = recipies.find({'outputs':os.path.abspath(filename)}, sort=[('date', -1)])
+        results = db.search(where('outputs') == os.path.abspath(filename))
 
 
     if len(results) == 0:
@@ -79,7 +79,7 @@ if __name__ == '__main__':
                 print_result(r)
                 print "-"*40
         else:
-            print_result(results[0])
+            print_result(results[-1])
             if results.count() > 1:
                 print "** Previous runs creating this output have been found. Run with --all to show. **"
 
