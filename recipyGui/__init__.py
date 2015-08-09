@@ -48,3 +48,14 @@ def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     return value.strftime(format)
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter
+
+@recipyGui.template_filter()
+def gitorigin2url(origin):
+    """convert a datetime to a different format."""
+    url = origin.replace(':', '/')
+    url = url.replace('git@', 'http://')
+    url = url.replace('.git', '')
+    
+    return url
+
+recipyGui.jinja_env.filters['gitorigin2url'] = gitorigin2url

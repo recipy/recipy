@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}ReciPy{% endblock %}
+{% block title %}ReciPy - Run Details{% endblock %}
 
 {% block navbar %}
 <nav class="navbar navbar-default">
@@ -76,11 +76,19 @@
       </tr>
       <tr>
         <td class="col-md-1">Inputs</td>
-        <td>{{ run.inputs | join(' ') | highlight(query) | safe }}</td>
+        <td>
+          {% if run.inputs | length > 0 %}
+              {{ run.inputs | join('</br>') | highlight(query) | safe }}
+          {% endif %}
+        </td>
       </tr>
       <tr>
         <td class="col-md-1">Outputs</td>
-        <td>{{ run.outputs | join(' ') | highlight(query) | safe }}</td>
+        <td>
+          {% if run.outputs | length > 0 %}
+              {{ run.outputs | join('</br>') | highlight(query) | safe }}
+          {% endif %}
+        </td>
       </tr>
       <tr>
         <td class="col-md-1">Environment</td>
@@ -92,15 +100,30 @@
     <table class="table table-striped table-condensed">
       <tr>
         <td class="col-md-1">Git Repo</td>
-        <td>{{ run.gitrepo | highlight(query) | safe }}</td>
+        <td>
+          {{ run.gitrepo | highlight(query) | safe }}
+          {% if run.gitorigin | length > 0 %}
+            (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
+          {% endif %}
+        </td>
       </tr>
       <tr>
         <td class="col-md-1">Git Origin</td>
-        <td>{{ run.gitorigin | highlight(query) | safe }}</td>
+        <td>
+          {{ run.gitorigin | highlight(query) | safe }}
+        </td>
       </tr>
       <tr>
         <td class="col-md-1">Git Commit</td>
-        <td>{{ run.gitcommit | highlight(query) | safe }}</td>
+        <td>
+          {% if run.gitorigin | length > 0 %}
+            <a href="{{ run.gitorigin | gitorigin2url | safe }}/commit/{{ run.gitcommit | highlight(query) | safe }}">
+              {{ run.gitcommit | highlight(query) | safe }}
+            </a>
+          {% else %}
+            {{ run.gitcommit | highlight(query) | safe }}
+          {% endif %}
+        </td>
       </tr>
     </table>
 
