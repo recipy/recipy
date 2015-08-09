@@ -48,7 +48,62 @@
       </div>
     </form>
 
-    <h1>Run Details</h1>
+    <h3>Run Details</h3>
+    <table class="table table-striped table-condensed">
+      <tr>
+        <td class="col-md-1">Id</td>
+        <td>{{ run._id | string | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Date</td>
+        <td>{{ run.date | datetimefilter }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Author</td>
+        <td>{{ run.author | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Description</td>
+        <td>{{ run.description | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Command</td>
+        <td>{{ run.command | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Script</td>
+        <td>{{ run.script | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Inputs</td>
+        <td>{{ run.inputs | join(' ') | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Outputs</td>
+        <td>{{ run.outputs | join(' ') | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Environment</td>
+        <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
+      </tr>
+    </table>
+
+    <h3>Git</h3>
+    <table class="table table-striped table-condensed">
+      <tr>
+        <td class="col-md-1">Git Repo</td>
+        <td>{{ run.gitrepo | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Git Origin</td>
+        <td>{{ run.gitorigin | highlight(query) | safe }}</td>
+      </tr>
+      <tr>
+        <td class="col-md-1">Git Commit</td>
+        <td>{{ run.gitcommit | highlight(query) | safe }}</td>
+      </tr>
+    </table>
+
   </div>
 
   {% endblock %}

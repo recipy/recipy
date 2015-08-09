@@ -2,6 +2,7 @@ from flask import Blueprint, request, redirect, render_template, url_for
 from flask.views import MethodView
 from recipyGui import recipyGui, mongo
 from forms import SearchForm
+from bson.objectid import ObjectId
 
 runs = Blueprint('runs', __name__, template_folder='templates')
 
@@ -30,7 +31,15 @@ def index():
 def run_details():
         form = SearchForm()
         query = request.args.get('query', '')
-        return render_template('runs/details.html', query=query, form=form)
+        run_id = request.args.get('id', '')
+
+        q = { '_id': ObjectId(run_id) }
+        r = mongo.db.recipies.find_one(q)
+        print run_id
+        print r
+
+        return render_template('runs/details.html', query=query, form=form,
+                               run=r)
 
 #class ListView(MethodView):
 
