@@ -5,6 +5,21 @@
 {% block content %}
 {{ super() }}
 
+{% if query | length > 0 %}
+<div class="top-buffer">
+  <ol class="breadcrumb">
+    <li>
+      <a href="{{ url_for('index', query=query) }}">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+      </a>
+      <a href="{{ url_for('index', query=query) }}">
+        back to search results
+      </a>
+    </li>
+  </ol>
+</div>
+{% endif %}
+
 <h3>Run Details</h3>
 <table class="table table-striped table-condensed">
   <tr>
