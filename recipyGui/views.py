@@ -25,6 +25,13 @@ def index():
     print 'query:', query
     return render_template('runs/list.html', runs=runs, query=query, form=form)
 
+
+@recipyGui.route('/run_details')
+def run_details():
+        form = SearchForm()
+        query = request.args.get('query', '')
+        return render_template('runs/details.html', query=query, form=form)
+
 #class ListView(MethodView):
 
 #    def get(self):
