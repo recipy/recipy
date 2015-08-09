@@ -1,5 +1,4 @@
-from flask import Blueprint, request, redirect, render_template, url_for
-from flask.views import MethodView
+from flask import Blueprint, request, render_template
 from recipyGui import recipyGui, mongo
 from forms import SearchForm
 from bson.objectid import ObjectId
@@ -23,8 +22,6 @@ def index():
         score_sort = [('score', {'$meta': 'textScore'})]
         runs = [r for r in mongo.db.recipies.find(q, score).sort(score_sort)]
 
-    print 'runs:', runs
-    print 'query:', query
     return render_template('list.html', runs=runs, query=query, form=form)
 
 
@@ -36,7 +33,5 @@ def run_details():
 
         q = { '_id': ObjectId(run_id) }
         r = mongo.db.recipies.find_one(q)
-        print run_id
-        print r
 
         return render_template('details.html', query=query, form=form, run=r)
