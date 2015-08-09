@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}ReciPy{% endblock %} 
+{% block title %}ReciPy{% endblock %}
 
 {% block navbar %}
 <nav class="navbar navbar-default">
@@ -52,6 +52,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th></th>
             <th>Date</th>
             <th>Title</th>
             <th>Command</th>
@@ -67,6 +68,15 @@
         <tbody>
           {% for run in runs %}
           <tr>
+            <td>
+              <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
+                <input type="hidden" name="id" value="{{ run._id }}"></input>
+                <input type="hidden" name="query" value="{{ query }}"></input>
+                <button type="submit" class="btn btn-info">
+                  Run details
+                </button>
+              </form>
+            </td>
             <td>{{ run.date | datetimefilter }}</td>
             <td>{{ run.title }}</td>
             <td>{{ run.command | highlight(query) | safe }}</td>
