@@ -125,6 +125,16 @@
           {% endif %}
         </td>
       </tr>
+      <tr>
+        <td class="col-md-1">Git diff</td>
+        {% if run.diff | length > 0 %}
+          <td style="padding: 0;">
+            {{ run.diff | colordiff | highlight(query) | safe }}
+          </td>
+        {% else %}
+          <td>No changes</td>
+        {% endif %}
+      </tr>
     </table>
 
   </div>
