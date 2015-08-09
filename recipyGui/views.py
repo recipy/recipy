@@ -4,7 +4,8 @@ from recipyGui import recipyGui, mongo
 from forms import SearchForm
 from bson.objectid import ObjectId
 
-runs = Blueprint('runs', __name__, template_folder='templates')
+routes = Blueprint('routes', __name__, template_folder='templates')
+
 
 @recipyGui.route('/')
 def index():
@@ -24,7 +25,7 @@ def index():
 
     print 'runs:', runs
     print 'query:', query
-    return render_template('runs/list.html', runs=runs, query=query, form=form)
+    return render_template('list.html', runs=runs, query=query, form=form)
 
 
 @recipyGui.route('/run_details')
@@ -38,15 +39,4 @@ def run_details():
         print run_id
         print r
 
-        return render_template('runs/details.html', query=query, form=form,
-                               run=r)
-
-#class ListView(MethodView):
-
-#    def get(self):
-#        runs = Run.objects.all()
-#        print runs
-#        return render_template('runs/list.html', runs=runs)
-
-# Register urls
-#runs.add_url_rule('/', view_func=ListView.as_view('list'))
+        return render_template('details.html', query=query, form=form, run=r)

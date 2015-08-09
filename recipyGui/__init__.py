@@ -25,8 +25,8 @@ recipyGui.jinja_env.globals['static'] = (
 
 def register_blueprints(app):
     # Prevents circular imports
-    from recipyGui.views import runs
-    recipyGui.register_blueprint(runs)
+    from recipyGui.views import routes
+    recipyGui.register_blueprint(routes)
 
 register_blueprints(recipyGui)
 
