@@ -14,7 +14,7 @@ class PatchPandas(PatchSimple):
     output_functions = ['DataFrame.to_csv', 'DataFrame.to_excel', 'DataFrame.to_hdf',
         'DataFrame.to_msgpack', 'DataFrame.to_stata', 'DataFrame.to_pickle']
 
-    output_functions = ['Panel.to_excel', 'Panel.to_hdf',
+    output_functions += ['Panel.to_excel', 'Panel.to_hdf',
         'Panel.to_msgpack', 'Panel.to_pickle']
 
     output_functions += ['Series.to_csv', 'Series.to_hdf',
