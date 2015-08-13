@@ -7,11 +7,9 @@ import platform
 import sys
 from tinydb import TinyDB
 
-try:
-    from ConfigParser import SafeConfigParser
-except:
-    from configparser import SafeConfigParser
 from git import Repo
+
+from .utils import option, open_config_file
 
 from tinydb_serialization import serialization
 
@@ -27,15 +25,13 @@ def get_origin(repo):
     except:
         return None
 
-def option(name):
-    return not CONFIG.has_option('ignored metadata', name)
+def new_run():
+    log_init()
 
 def log_init():
     global RUN_ID, CONFIG
 
-    CONFIG = SafeConfigParser(allow_no_value=True)
-    CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipyrc")])
-
+    CONFIG = open_config_file()
 
     scriptpath = os.path.realpath(sys.argv[0])
 
@@ -52,14 +48,14 @@ def log_init():
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow()}
 
-    if option('git'):
+    if not option(CONFIG, 'ignored metadata', 'git'):
         try:
             repo = Repo(scriptpath, search_parent_directories=True)
             run["gitrepo"] = repo.working_dir
             run["gitcommit"] =  repo.head.commit.hexsha
             run["gitorigin"] = get_origin(repo)
 
-            if option('diff'):
+            if not option(CONFIG, 'ignored metadata', 'diff'):
                 whole_diff = ''
                 diffs = repo.index.diff(None, create_patch=True)
                 for diff in diffs:
@@ -76,7 +72,8 @@ def log_init():
 
 def log_input(filename, source):
     filename = os.path.abspath(filename)
-    print("Input from %s using %s" % (filename, source))
+    if option(CONFIG, 'general', 'debug'):
+        print("Input from %s using %s" % (filename, source))
     #Update object in DB
     db = TinyDB(DBFILE)
     db.update(append("inputs", filename), eids=[RUN_ID])
@@ -84,7 +81,8 @@ def log_input(filename, source):
 
 def log_output(filename, source):
     filename = os.path.abspath(filename)
-    print("Output to %s using %s" % (filename, source))
+    if option(CONFIG, 'general', 'debug'):
+        print("Output to %s using %s" % (filename, source))
     #Update object in DB
     db = TinyDB(DBFILE)
     db.update(append("outputs", filename), eids=[RUN_ID])

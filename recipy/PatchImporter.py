@@ -4,6 +4,9 @@ import imp
 import functools
 from .utils import *
 
+CONFIG = open_config_file()
+
+
 class PatchImporter(object):
     modulename = ''
 
@@ -37,7 +40,8 @@ class PatchImporter(object):
             if file_obj:
                 file_obj.close()
         
-        print("Patching %s" % mod.__name__)
+        if option(CONFIG, 'general', 'debug'):
+            print("Patching %s" % mod.__name__)
         mod = self.patch(mod)
         sys.modules[name] = mod
         return mod

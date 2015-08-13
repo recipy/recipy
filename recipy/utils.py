@@ -1,5 +1,20 @@
 import wrapt
 import imp
+import os
+
+try:
+    from ConfigParser import SafeConfigParser
+except:
+    from configparser import SafeConfigParser
+
+def open_config_file():
+    CONFIG = SafeConfigParser(allow_no_value=True)
+    CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipyrc")])
+
+    return CONFIG
+
+def option(conf, section, name):
+    return conf.has_option(section, name)
 
 def recursive_getattr(obj, attr):
     prev_part = obj
