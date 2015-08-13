@@ -24,6 +24,7 @@ from tinydb import TinyDB, where
 import sys
 from pprint import pprint
 from jinja2 import Template
+from dateutil.parser import parse
 
 
 
@@ -61,17 +62,15 @@ if __name__ == '__main__':
 
     filename = args['<outputfile>']
 
-    #print(db.all())
-
     if args['--fuzzy']:
       results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
     elif args['--regex']:
       results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
-    elif args['--all']:
-      results = db.all();
     else:
       results = db.search(where('outputs').any(os.path.abspath(filename)))
 
+    # Sort the results
+    results = sorted(results, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
 
     if len(results) == 0:
         print "No results found"
