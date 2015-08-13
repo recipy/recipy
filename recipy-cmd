@@ -61,14 +61,16 @@ if __name__ == '__main__':
 
     filename = args['<outputfile>']
 
+    #print(db.all())
+
     if args['--fuzzy']:
-        results = db.search(where('outputs') == re.compile(".+%s.+" % filename))
+      results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
     elif args['--regex']:
-        results = db.search(where('outputs') == re.compile(filename))
+      results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
     elif args['--all']:
-        results = db.all();
+      results = db.all();
     else:
-        results = db.search(where('outputs') == os.path.abspath(filename))
+      results = db.search(where('outputs').any(os.path.abspath(filename)))
 
 
     if len(results) == 0:
@@ -80,7 +82,7 @@ if __name__ == '__main__':
                 print "-"*40
         else:
             print_result(results[-1])
-            if results.count() > 1:
+            if len(results) > 1:
                 print "** Previous runs creating this output have been found. Run with --all to show. **"
 
             if args['--diff']:
