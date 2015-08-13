@@ -6,6 +6,7 @@ import getpass
 import platform
 import sys
 from tinydb import TinyDB
+import uuid
 
 from git import Repo
 
@@ -39,7 +40,8 @@ def log_init():
     db = TinyDB(DBFILE, storage=serialization)
 
     # Get env info, etc
-    run = {"author": getpass.getuser(),
+    run = {"unique_id": str(uuid.uuid4()),
+        "author": getpass.getuser(),
         "description": "",
         "inputs": [],
         "outputs": [],
