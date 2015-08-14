@@ -1,7 +1,9 @@
 from flask import Flask, url_for
 import os
 from flask_bootstrap import Bootstrap
+from tinydb import TinyDB
 import re
+from time import strptime, strftime
 
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
@@ -10,6 +12,8 @@ Bootstrap(recipyGui)
 
 # Determines the destination of the build. Only usefull if you're using Frozen-Flask
 recipyGui.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
+
+db = TinyDB('../Recipy/recipyDB.json')
 
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
@@ -39,7 +43,8 @@ recipyGui.jinja_env.filters['highlight'] = highlight
 @recipyGui.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
-    return value.strftime(format)
+    value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
+    return strftime(format.encode('utf8'), value).decode('utf8')
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter
 

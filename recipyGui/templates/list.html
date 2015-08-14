@@ -8,14 +8,12 @@
     <tr>
       <th></th>
       <th>Date</th>
-      <th>Title</th>
       <th>Command</th>
       <th>Script</th>
       <th>Input</th>
       <th>Output</th>
       <th>Environment</th>
       <th>Git repo</th>
-      <th>Git user</th>
       <th>Git commit</th>
     </tr>
   </thead>
@@ -24,7 +22,7 @@
     <tr>
       <td>
         <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
-          <input type="hidden" name="id" value="{{ run._id }}"></input>
+          <input type="hidden" name="id" value="{{ run.eid }}"></input>
           <input type="hidden" name="query" value="{{ query }}"></input>
           <button type="submit" class="btn btn-info">
             View details
@@ -32,14 +30,12 @@
         </form>
       </td>
       <td>{{ run.date | datetimefilter }}</td>
-      <td>{{ run.title }}</td>
       <td>{{ run.command | highlight(query) | safe }}</td>
       <td>{{ run.script | highlight(query) | safe }}</td>
       <td>{{ run.inputs | join(' ') | highlight(query) | safe }}</td>
       <td>{{ run.outputs | join(' ') | highlight(query) | safe }}</td>
       <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
       <td>{{ run.gitrepo | highlight(query) | safe }}</td>
-      <td>{{ run.gituser }}</td>
       <td>{{ run.gitcommit | highlight(query) | safe }}</td>
     </tr>
     {% endfor %}
