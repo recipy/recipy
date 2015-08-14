@@ -1,6 +1,4 @@
 flask
-flask-pymongo
 Flask-Script
 flask_bootstrap
 flask-wtf
-
