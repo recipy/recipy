@@ -7,6 +7,10 @@ try:
 except:
     from configparser import SafeConfigParser
 
+def multiple_insert(lst, items):
+    for item in items:
+        lst.insert(0, item)
+
 def open_config_file():
     CONFIG = SafeConfigParser(allow_no_value=True)
     CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipyrc")])

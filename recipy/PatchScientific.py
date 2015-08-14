@@ -42,5 +42,5 @@ class PatchPillow(PatchSimple):
     output_wrapper = create_wrapper(log_output, 0, 'Pillow')
 
 
-sys.meta_path += [PatchGDAL(), PatchSKLearn(), PatchSKImage(),
-                 PatchPillow()]
+multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(), PatchSKImage(),
+                 PatchPillow()])

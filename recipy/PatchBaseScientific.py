@@ -41,4 +41,5 @@ class PatchNumpy(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 
-sys.meta_path += [PatchPandas(), PatchMPL(), PatchNumpy()]
+#sys.meta_path += [PatchPandas(), PatchMPL(), PatchNumpy()]
+multiple_insert(sys.meta_path, [PatchPandas(), PatchMPL(), PatchNumpy()])
