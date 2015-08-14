@@ -3,3 +3,4 @@ setuptools
 wrapt
 GitPython
 tinydb
+docopt
