@@ -12,7 +12,7 @@ from git import Repo
 
 from .utils import option, open_config_file
 
-from tinydb_serialization import serialization
+from .tinydb_serialization import serialization
 
 DBFILE = 'recipyDB.json'
 RUN_ID = {}
@@ -39,8 +39,10 @@ def log_init():
     #Set up TinyDB database
     db = TinyDB(DBFILE, storage=serialization)
 
+
+    guid = str(uuid.uuid4())
     # Get env info, etc
-    run = {"unique_id": str(uuid.uuid4()),
+    run = {"unique_id": guid,
         "author": getpass.getuser(),
         "description": "",
         "inputs": [],
@@ -69,7 +71,7 @@ def log_init():
 
     # Put basics into DB
     RUN_ID = db.insert(run)
-    print("recipy run inserted, with ID %s" % (RUN_ID))
+    print("recipy run inserted, with ID %s" % (guid))
     db.close()
 
 def log_input(filename, source):
