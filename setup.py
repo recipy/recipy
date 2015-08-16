@@ -15,7 +15,10 @@ setup(
     version='0.1',
 
     description='A frictionless provenance framework for Python',
-    long_description='',
+    long_description="""A frictionless provenance framework for Python.
+
+Please see https://github.com/recipy/recipy for further information.
+""",
 
     # The project's main homepage.
     url='https://github.com/recipy/recipy',
