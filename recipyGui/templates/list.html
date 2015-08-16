@@ -7,14 +7,7 @@
   <thead>
     <tr>
       <th></th>
-      <th>Date</th>
-      <th>Command</th>
-      <th>Script</th>
-      <th>Input</th>
-      <th>Output</th>
-      <th>Environment</th>
-      <th>Git repo</th>
-      <th>Git commit</th>
+      <th>Run</th>
     </tr>
   </thead>
   <tbody>
@@ -29,14 +22,21 @@
           </button>
         </form>
       </td>
-      <td>{{ run.date | datetimefilter }}</td>
-      <td>{{ run.command | highlight(query) | safe }}</td>
-      <td>{{ run.script | highlight(query) | safe }}</td>
-      <td>{{ run.inputs | join(' ') | highlight(query) | safe }}</td>
-      <td>{{ run.outputs | join(' ') | highlight(query) | safe }}</td>
-      <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
-      <td>{{ run.gitrepo | highlight(query) | safe }}</td>
-      <td>{{ run.gitcommit | highlight(query) | safe }}</td>
+      <td>
+        Run ID: {{ run.unique_id }} <br>
+        Created by <span class="text-primary">{{ run.author }}</span>
+        on <span class="text-primary">{{ run.date | datetimefilter }}</span><br>
+        Ran <code>{{ run.script }}</code> using <code>{{ run.command }}</code><br>
+        Environment: {{ run.environment|join(", ") }} <br>
+        {% if run.inputs | length == 0 %}
+          Input: none
+        {% else %}
+          Input:
+          <code>{{ run.inputs | join('</code>, <code>') | safe }}</code>
+        {% endif %}
+        <br>
+        Output: <code>{{ run.outputs | join('</code>, <code>') | highlight(query) | safe }}</code>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
