@@ -27,6 +27,8 @@ setup(
     # Choose your license
     license='Apache',
 
+    include_package_data=True,
+
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
@@ -57,13 +59,20 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=['recipy'],
+    packages=['recipy', 'recipyGui', 'recipyCmd'],
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['wrapt', 'pymongo', 'jinja2', 'docopt', 'GitPython'],
+    install_requires=['wrapt', 'tinydb', 'jinja2', 'docopt', 'GitPython', 'Flask',
+                      'Flask-Script', 'flask_bootstrap', 'flask-wtf', 'python-dateutil'],
 
-    scripts=['recipy-cmd']
+    entry_points={
+        'console_scripts': [
+            'recipy=recipyCmd.recipycmd:main',
+        ]
+    }
+
+    #scripts=['recipy-cmd']
 )
