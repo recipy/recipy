@@ -10,8 +10,7 @@ recipyGui.config['SECRET_KEY'] = 'geheim'
 
 Bootstrap(recipyGui)
 
-# TODO: Fix after recipy-gui is merged with recipy
-db = TinyDB('../Recipy/recipyDB.json')
+db = TinyDB('recipyDB.json')
 
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
