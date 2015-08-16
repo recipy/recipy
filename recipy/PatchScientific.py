@@ -2,8 +2,8 @@ import sys
 from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 
-from .log import *
-from .utils import *
+from .log import log_input, log_output
+from .utils import create_wrapper, multiple_insert
 
 class PatchGDAL(PatchSimple):
     modulename = 'gdal'

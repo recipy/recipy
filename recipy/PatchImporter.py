@@ -8,6 +8,12 @@ CONFIG = open_config_file()
 
 
 class PatchImporter(object):
+    """A class that handles finding modules, importing them
+    and calling a `patch` method.
+
+    This class is not designed to be used itself - instead,
+    subclasses should be created that implement the `patch` method.
+    """
     modulename = ''
 
     def find_module(self, fullname, path=None):
@@ -21,19 +27,20 @@ class PatchImporter(object):
         return None
     
     def load_module(self, name):
-        """Module loading method. It imports pytz normally
-        and then enhances it with our generic timezones.
+        """Module loading method. It imports the module normally,
+        and then calls the `patch` method to wrap the functions we need.
+
+        `patch` is implemented by subclasses
         """
-        #print("Loading module: %s" % name)
         if name != self.modulename:
-            raise ImportError("%s can only be used to import pandas!",
+            raise ImportError("%s can only be used to import a specific module!",
                               self.__class__.__name__)
         if name in sys.modules:
-            return sys.modules[name]    # already imported
+            return sys.modules[name]    # already imported and patched
         
+        # Find the module
         file_obj, pathname, desc = recursive_find_module(name, sys.path)
 
-        #file_obj, pathname, desc = imp.find_module(name, self.path)
         try:
             mod = imp.load_module(name, file_obj, pathname, desc)
         finally:
@@ -42,8 +49,13 @@ class PatchImporter(object):
         
         if option(CONFIG, 'general', 'debug'):
             print("Patching %s" % mod.__name__)
+
+        # Actually do the patching
         mod = self.patch(mod)
+
+        # And put the module in Python's proper namespace
         sys.modules[name] = mod
+
         return mod
 
     
