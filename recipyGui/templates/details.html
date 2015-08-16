@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}ReciPy - Run Details{% endblock %}
+{% block title %}ReciPy - Run Details
+  {% if active_page == 'latest_run' %} - Latest Run{% endif %}
+{% endblock %}
 
 {% block content %}
 {{ super() }}
