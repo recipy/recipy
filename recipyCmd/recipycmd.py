@@ -58,7 +58,7 @@ Outputs:
 
 
 def main():
-  args = docopt(__doc__, version='recipy v0.1')
+  args = docopt(__doc__, version='recipy v0.0.1')
   
   if args['--debug']:
       print(args)
