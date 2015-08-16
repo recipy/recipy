@@ -2,7 +2,8 @@
 """recipy - a frictionless provenance tool for Python
 
 Usage:
-  recipy-cmd [options] <outputfile>
+  recipy-cmd search [options] <outputfile>
+  recipy-cmd gui
   recipy-cmd (-h | --help)
   recipy-cmd --version
 
@@ -53,47 +54,81 @@ Outputs:
     template = Template(template, trim_blocks=True)
     print template.render(**r)
 
+
+def main():
+  args = docopt(__doc__, version='recipy-cmd v0.1')
+  
+  if args['--debug']:
+      print(args)
+
+  if args['search']:
+    search(args)
+  elif args['gui']:
+    gui(args)
+
+def gui(args):
+  from recipyGui import recipyGui
+  import threading, webbrowser, socket
+
+  def get_free_port():
+      s = socket.socket()
+      s.bind(('', 0))
+      port = s.getsockname()[1]
+      s.close()
+      return port
+
+  port = get_free_port()
+  url = "http://127.0.0.1:{0}".format(port)
+
+  # Give the application some time before it starts
+  threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+
+  # Turn off reloading by setting debug = False (this also fixes starting the
+  # application twice)
+  recipyGui.run(debug = False, port=port)
+
+
+def search(args):
+  db = TinyDB('recipyDB.json') 
+
+  filename = args['<outputfile>']
+
+  if args['--fuzzy']:
+    results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
+  elif args['--regex']:
+    results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
+  else:
+    results = db.search(where('outputs').any(os.path.abspath(filename)))
+
+  def change_date(result):
+    result['date'] = result['date'].replace('{TinyDate}:', '')
+    return result
+
+  results = [change_date(result) for result in results]
+
+  # Sort the results
+  results = sorted(results, key = lambda x: parse(x['date']), reverse=True)
+
+  if len(results) == 0:
+      print "No results found"
+  else:
+      if args['--all']:
+          for r in results:
+              print_result(r)
+              print "-"*40
+      else:
+          print_result(results[-1])
+          if len(results) > 1:
+              print "** Previous runs creating this output have been found. Run with --all to show. **"
+
+          if args['--diff']:
+            if 'diff' in results[0]:
+              print "\n\n"
+              print results[0]['diff']
+
+  db.close()
+
+
+
 if __name__ == '__main__':
-    args = docopt(__doc__, version='recipy-cmd v0.1')
-    
-    if args['--debug']:
-        print(args)
-
-    db = TinyDB('recipyDB.json') 
-
-    filename = args['<outputfile>']
-
-    if args['--fuzzy']:
-      results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
-    elif args['--regex']:
-      results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
-    else:
-      results = db.search(where('outputs').any(os.path.abspath(filename)))
-
-    def change_date(result):
-      result['date'] = result['date'].replace('{TinyDate}:', '')
-      return result
-
-    results = [change_date(result) for result in results]
-
-    # Sort the results
-    results = sorted(results, key = lambda x: parse(x['date']), reverse=True)
-
-    if len(results) == 0:
-        print "No results found"
-    else:
-        if args['--all']:
-            for r in results:
-                print_result(r)
-                print "-"*40
-        else:
-            print_result(results[-1])
-            if len(results) > 1:
-                print "** Previous runs creating this output have been found. Run with --all to show. **"
-
-            if args['--diff']:
-              if 'diff' in results[0]:
-                print "\n\n"
-                print results[0]['diff']
-
-    db.close()
+  main()
