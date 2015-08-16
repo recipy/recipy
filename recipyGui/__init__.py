@@ -8,10 +8,14 @@ from time import strptime, strftime
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
 
+DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
+
 Bootstrap(recipyGui)
 
-# TODO: Fix after recipy-gui is merged with recipy
-db = TinyDB('../Recipy/recipyDB.json')
+if not os.path.exists(os.path.dirname(DBFILE)):
+        os.mkdir(os.path.dirname(DBFILE))
+
+db = TinyDB(DBFILE)
 
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
@@ -42,7 +46,7 @@ recipyGui.jinja_env.filters['highlight'] = highlight
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
     value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
-    return strftime(format.encode('utf8'), value).decode('utf8')
+    return strftime(format, value)
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter
 
@@ -65,7 +69,7 @@ def colordiff(diff):
     diff = diff.strip()
     diff = diff.replace('\n', '&nbsp;\n')
     diffData = diff.split('\n')
-    print diffData
+    print(diffData)
     openTag = '<tr><td class="'
     openTagEnd = '">'
     nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;'

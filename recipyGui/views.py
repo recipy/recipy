@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template
 from recipyGui import recipyGui, db
-from forms import SearchForm
+from .forms import SearchForm
 from tinydb import where
 import re
 from dateutil.parser import parse

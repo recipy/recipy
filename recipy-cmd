@@ -27,6 +27,8 @@ from pprint import pprint
 from jinja2 import Template
 from dateutil.parser import parse
 
+DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
+
 
 
 def print_result(r):
@@ -52,7 +54,7 @@ Outputs:
   {{ output }}
 {% endfor %}"""
     template = Template(template, trim_blocks=True)
-    print template.render(**r)
+    print(template.render(**r))
 
 
 def main():
@@ -85,11 +87,14 @@ def gui(args):
 
   # Turn off reloading by setting debug = False (this also fixes starting the
   # application twice)
-  recipyGui.run(debug = False, port=port)
+  recipyGui.run(debug = True, port=port)
 
 
 def search(args):
-  db = TinyDB('recipyDB.json') 
+  if not os.path.exists(os.path.dirname(DBFILE)):
+      os.mkdir(os.path.dirname(DBFILE))
+
+  db = TinyDB(DBFILE) 
 
   filename = args['<outputfile>']
 
@@ -110,21 +115,21 @@ def search(args):
   results = sorted(results, key = lambda x: parse(x['date']), reverse=True)
 
   if len(results) == 0:
-      print "No results found"
+      print("No results found")
   else:
       if args['--all']:
           for r in results:
               print_result(r)
-              print "-"*40
+              print("-"*40)
       else:
           print_result(results[-1])
           if len(results) > 1:
-              print "** Previous runs creating this output have been found. Run with --all to show. **"
+              print("** Previous runs creating this output have been found. Run with --all to show. **")
 
           if args['--diff']:
             if 'diff' in results[0]:
-              print "\n\n"
-              print results[0]['diff']
+              print("\n\n")
+              print(results[0]['diff'])
 
   db.close()
 

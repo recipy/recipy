@@ -13,7 +13,7 @@ def multiple_insert(lst, items):
 
 def open_config_file():
     CONFIG = SafeConfigParser(allow_no_value=True)
-    CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipyrc")])
+    CONFIG.read(['.recipyrc', os.path.expanduser("~/.recipy/.recipyrc")])
 
     return CONFIG
 

@@ -14,7 +14,7 @@ from .utils import option, open_config_file
 
 from .tinydb_serialization import serialization
 
-DBFILE = 'recipyDB.json'
+DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
 RUN_ID = {}
 CONFIG = None
 store_diff = True
@@ -35,6 +35,9 @@ def log_init():
     CONFIG = open_config_file()
 
     scriptpath = os.path.realpath(sys.argv[0])
+
+    if not os.path.exists(os.path.dirname(DBFILE)):
+        os.mkdir(os.path.dirname(DBFILE))
 
     #Set up TinyDB database
     db = TinyDB(DBFILE, storage=serialization)
