@@ -87,7 +87,7 @@ def gui(args):
 
   # Turn off reloading by setting debug = False (this also fixes starting the
   # application twice)
-  recipyGui.run(debug = True, port=port)
+  recipyGui.run(debug = args['--debug'], port=port)
 
 
 def search(args):

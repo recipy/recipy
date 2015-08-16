@@ -1,21 +1,15 @@
 from flask import Flask, url_for
 import os
 from flask_bootstrap import Bootstrap
-from tinydb import TinyDB
 import re
 from time import strptime, strftime
 
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
 
-DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
-
 Bootstrap(recipyGui)
 
-if not os.path.exists(os.path.dirname(DBFILE)):
-        os.mkdir(os.path.dirname(DBFILE))
 
-db = TinyDB(DBFILE)
 
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
