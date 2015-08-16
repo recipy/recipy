@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+{% if query %}
+<h3>Search results</h3>
+{% else %}
+<h3>Runs</h3>
+{% endif %}
+
+{% if runs | length > 0 %}
+<table class="table table-hover">
+  {% for run in runs %}
+  <tr>
+    <td>
+      <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
+        <input type="hidden" name="id" value="{{ run.eid }}"></input>
+        <input type="hidden" name="query" value="{{ query }}"></input>
+        <button type="submit" class="btn btn-info">
+          View details
+        </button>
+      </form>
+    </td>
+    <td>
+      Run ID: {{ run.unique_id }}
+      <br> Created by
+      <span class="text-primary">{{ run.author }}</span>
+      on
+      <span class="text-primary">{{ run.date | datetimefilter }}</span>
+      <br> Ran
+      <code>{{ run.script }}</code> using
+      <code>{{ run.command }}</code>
+      <br> Environment: {{ run.environment|join(", ") }}
+      <br>
+      {% if run.inputs | length == 0 %}
+      Inputs: none
+      {% else %}
+      Input:
+      <code>{{ run.inputs | join('</code>,
+      <code>') | safe }}</code>
+      {% endif %}
+      <br> Outputs:
+      <code>{{ run.outputs | join('</code>,
+      <code>') | highlight(query) | safe }}</code>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% else %}
+No runs found.
+{% endif %}
+
+{% endblock %}

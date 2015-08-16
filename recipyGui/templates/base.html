@@ -1,0 +1,63 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/main.css')}}">
+{% endblock %}
+
+{% block title %}ReciPy{% endblock %}
+
+{% block navbar %}
+
+{% set navigation_bar = [
+    ('/', 'runs', 'Runs'),
+    ('/latest_run', 'latest_run', 'Latest run')
+] -%}
+
+{% set active_page = active_page|default('runs') -%}
+
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">RecipyGui</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul id="navigation" class="nav navbar-nav">
+      {% for href, id, caption in navigation_bar %}
+        <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+    <!--/.nav-collapse -->
+  </div>
+  <!--/.container -->
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+
+    <!-- Search bar -->
+    <form class="form" role="form" action="{{ url_for('index') }}" method="get">
+      <div class="input-group col-md-12">
+        <input type="text"
+               class="form-control input-lg"
+               placeholder="Search runs"
+               id="query"
+               name="query"
+               value="{{ query }}" />
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-info btn-lg">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </span>
+      </div>
+    </form>
+
+  </div>
+
+  {% endblock %}

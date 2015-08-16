@@ -1,0 +1,8 @@
+.top-buffer {
+  margin-top: 20px;
+}
+
+.no-side-padding {
+  padding-left: 0;
+  padding-right: 0;
+}

@@ -2,4 +2,9 @@ matplotlib
 setuptools
 wrapt
 GitPython
+flask
+Flask-Script
+flask_bootstrap
+flask-wtf
 tinydb
+docopt

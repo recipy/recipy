@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}ReciPy - Run Details
+  {% if active_page == 'latest_run' %} - Latest Run{% endif %}
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<div class="top-buffer">
+  <ol class="breadcrumb">
+    <li>
+      <a href="{{ url_for('index', query=query) }}">
+        <i class="glyphicon glyphicon-arrow-left"></i>
+      </a>
+      <a href="{{ url_for('index', query=query) }}">
+        back to
+        {% if query | length > 0 %} search results
+        {% else %} runs
+        {% endif %}
+      </a>
+    </li>
+  </ol>
+</div>
+
+<h3>Run {{ run.unique_id | string }}</h3>
+<table class="table table-striped table-condensed">
+  <tr>
+    <td class="col-md-1">Date</td>
+    <td>{{ run.date | datetimefilter }}</td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Author</td>
+    <td>{{ run.author | highlight(query) | safe }}</td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Command</td>
+    <td>
+      <code>{{ run.command | highlight(query) | safe }}</code>
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Script</td>
+    <td>
+      <code>{{ run.script | highlight(query) | safe }}</code>
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Inputs</td>
+    <td>
+      {% if run.inputs | length > 0 %}
+      <code>{{ run.inputs | join('</code>,
+      <code>') | highlight(query) | safe }} {% else %} none {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Outputs</td>
+    <td>
+      {% if run.outputs | length > 0 %}
+      <code>{{ run.outputs | join('</code>,
+      <code>') | highlight(query) | safe }}</code>
+      {% else %} none {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Environment</td>
+    <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
+  </tr>
+</table>
+
+{% if run.gitcommit %}
+<h3>Git</h3>
+<table class="table table-striped table-condensed">
+  <tr>
+    <td class="col-md-1">Git Repo</td>
+    <td>
+      <code>{{ run.gitrepo | highlight(query) | safe }}</code>
+      {% if run.gitorigin | length > 0 %}
+      (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Git Origin</td>
+    <td>
+      {{ run.gitorigin | highlight(query) | safe }}
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Git Commit</td>
+    <td>
+      {% if run.gitorigin | length > 0 %}
+      <a href="{{ run.gitorigin | gitorigin2url | safe }}/commit/{{ run.gitcommit | highlight(query) | safe }}">
+              {{ run.gitcommit | highlight(query) | safe }}
+            </a> {% else %} {{ run.gitcommit | highlight(query) | safe }} {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td class="col-md-1">Git diff</td>
+    {% if run.diff | length > 0 %}
+    <td style="padding: 0;">
+      {{ run.diff | colordiff | highlight(query) | safe }}
+    </td>
+    {% else %}
+    <td>No changes</td>
+    {% endif %}
+  </tr>
+</table>
+{% endif %}
+
+{% endblock %}
