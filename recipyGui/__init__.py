@@ -10,9 +10,7 @@ recipyGui.config['SECRET_KEY'] = 'geheim'
 
 Bootstrap(recipyGui)
 
-# Determines the destination of the build. Only usefull if you're using Frozen-Flask
-recipyGui.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
-
+# TODO: Fix after recipy-gui is merged with recipy
 db = TinyDB('../Recipy/recipyDB.json')
 
 # Function to easily find your assets

@@ -17,4 +17,4 @@ threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
 
 # Turn off reloading by setting debug = False (this also fixes starting the
 # application twice)
-recipyGui.run(debug = True, port=port)
+recipyGui.run(debug = False, port=port)
