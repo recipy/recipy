@@ -26,6 +26,7 @@ import sys
 from pprint import pprint
 from jinja2 import Template
 from dateutil.parser import parse
+from . import __version__
 
 DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
 
@@ -58,7 +59,7 @@ Outputs:
 
 
 def main():
-  args = docopt(__doc__, version='recipy v0.0.1')
+  args = docopt(__doc__, version='recipy v%s' % __version__)
   
   if args['--debug']:
       print(args)
