@@ -1,6 +1,10 @@
 from flask import Blueprint, request, render_template
 from recipyGui import recipyGui, db
 from forms import SearchForm
+from tinydb import where
+import re
+from dateutil.parser import parse
+import os
 
 routes = Blueprint('routes', __name__, template_folder='templates')
 
@@ -12,13 +16,11 @@ def index():
     query = request.args.get('query', '')
 
     if not query:
-        # Return all runs, ordered by date (oldest run first)
-        # TODO: find out iftinydb supports sorting by date
-        runs = db.all()[::-1]
+        runs = db.all()
     else:
-        # Search runs using the query string
-        # TODO: fix search
-        runs = []
+        # Search run outputs using the query string
+        runs = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % query, x)))
+    runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
 
     return render_template('list.html', runs=runs, query=query, form=form)
 
