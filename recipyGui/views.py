@@ -34,3 +34,13 @@ def run_details():
         r = db.get(eid=run_id)
 
         return render_template('details.html', query=query, form=form, run=r)
+
+
+@recipyGui.route('/latest_run')
+def latest_run():
+    form = SearchForm()
+
+    runs = db.all()
+    runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
+
+    return render_template('details.html', query='', form=form, run=runs[0], active_page='latest_run')
