@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """recipy - a frictionless provenance tool for Python
 
 Usage:
