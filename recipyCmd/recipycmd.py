@@ -113,7 +113,7 @@ def search(args):
   results = [change_date(result) for result in results]
 
   # Sort the results
-  results = sorted(results, key = lambda x: parse(x['date']), reverse=True)
+  results = sorted(results, key = lambda x: parse(x['date']))
 
   if len(results) == 0:
       print("No results found")
