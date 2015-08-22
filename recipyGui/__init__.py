@@ -6,6 +6,7 @@ from time import strptime, strftime
 
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
+recipyGui.config['tinydb'] = os.path.expanduser('~/.recipy/recipyDB.json')
 
 Bootstrap(recipyGui)
 

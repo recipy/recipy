@@ -6,12 +6,11 @@ import re
 from dateutil.parser import parse
 import os
 
-dbName = os.path.expanduser('~/.recipy/recipyDB.json')
 
 routes = Blueprint('routes', __name__, template_folder='templates')
 
-if not os.path.exists(os.path.dirname(dbName)):
-        os.mkdir(os.path.dirname(dbName))
+if not os.path.exists(os.path.dirname(recipyGui.config.get('tinydb'))):
+        os.mkdir(os.path.dirname(recipyGui.config.get('tinydb')))
 
 
 @recipyGui.route('/')
@@ -20,7 +19,7 @@ def index():
 
     query = request.args.get('query', '')
 
-    db = TinyDB(dbName)
+    db = TinyDB(recipyGui.config.get('tinydb'))
 
     if not query:
         runs = db.all()
@@ -40,7 +39,7 @@ def run_details():
         query = request.args.get('query', '')
         run_id = int(request.args.get('id'))
 
-        db = TinyDB(dbName)
+        db = TinyDB(recipyGui.config.get('tinydb'))
         r = db.get(eid=run_id)
 
         db.close()
@@ -52,7 +51,7 @@ def run_details():
 def latest_run():
     form = SearchForm()
 
-    db = TinyDB(dbName)
+    db = TinyDB(recipyGui.config.get('tinydb'))
 
     runs = db.all()
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
