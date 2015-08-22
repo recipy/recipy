@@ -1,40 +1,48 @@
-# What is it and who cares?
-Have you ever run some Python scripts to produce some outputs - such as graphs or output CSV files - and then forgotten exactly how you created them? For example, you have a lovely graph in plot.pdf, but you don't know how you created it, and therefore can't use it in a journal paper.
+# recipy
 
-Recipy (from *recipe* and *python*) will come to your rescue! With almost no extra work (literally the addition of a single line of code to your Python script), it will monitor the inputs and outputs of the script and store this information in a database so you can easily query it.
+## What is it and who cares?
+Imagine the situation: You’ve written some wonderful Python code which produces a beautiful graph as an output. You save that graph, naturally enough, as `graph.png`. You run the code a couple of times, each time making minor modifications. You come back to it the next week/month/year. Do you know how you created that graph? What input data? What version of your code? If you’re anything like me then the answer will often, frustratingly, be “no”. Of course, you then waste lots of time trying to work out how you created it, or even give up and never use it in that journal paper that will win you a Nobel Prize…
 
-It's great!
+This talk will introduce ReciPy (from *recipe* and *python*), a Python module that will save you from this situation! (Although it can’t guarantee that your resulting paper will win a Nobel Prize!) With the addition of a single line of code to the top of your Python files, ReciPy will log each run of your code to a database, keeping track of the input files, output files and the version of your code, and then let you query this database to find out how you actually did create `graph.png`.
 
-# Installation:
-You will need to install the following python packages:
- * `pymongo`
- * `wrapt`
+## Installation:
+The easiest way to install is by simply running
 
-You can install these by running:
+    pip install recipy
 
-    pip install pymongo
-    pip install wrapt
+Alternatively, you can clone this repository and run:
 
-If you want to run the example scripts that come with recipy then you'll also need to have `numpy`, `pandas` and `matplotlib` installed.
+	python setup.py install
 
-You'll also need to install MongoDB (`brew install mongodb` if you're running OS X) and run it locally with the command `mongod`.
+If you want to install the dependencies manually (they should be installed automatically if you're following the instructions above) then run:
 
-You may want to install [recipy-gui](https://github.com/recipy/recipy-gui) for a nice way to view the data.
+	pip install -r requirements.txt
 
-# Usage
+
+**Note:** Previous (unreleased) versions of recipy required MongoDB to be installed and set up manually. This is no longer required, as a pure Python database (TinyDB) is used instead. Also, the GUI is now integrated fully into recipy and does not require installing separately.
+
+## Usage
 Simply add the following line to the top of your Python script:
 
     import recipy
 
-Note that this must be the *very top* line of your script, before you import anything else.
+Note that this **must** be the **very top** line of your script, before you import anything else.
 
-Then just run your script as usual, and all of the data will be logged into the MongoDB database. You can use the `recipy-cmd` script to quickly query the database to find out what run of your code produced what output file. So, for example, if you add `import recipy` to the top of 'example_script3.py' and then run:
+Then just run your script as usual, and all of the data will be logged into the TinyDB database (don't worry, the database is automatically created if needed). You can then use the `recipy` script to quickly query the database to find out what run of your code produced what output file. So, for example, if you run some code like this:
 
-    python example_script.py
-    
-it will produce an output called `newplot.pdf`. To find out the details of the run which created this file you can search using
+	import recipy
+	import numpy
 
-    ./recipy-cmd newplot.pdf
+	arr = numpy.arange(10)
+	arr = arr + 500
+
+	numpy.save('test.npy', arr)
+
+(Note the addition of `import recipy` at the beginning of script - but there are no other changes from a standard script)
+
+it will produce an output called `test.npy`. To find out the details of the run which created this file you can search using
+
+    ./recipy search newplot.pdf
 
 and it will display information like the following:
 
@@ -48,20 +56,23 @@ and it will display information like the following:
 	Outputs:
 	  /Users/robin/code/recipy/newplot.pdf
 
-	** Previous runs creating this output have been found. Run with --all to show. **
-    
-Run `./recipy-cmd --help` to see the other options: you can view diffs, all runs that created a file with that name, and more:
+An alternative way to view this is to use the GUI. Just run `recipy gui` and a browser window will open with an interface that you can use to search all of your recipy 'runs':
+
+![Screenshot of GUI](http://rtwilson.com/images/RecipyGUI.png)
+
+Run `./recipy --help` to see the other options: you can view diffs, all runs that created a file with that name, and more:
 
 	recipy - a frictionless provenance tool for Python
-
+	
 	Usage:
-	  recipy-cmd [options] <outputfile>
-	  recipy-cmd (-h | --help)
-	  recipy-cmd --version
-
+	  recipy search [options] <outputfile>
+	  recipy gui [options]
+	  recipy (-h | --help)
+	  recipy --version
+	
 	Options:
 	  -h --help     Show this screen
-	  --version     Show version
+	  --version     Show versionrecip
 	  -a --all      Show all results (otherwise just latest result given)
 	  -f --fuzzy    Use fuzzy searching on filename
 	  -r --regex    Use regex searching on filename
@@ -69,7 +80,28 @@ Run `./recipy-cmd --help` to see the other options: you can view diffs, all runs
 	  -d --diff     Show diff
 	  --debug       Turn on debugging mode
 
-# How it works
+## Configuration
+Recipy stores all of its configuration and the database itself in `~/.recipy`. Recipy's  main configuration file is inside this folder, called `.recipyrc`. The configuration file format is very simple, and is based on Windows INI files. An example configuration is:
+
+	[ignored metadata]
+	diff
+
+	[general]
+	debug
+
+This simply instructs recipy not to save `git diff` information when it records metadata about a run, and also to print debug messages (which can be really useful if you're trying to work out why certain functions aren't patched). At the moment, the only possible options are:
+
+ * `[ignored metadata]`
+	 * `diff` - don't store the output of `git diff` in the metadata for a recipy run
+	 * `git` - don't store anything relating to git (origin, commit, repo etc) in the metadata for a recipy run
+ * `[general]`
+	 * `debug` - print debug mesages
+
+By default all metadata is stored (ie. no metadata is ignored) and debug messages are not shown. A `.recipyrc` file in the current directory takes precedence over the `~/.recipy/.recipyrc` file, allowing per-project configurations to be easily handled.
+
+**Note:** No default configuration file is provided with recipy, so if you wish to configure anything you will need to create a properly-formatted file yourself.
+
+## How it works
 When you import recipy it adds a number of classes to `sys.meta_path`. These are then used by Python as part of the importing procedure for modules. The classes that we add are classes derived from `PatchImporter`, often using the easier interface provided by `PatchSimple`, which allow us to wrap functions that do input/output in a function that calls recipy first to log the information.
 
 Generally, most of the complexity is hidden away in `PatchImporter` and `PatchSimple` (plus `utils.py`), so the actual code to wrap a module, such as `numpy` is fairly simple:
@@ -93,3 +125,15 @@ Generally, most of the complexity is hidden away in `PatchImporter` and `PatchSi
 	    # it that it came from numpy.
 	    input_wrapper = create_wrapper(log_input, 0, 'numpy')
 	    output_wrapper = create_wrapper(log_output, 0, 'numpy')
+
+A class like this must be implemented for each module whose input/output needs logging. At the moment all of the input/output functions for the following modules are wrapped:
+
+ * `numpy`
+ * `pandas`
+ * `matplotlib`
+ * `GDAL`
+ * `scikit-learn`
+ * `scikit-image`
+ * `pillow`
+
+However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
