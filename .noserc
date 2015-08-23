@@ -1,0 +1,2 @@
+[nosetests]
+no-path-adjustment=1

@@ -10,8 +10,6 @@ recipyGui.config['tinydb'] = os.path.expanduser('~/.recipy/recipyDB.json')
 
 Bootstrap(recipyGui)
 
-
-
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
 recipyGui.jinja_env.globals['static'] = (
