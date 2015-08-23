@@ -128,9 +128,9 @@ def search(args):
               print("** Previous runs creating this output have been found. Run with --all to show. **")
 
           if args['--diff']:
-            if 'diff' in results[0]:
+            if 'diff' in results[-1]:
               print("\n\n")
-              print(results[0]['diff'])
+              print(results[-1]['diff'])
 
   db.close()
 
