@@ -75,7 +75,7 @@
     <td class="col-md-1">Git Repo</td>
     <td>
       <code>{{ run.gitrepo | highlight(query) | safe }}</code>
-      {% if run.gitorigin | length > 0 %}
+      {% if run.gitorigin and run.gitorigin | length > 0 %}
       (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
       {% endif %}
     </td>
@@ -89,15 +89,18 @@
   <tr>
     <td class="col-md-1">Git Commit</td>
     <td>
-      {% if run.gitorigin | length > 0 %}
+      {% if run.gitorigin and run.gitorigin | length > 0 %}
       <a href="{{ run.gitorigin | gitorigin2url | safe }}/commit/{{ run.gitcommit | highlight(query) | safe }}">
               {{ run.gitcommit | highlight(query) | safe }}
-            </a> {% else %} {{ run.gitcommit | highlight(query) | safe }} {% endif %}
+      </a>
+      {% else %}
+      {{ run.gitcommit | highlight(query) | safe }}
+      {% endif %}
     </td>
   </tr>
   <tr>
     <td class="col-md-1">Git diff</td>
-    {% if run.diff | length > 0 %}
+    {% if run.diff and run.diff | length > 0 %}
     <td style="padding: 0;">
       {{ run.diff | colordiff | highlight(query) | safe }}
     </td>
