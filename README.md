@@ -135,5 +135,6 @@ A class like this must be implemented for each module whose input/output needs l
  * `scikit-learn`
  * `scikit-image`
  * `pillow`
+ * `nibabel` (only the data formats in submodules imported by default)
 
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
