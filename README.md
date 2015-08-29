@@ -81,7 +81,7 @@ Run `./recipy --help` to see the other options: you can view diffs, all runs tha
 	  --debug       Turn on debugging mode
 
 ## Configuration
-Recipy stores all of its configuration and the database itself in `~/.recipy`. Recipy's  main configuration file is inside this folder, called `.recipyrc`. The configuration file format is very simple, and is based on Windows INI files. An example configuration is:
+Recipy stores all of its configuration and the database itself in `~/.recipy`. Recipy's  main configuration file is inside this folder, called `recipyrc`. The configuration file format is very simple, and is based on Windows INI files. An example configuration is:
 
 	[ignored metadata]
 	diff
@@ -97,7 +97,7 @@ This simply instructs recipy not to save `git diff` information when it records 
  * `[general]`
 	 * `debug` - print debug mesages
 
-By default all metadata is stored (ie. no metadata is ignored) and debug messages are not shown. A `.recipyrc` file in the current directory takes precedence over the `~/.recipy/.recipyrc` file, allowing per-project configurations to be easily handled.
+By default all metadata is stored (ie. no metadata is ignored) and debug messages are not shown. A `.recipyrc` file in the current directory takes precedence over the `~/.recipy/recipyrc` file, allowing per-project configurations to be easily handled.
 
 **Note:** No default configuration file is provided with recipy, so if you wish to configure anything you will need to create a properly-formatted file yourself.
 
