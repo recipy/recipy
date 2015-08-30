@@ -67,22 +67,24 @@ An alternative way to view this is to use the GUI. Just run `recipy gui` and a b
 
 ![Screenshot of GUI](http://rtwilson.com/images/RecipyGUI.png)
 
-Run `./recipy --help` to see the other options: you can view diffs, all runs that created a file with that name, and more:
+Run `./recipy --help` to see the other options: you can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
 
 	recipy - a frictionless provenance tool for Python
-	
+
 	Usage:
 	  recipy search [options] <outputfile>
+	  recipy latest [options]
 	  recipy gui [options]
 	  recipy (-h | --help)
 	  recipy --version
-	
+
 	Options:
 	  -h --help     Show this screen
-	  --version     Show versionrecip
+	  --version     Show version
 	  -a --all      Show all results (otherwise just latest result given)
 	  -f --fuzzy    Use fuzzy searching on filename
 	  -r --regex    Use regex searching on filename
+	  -i --id       Search based on (a fragment of) the run ID
 	  -v --verbose  Be verbose
 	  -d --diff     Show diff
 	  --debug       Turn on debugging mode

@@ -14,6 +14,7 @@ Options:
   -a --all      Show all results (otherwise just latest result given)
   -f --fuzzy    Use fuzzy searching on filename
   -r --regex    Use regex searching on filename
+  -i --id       Search based on (a fragment of) the run ID
   -v --verbose  Be verbose
   -d --diff     Show diff
   --debug       Turn on debugging mode
@@ -138,6 +139,11 @@ def search(args):
     results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
   elif args['--regex']:
     results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
+  elif args['--id']:
+    results = db.search(where('unique_id').matches('%s.+' % filename)) 
+    # Automatically turn on display of all results so we don't misleadingly
+    # suggest that their shortened ID is unique when it isn't
+    args['--all'] = True
   else:
     results = db.search(where('outputs').any(os.path.abspath(filename)))
 
