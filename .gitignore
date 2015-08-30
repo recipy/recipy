@@ -1,3 +1,10 @@
+# Specific stuff for recipy output files
+*.png
+*.npy
+*.swp
+*.pdf
+.ipynb_checkpoints/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
