@@ -41,6 +41,15 @@ class PatchPillow(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'Pillow')
     output_wrapper = create_wrapper(log_output, 0, 'Pillow')
 
+class PatchNIBabel(PatchSimple):
+    modulename = 'nibabel'
+
+    images = ['nifti1.Nifti1Image', 'nifti2.Nifti2Image', 'freesurfer.mghformat.MGHImage', 'spm99analyze.Spm99AnalyzeImage', 'minc1.Minc1Image', 'minc2.Minc2Image', 'analyze.AnalyzeImage', 'parrec.PARRECImage', 'spm2analyze.Spm2AnalyzeImage']
+    input_functions = [image_name + '.from_filename' for image_name in images]
+    output_functions = [image_name + '.to_filename' for image_name in images]
+
+    input_wrapper = create_wrapper(log_input, 0, 'nibabel')
+    output_wrapper = create_wrapper(log_output, 0, 'nibabel')
 
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(), PatchSKImage(),
-                 PatchPillow()])
+                                PatchPillow(), PatchNIBabel()])
