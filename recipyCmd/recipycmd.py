@@ -3,6 +3,7 @@
 
 Usage:
   recipy search [options] <outputfile>
+  recipy latest [options]
   recipy gui [options]
   recipy (-h | --help)
   recipy --version
@@ -27,6 +28,7 @@ from pprint import pprint
 from jinja2 import Template
 from tinydb import TinyDB, where
 from dateutil.parser import parse
+import six
 
 from . import __version__
 from recipyCommon import config, utils
@@ -68,12 +70,23 @@ def main():
   args = docopt(__doc__, version='recipy v%s' % __version__)
   
   if args['--debug']:
-      print('Command-line arguments: ', args)
+      print('Command-line arguments: ')
+      print(args)
       print('DB path: ', config.get_db_path())
+      print('')
+      print('Full config file (as interpreted):')
+      print('----------------------------------')
+      conf = config.read_config_file()
+      s = six.StringIO()
+      conf.write(s)
+      print(s.getvalue())
+      print('----------------------------------')
 
 
   if args['search']:
     search(args)
+  elif args['latest']:
+    latest(args)
   elif args['gui']:
     gui(args)
 
@@ -101,6 +114,22 @@ def gui(args):
   # application twice)
   recipyGui.run(debug = args['--debug'], port=port)
 
+def latest(args):
+  results = db.all()
+
+  results = [_change_date(result) for result in results]
+
+  # Sort the results
+  results = sorted(results, key = lambda x: parse(x['date']))
+
+  print_result(results[-1])
+
+  if args['--diff']:
+    if 'diff' in results[-1]:
+      print("\n\n")
+      print(results[-1]['diff'])
+
+  db.close()
 
 def search(args):
   filename = args['<outputfile>']
@@ -112,11 +141,7 @@ def search(args):
   else:
     results = db.search(where('outputs').any(os.path.abspath(filename)))
 
-  def change_date(result):
-    result['date'] = result['date'].replace('{TinyDate}:', '')
-    return result
-
-  results = [change_date(result) for result in results]
+  results = [_change_date(result) for result in results]
 
   # Sort the results
   results = sorted(results, key = lambda x: parse(x['date']))
@@ -140,7 +165,9 @@ def search(args):
 
   db.close()
 
-
+def _change_date(result):
+  result['date'] = result['date'].replace('{TinyDate}:', '')
+  return result
 
 if __name__ == '__main__':
   main()

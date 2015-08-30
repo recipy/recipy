@@ -10,3 +10,4 @@ tinydb
 docopt
 flask-testing
 blinker
+six

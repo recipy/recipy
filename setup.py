@@ -62,14 +62,15 @@ Please see https://github.com/recipy/recipy for further information.
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=['recipy', 'recipyGui', 'recipyCmd'],
+    packages=find_packages(),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['wrapt', 'tinydb', 'jinja2', 'docopt', 'GitPython', 'Flask',
-                      'Flask-Script', 'flask_bootstrap', 'flask-wtf', 'python-dateutil'],
+                      'Flask-Script', 'flask_bootstrap', 'flask-wtf', 'python-dateutil',
+                      'six'],
 
     entry_points={
         'console_scripts': [
