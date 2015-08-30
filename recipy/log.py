@@ -35,8 +35,8 @@ def log_init():
 
     # Get the path of the script we're running
     # When running python -m recipy ..., during the recipy import argument 0
-    # is -c and the script is argument 1
-    scriptpath = os.path.realpath(sys.argv[1 if sys.argv[0] == '-c' else 0])
+    # is -c (for Python 2) or -m (for Python 3) and the script is argument 1
+    scriptpath = os.path.realpath(sys.argv[1 if sys.argv[0] in ['-c', '-m'] else 0])
 
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
