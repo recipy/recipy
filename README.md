@@ -40,6 +40,8 @@ Then just run your script as usual, and all of the data will be logged into the 
 
 (Note the addition of `import recipy` at the beginning of script - but there are no other changes from a standard script)
 
+Alternatively, run an unmodified script with `python -m recipy SCRIPT [ARGS ...]` to enable recipy logging. This invokes recipy's module entry point, which takes care of import recipy for you, before running your script.
+
 it will produce an output called `test.npy`. To find out the details of the run which created this file you can search using
 
     ./recipy search newplot.pdf
