@@ -4,6 +4,7 @@ from flask.ext.testing import TestCase
 from tinydb import TinyDB
 from dateutil.parser import parse
 
+import six
 
 class TestRecipyGui(TestCase):
     def create_app(self):
@@ -103,7 +104,7 @@ class TestRecipyGui(TestCase):
 
         runs = self.get_context_variable('runs')
 
-        for k, v in runs[0].iteritems():
+        for k, v in six.iteritems(runs[0]):
             self.assertEqual(run.get(k), v)
 
     def test_index_view_test_runs(self):
@@ -126,5 +127,5 @@ class TestRecipyGui(TestCase):
 
             run2 = self.get_context_variable('run')
 
-            for k, v in run2.iteritems():
+            for k, v in six.iteritems(run2):
                 self.assertEqual(run.get(k), v)
