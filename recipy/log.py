@@ -25,6 +25,17 @@ def new_run():
     log_init()
 
 def log_init():
+    # Get the path of the script we're running
+    # When running python -m recipy ..., during the recipy import argument 0
+    # is -c (for Python 2) or -m (for Python 3) and the script is argument 1
+    if sys.argv[0] in ['-c', '-m']:
+        # Has the user called python -m recipy without further arguments?
+        if len(sys.argv) < 2:
+            return
+        scriptpath = os.path.realpath(sys.argv[1])
+    else:
+        scriptpath = os.path.realpath(sys.argv[0])
+
     global RUN_ID
 
     # Open the database
@@ -32,9 +43,6 @@ def log_init():
 
     # Create the unique ID for this run
     guid = str(uuid.uuid4())
-
-    # Get the path of the script we're running
-    scriptpath = os.path.realpath(sys.argv[0])
 
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
