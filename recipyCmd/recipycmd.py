@@ -20,16 +20,19 @@ Options:
 """
 import os
 import re
-from docopt import docopt
-from tinydb import TinyDB, where
 import sys
+
+from docopt import docopt
 from pprint import pprint
 from jinja2 import Template
+from tinydb import TinyDB, where
 from dateutil.parser import parse
+
 from . import __version__
+from recipyCommon import config, utils
 
-DBFILE = os.path.expanduser('~/.recipy/recipyDB.json')
 
+db = utils.open_or_create_db()
 
 
 def print_result(r):
@@ -59,10 +62,15 @@ Outputs:
 
 
 def main():
+  """
+  Main function for recipy command-line script
+  """
   args = docopt(__doc__, version='recipy v%s' % __version__)
   
   if args['--debug']:
-      print(args)
+      print('Command-line arguments: ', args)
+      print('DB path: ', config.get_db_path())
+
 
   if args['search']:
     search(args)
@@ -70,6 +78,9 @@ def main():
     gui(args)
 
 def gui(args):
+  """
+  Loads recipy GUI from the command-line
+  """
   from recipyGui import recipyGui
   import threading, webbrowser, socket
 
@@ -92,11 +103,6 @@ def gui(args):
 
 
 def search(args):
-  if not os.path.exists(os.path.dirname(DBFILE)):
-      os.mkdir(os.path.dirname(DBFILE))
-
-  db = TinyDB(DBFILE) 
-
   filename = args['<outputfile>']
 
   if args['--fuzzy']:

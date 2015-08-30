@@ -2,10 +2,8 @@ import sys
 import imp
 
 import functools
-from .utils import *
-
-CONFIG = open_config_file()
-
+from recipyCommon.config import option_set
+from recipyCommon.utils import recursive_find_module
 
 class PatchImporter(object):
     """A class that handles finding modules, importing them
@@ -47,7 +45,7 @@ class PatchImporter(object):
             if file_obj:
                 file_obj.close()
         
-        if option(CONFIG, 'general', 'debug'):
+        if option_set('general', 'debug'):
             print("Patching %s" % mod.__name__)
 
         # Actually do the patching
@@ -61,7 +59,3 @@ class PatchImporter(object):
     
     def patch(self, mod):
         return mod
-
-
-
-#sys.meta_path = [PatchImporter()]

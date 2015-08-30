@@ -3,9 +3,8 @@ from .PatchImporter import PatchImporter
 import wrapt
 
 from .log import *
-from .utils import *
-
-CONFIG = open_config_file()
+from recipyCommon.utils import *
+from recipyCommon.config import option_set
 
 class PatchSimple(PatchImporter):
     """Simple sublass of PatchImporter which implements
@@ -22,12 +21,12 @@ class PatchSimple(PatchImporter):
         """
         
         for f in self.input_functions:
-            if option(CONFIG, 'general', 'debug'):
+            if option_set('general', 'debug'):
                 print('Patching input function: %s' % f)
             patch_function(mod, f, self.input_wrapper)
 
         for f in self.output_functions:
-            if option(CONFIG, 'general', 'debug'):
+            if option_set('general', 'debug'):
                 print('Patching output function: %s' % f)
             patch_function(mod, f, self.output_wrapper) 
         return mod

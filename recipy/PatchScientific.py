@@ -3,7 +3,7 @@ from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 
 from .log import log_input, log_output
-from .utils import create_wrapper, multiple_insert
+from recipyCommon.utils import create_wrapper, multiple_insert
 
 class PatchGDAL(PatchSimple):
     modulename = 'gdal'

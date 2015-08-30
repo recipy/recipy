@@ -4,7 +4,7 @@ from .PatchSimple import PatchSimple
 import wrapt
 
 from .log import log_input, log_output
-from .utils import create_wrapper, multiple_insert
+from recipyCommon.utils import create_wrapper, multiple_insert
 
 class PatchPandas(PatchSimple):
     modulename = 'pandas'
