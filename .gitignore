@@ -3,6 +3,9 @@
 *.npy
 *.swp
 *.pdf
+*.json
+test/.recipyrc
+
 .ipynb_checkpoints/
 
 # Byte-compiled / optimized / DLL files
