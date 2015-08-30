@@ -16,7 +16,13 @@ def read_config_file():
     Try .recipyrc and recipy in the current directory, and then ~/.recipy/recipyrc
     """
     CONFIG = SafeConfigParser(allow_no_value=True)
-    CONFIG.read(['.recipyrc', 'recipyrc', os.path.expanduser("~/.recipy/recipyrc")])
+    
+    # Try reading files in the current directory first
+    files_read = CONFIG.read(['.recipyrc', 'recipyrc')
+    
+    # Read the config file in the home directory
+    if len(files_read) == 0:
+        CONFIG.read(os.path.expanduser("~/.recipy/recipyrc"))
 
     return CONFIG
 
