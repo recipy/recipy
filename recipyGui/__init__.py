@@ -61,7 +61,7 @@ def colordiff(diff):
     """convert git diff data to html/bootstrap color code"""
     if diff=='':
         return ''
-    diff = diff.strip()
+    diff = str(diff.strip())
     diff = diff.replace('\n', '&nbsp;\n')
     diffData = diff.split('\n')
     print(diffData)
