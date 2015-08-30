@@ -8,3 +8,5 @@ flask_bootstrap
 flask-wtf
 tinydb
 docopt
+flask-testing
+blinker
