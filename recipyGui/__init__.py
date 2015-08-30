@@ -4,9 +4,11 @@ from flask_bootstrap import Bootstrap
 import re
 from time import strptime, strftime
 
+from recipyCommon.config import get_db_path
+
 recipyGui = Flask(__name__)
 recipyGui.config['SECRET_KEY'] = 'geheim'
-recipyGui.config['tinydb'] = os.path.expanduser('~/.recipy/recipyDB.json')
+recipyGui.config['tinydb'] = get_db_path()
 
 Bootstrap(recipyGui)
 

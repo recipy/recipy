@@ -64,7 +64,7 @@ def log_init():
                     whole_diff += "\n\n\n" + str(diff.diff)
 
                 run['diff'] = whole_diff
-        except InvalidGitRepositoryError, ValueError:
+        except (InvalidGitRepositoryError, ValueError):
             # We can't store git info for some reason, so just skip it
             pass
 
