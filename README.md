@@ -81,7 +81,9 @@ Run `./recipy --help` to see the other options: you can view diffs, all runs tha
 	  --debug       Turn on debugging mode
 
 ## Configuration
-Recipy stores all of its configuration and the database itself in `~/.recipy`. Recipy's  main configuration file is inside this folder, called `recipyrc`. The configuration file format is very simple, and is based on Windows INI files. An example configuration is:
+Recipy stores all of its configuration and the database itself in `~/.recipy`. Recipy's  main configuration file is inside this folder, called `recipyrc`. The configuration file format is very simple, and is based on Windows INI files - and having a configuration file is completely optional: the defaults will work fine with no configuration file.
+
+An example configuration is:
 
 	[ignored metadata]
 	diff
@@ -91,11 +93,18 @@ Recipy stores all of its configuration and the database itself in `~/.recipy`. R
 
 This simply instructs recipy not to save `git diff` information when it records metadata about a run, and also to print debug messages (which can be really useful if you're trying to work out why certain functions aren't patched). At the moment, the only possible options are:
 
+ * `[general]`
+	 * `debug` - print debug mesages
+	 * `quiet` - don't print any messages
+ *  `[database]`
+ 	 * `path = /path/to/file.json` - set the path to the database file
  * `[ignored metadata]`
 	 * `diff` - don't store the output of `git diff` in the metadata for a recipy run
 	 * `git` - don't store anything relating to git (origin, commit, repo etc) in the metadata for a recipy run
- * `[general]`
-	 * `debug` - print debug mesages
+ * `[ignored inputs]`
+ 	 * List any module here (eg. `numpy`) to instruct recipy *not* to record inputs from this module, or `all` to ignore inputs from all modules
+ * `[ignored outputs]`
+ 	 * List any module here (eg. `numpy`) to instruct recipy *not* to record outputs from this module, or `all` to ignore outputs from all modules	 
 
 By default all metadata is stored (ie. no metadata is ignored) and debug messages are not shown. A `.recipyrc` file in the current directory takes precedence over the `~/.recipy/recipyrc` file, allowing per-project configurations to be easily handled.
 
