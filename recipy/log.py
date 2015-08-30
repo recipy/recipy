@@ -58,7 +58,7 @@ def log_init():
                 whole_diff = ''
                 diffs = repo.index.diff(None, create_patch=True)
                 for diff in diffs:
-                    whole_diff += "\n\n\n" + str(diff.diff)
+                    whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
 
                 run['diff'] = whole_diff
         except (InvalidGitRepositoryError, ValueError):
