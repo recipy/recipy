@@ -34,7 +34,9 @@ def log_init():
     guid = str(uuid.uuid4())
 
     # Get the path of the script we're running
-    scriptpath = os.path.realpath(sys.argv[0])
+    # When running python -m recipy ..., during the recipy import argument 0
+    # is -c and the script is argument 1
+    scriptpath = os.path.realpath(sys.argv[1 if sys.argv[0] == '-c' else 0])
 
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
