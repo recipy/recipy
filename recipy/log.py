@@ -8,7 +8,7 @@ import sys
 from tinydb import TinyDB
 import uuid
 
-from git import Repo
+from git import Repo, InvalidGitRepositoryError
 
 from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
