@@ -1,3 +1,14 @@
+"""
+This script creates CHANGELOG.md sensibly, leaving manual edits to previous
+bits of the changelog untouched.
+
+Requires the github_changelog_generator command (see https://github.com/skywinder/github-changelog-generator)
+which can be installed with:
+
+gem install github_changelog_generator
+
+You'll also need to make sure you have a Github API token in the environment variable CHANGELOG_GITHUB_TOKEN
+"""
 import os
 import sys
 
