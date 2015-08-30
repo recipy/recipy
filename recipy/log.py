@@ -14,9 +14,6 @@ from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
-CONFIG = None
-store_diff = True
-
 
 def get_origin(repo):
     try:
@@ -70,7 +67,11 @@ def log_init():
 
     # Put basics into DB
     RUN_ID = db.insert(run)
-    print("recipy run inserted, with ID %s" % (guid))
+
+    # Print message
+    if not option_set('general', 'quiet'):
+        print("recipy run inserted, with ID %s" % (guid))
+
     db.close()
 
 def log_input(filename, source):
