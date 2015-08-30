@@ -20,13 +20,32 @@ class PatchSimple(PatchImporter):
         in `mod` using `input_wrapper` and `output_wrapper` respectively.
         """
         
-        for f in self.input_functions:
+        if not self._ignore_input():
+            for f in self.input_functions:
+                if option_set('general', 'debug'):
+                    print('Patching input function: %s' % f)
+                patch_function(mod, f, self.input_wrapper)
+        else:
             if option_set('general', 'debug'):
-                print('Patching input function: %s' % f)
-            patch_function(mod, f, self.input_wrapper)
+                    print('Ignoring inputs for: %s' % self.modulename)
 
-        for f in self.output_functions:
+        if not self._ignore_output():
+            for f in self.output_functions:
+                if option_set('general', 'debug'):
+                    print('Patching output function: %s' % f)
+                patch_function(mod, f, self.output_wrapper)
+        else:
             if option_set('general', 'debug'):
-                print('Patching output function: %s' % f)
-            patch_function(mod, f, self.output_wrapper) 
+                    print('Ignoring outputs for: %s' % self.modulename)
+
         return mod
+
+    def _ignore_input(self):
+        root_modulename = self.modulename.split('.')[0]
+
+        return option_set('ignored inputs', root_modulename) or option_set('ignored inputs', 'all')
+
+    def _ignore_output(self):
+        root_modulename = self.modulename.split('.')[0]
+
+        return option_set('ignored outputs', root_modulename) or option_set('ignored outputs', 'all')
