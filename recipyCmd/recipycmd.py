@@ -47,6 +47,9 @@ Ran {{ script }} using {{ command }}
 Git: commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
 Environment: {{ environment|join(", ") }}
+{% if exception is defined %}
+Exception: ({{ exception.type }}) {{ exception.message }}
+{% endif %}
 {% if inputs|length == 0 %}
 Inputs: none
 {% else %}
@@ -69,7 +72,7 @@ def main():
   Main function for recipy command-line script
   """
   args = docopt(__doc__, version='recipy v%s' % __version__)
-  
+
   if args['--debug']:
       print('Command-line arguments: ')
       print(args)
@@ -140,7 +143,7 @@ def search(args):
   elif args['--regex']:
     results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
   elif args['--id']:
-    results = db.search(where('unique_id').matches('%s.+' % filename)) 
+    results = db.search(where('unique_id').matches('%s.+' % filename))
     # Automatically turn on display of all results so we don't misleadingly
     # suggest that their shortened ID is unique when it isn't
     args['--all'] = True
