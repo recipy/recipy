@@ -83,6 +83,9 @@ def log_init():
 
     db.close()
 
+    # Register exception hook so exceptions can be logged
+    sys.excepthook = log_exception
+
 def log_input(filename, source):
     filename = os.path.abspath(filename)
     if option_set('general', 'debug'):
