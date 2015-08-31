@@ -33,8 +33,10 @@ def log_init():
         if len(sys.argv) < 2:
             return
         scriptpath = os.path.realpath(sys.argv[1])
+        cmd_args = sys.argv[2:]
     else:
         scriptpath = os.path.realpath(sys.argv[0])
+        cmd_args = sys.argv[1:]
 
     global RUN_ID
 
@@ -43,7 +45,9 @@ def log_init():
 
     # Create the unique ID for this run
     guid = str(uuid.uuid4())
-
+    
+    
+    
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
         "author": getpass.getuser(),
@@ -53,7 +57,8 @@ def log_init():
         "script": scriptpath,
         "command": sys.executable,
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
-        "date": datetime.datetime.utcnow()}
+        "date": datetime.datetime.utcnow(),
+        "command_args": " ".join(cmd_args)}
 
     if not option_set('ignored metadata', 'git'):
         try:
@@ -72,7 +77,7 @@ def log_init():
         except (InvalidGitRepositoryError, ValueError):
             # We can't store git info for some reason, so just skip it
             pass
-
+    
     # Put basics into DB
     RUN_ID = db.insert(run)
 

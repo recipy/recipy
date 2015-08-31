@@ -42,6 +42,7 @@ def print_result(r):
     template = """Run ID: {{ unique_id }}
 Created by {{ author }} on {{ date }}
 Ran {{ script }} using {{ command }}
+Using command-line arguments: {{ command_args }}
 {% if gitcommit is defined %}
 Git: commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
