@@ -18,6 +18,11 @@ If you want to install the dependencies manually (they should be installed autom
 
 	pip install -r requirements.txt
 
+You can upgrade from a previous release by running:
+
+	pip install -U recipy
+
+To find out what has changed since the last release, see the [changelog](https://github.com/recipy/recipy/blob/master/CHANGELOG.md)
 
 **Note:** Previous (unreleased) versions of recipy required MongoDB to be installed and set up manually. This is no longer required, as a pure Python database (TinyDB) is used instead. Also, the GUI is now integrated fully into recipy and does not require installing separately.
 
@@ -62,22 +67,24 @@ An alternative way to view this is to use the GUI. Just run `recipy gui` and a b
 
 ![Screenshot of GUI](http://rtwilson.com/images/RecipyGUI.png)
 
-Run `./recipy --help` to see the other options: you can view diffs, all runs that created a file with that name, and more:
+Run `./recipy --help` to see the other options: you can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
 
 	recipy - a frictionless provenance tool for Python
-	
+
 	Usage:
 	  recipy search [options] <outputfile>
+	  recipy latest [options]
 	  recipy gui [options]
 	  recipy (-h | --help)
 	  recipy --version
-	
+
 	Options:
 	  -h --help     Show this screen
-	  --version     Show versionrecip
+	  --version     Show version
 	  -a --all      Show all results (otherwise just latest result given)
 	  -f --fuzzy    Use fuzzy searching on filename
 	  -r --regex    Use regex searching on filename
+	  -i --id       Search based on (a fragment of) the run ID
 	  -v --verbose  Be verbose
 	  -d --diff     Show diff
 	  --debug       Turn on debugging mode
