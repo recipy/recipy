@@ -66,6 +66,22 @@
     <td class="col-md-1">Environment</td>
     <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
   </tr>
+  <tr>
+    <td class="col-md-1">Notes</td>
+    <td>
+      <form class="form-inline" role="form" action="{{ url_for('annotate') }}" method="post">
+        <div class="input-group col-md-10">
+          <textarea class="form-control" id="notes" name="notes" rows="5">{{ run.notes }}</textarea>
+          {{ annotateRunForm.run_id(value=run.eid) }}
+        </div>
+        <div class="input-group col-md-1">
+          <button type="submit" class="btn btn-info">
+            Save notes
+          </button>
+        </div>
+      </form>
+    </td>
+  </tr>
 </table>
 
 {% if run.gitcommit %}

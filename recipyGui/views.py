@@ -1,6 +1,6 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, redirect, url_for
 from recipyGui import recipyGui
-from .forms import SearchForm
+from .forms import SearchForm, AnnotateRunForm
 from tinydb import TinyDB, where
 import re
 from dateutil.parser import parse
@@ -36,6 +36,7 @@ def index():
 @recipyGui.route('/run_details')
 def run_details():
         form = SearchForm()
+        annotateRunForm = AnnotateRunForm()
         query = request.args.get('query', '')
         run_id = int(request.args.get('id'))
 
@@ -44,7 +45,8 @@ def run_details():
 
         db.close()
 
-        return render_template('details.html', query=query, form=form, run=r)
+        return render_template('details.html', query=query, form=form,
+                               annotateRunForm=annotateRunForm, run=r)
 
 
 @recipyGui.route('/latest_run')
@@ -59,3 +61,16 @@ def latest_run():
     db.close()
 
     return render_template('details.html', query='', form=form, run=runs[0], active_page='latest_run')
+
+@recipyGui.route('/annotate', methods=['POST'])
+def annotate():
+    notes = request.form['notes']
+    run_id = int(request.form['run_id'])
+
+    query = request.args.get('query', '')
+
+    db = TinyDB(recipyGui.config.get('tinydb'))
+    db.update({'notes': notes}, eids=[run_id])
+    db.close()
+
+    return redirect(url_for('run_details', id=run_id, query=query))
