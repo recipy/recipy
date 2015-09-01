@@ -26,10 +26,12 @@ def index():
         runs = db.all()
     else:
         # Search run outputs using the query string
-        runs = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % query, x)))
+        runs = db.search(
+            where('outputs').any(lambda x: re.match(".+%s.+" % query, x)) |
+            where('notes').contains(query))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
     for run in runs:
-        run['notes'] = escape(run['notes'])
+        run['notes'] = str(escape(run['notes']))
 
     db.close()
 
