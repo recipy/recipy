@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, \
+    escape
 from recipyGui import recipyGui
 from .forms import SearchForm, AnnotateRunForm
 from tinydb import TinyDB, where
@@ -27,6 +28,8 @@ def index():
         # Search run outputs using the query string
         runs = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % query, x)))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
+    for run in runs:
+        run['notes'] = escape(run['notes'])
 
     db.close()
 
