@@ -70,14 +70,12 @@
     <td class="col-md-1">Notes</td>
     <td>
       <form class="form-inline" role="form" action="{{ url_for('annotate') }}" method="post">
-        <div class="input-group col-md-10">
-          <textarea class="form-control" id="notes" name="notes" rows="5">{{ run.notes }}</textarea>
+        <div class="input-group">
+          <textarea class="form-control" id="notes" name="notes" rows="5" cols="80">{{ run.notes }}</textarea>
           {{ annotateRunForm.run_id(value=run.eid) }}
         </div>
-        <div class="input-group col-md-1">
-          <button type="submit" class="btn btn-info">
-            Save notes
-          </button>
+        <div class="input-group bottom-box">
+          <button type="submit" class="btn btn-info">Save notes</button>
         </div>
       </form>
     </td>

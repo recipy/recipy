@@ -10,3 +10,7 @@
 .pre-wrap-white-space {
   white-space: pre-wrap;
 }
+
+.bottom-box {
+  vertical-align: bottom !important;
+}
