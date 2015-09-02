@@ -31,7 +31,8 @@ def index():
             where('notes').contains(query))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
     for run in runs:
-        run['notes'] = str(escape(run['notes']))
+        if 'notes' in run.keys():
+            run['notes'] = str(escape(run['notes']))
 
     db.close()
 
@@ -57,6 +58,7 @@ def run_details():
 @recipyGui.route('/latest_run')
 def latest_run():
     form = SearchForm()
+    annotateRunForm = AnnotateRunForm()
 
     db = TinyDB(recipyGui.config.get('tinydb'))
 
@@ -65,7 +67,9 @@ def latest_run():
 
     db.close()
 
-    return render_template('details.html', query='', form=form, run=runs[0], active_page='latest_run')
+    return render_template('details.html', query='', form=form, run=runs[0],
+                           annotateRunForm=annotateRunForm,
+                           active_page='latest_run')
 
 @recipyGui.route('/annotate', methods=['POST'])
 def annotate():
