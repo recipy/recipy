@@ -33,7 +33,7 @@ class PatchSKImage(PatchSimple):
     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
 
 class PatchPillow(PatchSimple):
-    modulename = 'skimage'
+    modulename = 'PIL'
 
     input_functions = ['Image.open']
     output_functions = ['Image.save']
