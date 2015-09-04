@@ -46,6 +46,15 @@
     </td>
   </tr>
   <tr>
+  {% if run.command_args|length > 0 %}
+  <tr>
+    <td class="col-md-1">Command line arguments</td>
+    <td>
+      <code>{{ run.command_args | highlight(query) | safe }}</code>
+    </td>
+  </tr>
+  {% endif %}
+  <tr>
     <td class="col-md-1">Inputs</td>
     <td>
       {% if run.inputs | length > 0 %}

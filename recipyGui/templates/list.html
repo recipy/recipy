@@ -31,7 +31,11 @@
       <br> Ran
       <code>{{ run.script }}</code> using
       <code>{{ run.command }}</code>
-      <br> Environment: {{ run.environment|join(", ") }}
+      <br> {% if run.command_args|length > 0 %}
+      Command-line arguments: {{ run.command_args | safe }}
+      <br>
+      {% endif %}
+      Environment: {{ run.environment|join(", ") }}
       <br>
       {% if run.inputs | length == 0 %}
       Inputs: none
