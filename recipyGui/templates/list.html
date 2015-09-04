@@ -43,6 +43,9 @@
       <br> Outputs:
       <code>{{ run.outputs | join('</code>,
       <code>') | highlight(query) | safe }}</code>
+      {% if run.exception %}
+      <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
+      {% endif %}
     </td>
   </tr>
   {% endfor %}

@@ -5,6 +5,7 @@ import sys
 import getpass
 import platform
 import sys
+from traceback import format_tb
 from tinydb import TinyDB
 import uuid
 
@@ -82,6 +83,9 @@ def log_init():
 
     db.close()
 
+    # Register exception hook so exceptions can be logged
+    sys.excepthook = log_exception
+
 def log_input(filename, source):
     filename = os.path.abspath(filename)
     if option_set('general', 'debug'):
@@ -106,6 +110,19 @@ def log_update(field, filename, source):
     db = open_or_create_db()
     db.update(append(field, filename), eids=[RUN_ID])
     db.close()
+
+def log_exception(typ, value, traceback):
+    if option_set('general', 'debug'):
+        print("Logging exception %s" % value)
+    exception = {'type': typ.__name__,
+                 'message': str(value),
+                 'traceback': ''.join(format_tb(traceback))}
+    # Update object in DB
+    db = open_or_create_db()
+    db.update({"exception": exception}, eids=[RUN_ID])
+    db.close()
+    # Done logging, call default exception handler
+    sys.__excepthook__(typ, value, traceback)
 
 def append(field, value):
     """
