@@ -61,11 +61,14 @@ Inputs:
   {{ input }}
 {% endfor %}
 {% endif %}
-
+{% if outputs | length == 0 %}
+Outputs: none
+{% else %}
 Outputs:
 {% for output in outputs %}
   {{ output }}
-{% endfor %}"""
+{% endfor %}
+{% endif %}"""
     template = Template(template, trim_blocks=True)
     print(template.render(**r))
 
@@ -162,9 +165,10 @@ def search(args):
       print("No results found")
   else:
       if args['--all']:
-          for r in results:
+          for r in results[:-1]:
               print_result(r)
               print("-"*40)
+          print_result(results[-1])
       else:
           print_result(results[-1])
           if len(results) > 1:
