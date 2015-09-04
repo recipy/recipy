@@ -41,7 +41,7 @@ db = utils.open_or_create_db()
 def print_result(r):
   # Print a single result from the search
     template = """Run ID: {{ unique_id }}
-Created by {{ author }} on {{ date }}
+Created by {{ author }} on {{ date }} UTC
 Ran {{ script }} using {{ command }}
 {% if command_args|length > 0 %}
 Using command-line arguments: {{ command_args }}
