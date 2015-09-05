@@ -98,5 +98,6 @@ def runs2json():
     db.close()
 
     response = make_response(dumps(runs, indent=2, sort_keys=True))
-    response.headers["content-type"] = "text/plain"
+    response.headers['content-type'] = 'application/json'
+    response.headers['Content-Disposition'] = 'attachment; filename=runs.json'
     return response
