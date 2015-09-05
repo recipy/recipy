@@ -4,13 +4,25 @@
 {{ super() }}
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-3">
     {% if query %}
       <h3>Search results</h3>
     {% else %}
       <h3>Runs</h3>
     {% endif %}
   </div>
+  <div class="col-md-2 col-md-offset-7">
+    <div class="btn-group pull-right">
+      <form class="form" role="form" action="{{ url_for('runs2json') }}" method="post">
+        <input type="hidden" name="run_ids" value="{{ run_ids }}"></input>
+        <button type="submit" class="btn btn-info">Export to JSON</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
 </div>
 
 <div class="row">
