@@ -41,12 +41,18 @@ db = utils.open_or_create_db()
 def print_result(r):
   # Print a single result from the search
     template = """Run ID: {{ unique_id }}
-Created by {{ author }} on {{ date }}
+Created by {{ author }} on {{ date }} UTC
 Ran {{ script }} using {{ command }}
+{% if command_args|length > 0 %}
+Using command-line arguments: {{ command_args }}
+{% endif %}
 {% if gitcommit is defined %}
 Git: commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
 Environment: {{ environment|join(", ") }}
+{% if exception is defined %}
+Exception: ({{ exception.type }}) {{ exception.message }}
+{% endif %}
 {% if inputs|length == 0 %}
 Inputs: none
 {% else %}
@@ -55,11 +61,14 @@ Inputs:
   {{ input }}
 {% endfor %}
 {% endif %}
-
+{% if outputs | length == 0 %}
+Outputs: none
+{% else %}
 Outputs:
 {% for output in outputs %}
   {{ output }}
-{% endfor %}"""
+{% endfor %}
+{% endif %}"""
     template = Template(template, trim_blocks=True)
     print(template.render(**r))
 
@@ -69,7 +78,7 @@ def main():
   Main function for recipy command-line script
   """
   args = docopt(__doc__, version='recipy v%s' % __version__)
-  
+
   if args['--debug']:
       print('Command-line arguments: ')
       print(args)
@@ -140,7 +149,7 @@ def search(args):
   elif args['--regex']:
     results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
   elif args['--id']:
-    results = db.search(where('unique_id').matches('%s.+' % filename)) 
+    results = db.search(where('unique_id').matches('%s.+' % filename))
     # Automatically turn on display of all results so we don't misleadingly
     # suggest that their shortened ID is unique when it isn't
     args['--all'] = True
@@ -156,9 +165,10 @@ def search(args):
       print("No results found")
   else:
       if args['--all']:
-          for r in results:
+          for r in results[:-1]:
               print_result(r)
               print("-"*40)
+          print_result(results[-1])
       else:
           print_result(results[-1])
           if len(results) > 1:

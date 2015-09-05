@@ -31,20 +31,32 @@
       <br> Ran
       <code>{{ run.script }}</code> using
       <code>{{ run.command }}</code>
-      <br> Environment: {{ run.environment|join(", ") }}
+      <br> {% if run.command_args|length > 0 %}
+      Command-line arguments: {{ run.command_args | safe }}
+      <br>
+      {% endif %}
+      Environment: {{ run.environment|join(", ") }}
       <br>
       {% if run.inputs | length == 0 %}
-      Inputs: none
+      Inputs: <em>none</em>
       {% else %}
-      Input:
+      Inputs:
       <code>{{ run.inputs | join('</code>,
       <code>') | safe }}</code>
       {% endif %}
-      <br> Outputs:
+      <br>
+      {% if run.outputs | length == 0 %}
+      Outputs: <em>none</em>
+      {% else %}
+      Outputs:
       <code>{{ run.outputs | join('</code>,
       <code>') | highlight(query) | safe }}</code>
+      {% endif %}
       <br>Notes:
       <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
+      {% if run.exception %}
+      <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
+      {% endif %}
     </td>
   </tr>
   {% endfor %}

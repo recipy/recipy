@@ -46,11 +46,20 @@
     </td>
   </tr>
   <tr>
+  {% if run.command_args|length > 0 %}
+  <tr>
+    <td class="col-md-1">Command line arguments</td>
+    <td>
+      <code>{{ run.command_args | highlight(query) | safe }}</code>
+    </td>
+  </tr>
+  {% endif %}
+  <tr>
     <td class="col-md-1">Inputs</td>
     <td>
       {% if run.inputs | length > 0 %}
       <code>{{ run.inputs | join('</code>,
-      <code>') | highlight(query) | safe }} {% else %} none {% endif %}
+      <code>') | highlight(query) | safe }} {% else %} <em>none</em> {% endif %}
     </td>
   </tr>
   <tr>
@@ -59,9 +68,21 @@
       {% if run.outputs | length > 0 %}
       <code>{{ run.outputs | join('</code>,
       <code>') | highlight(query) | safe }}</code>
-      {% else %} none {% endif %}
+      {% else %} <em>none</em> {% endif %}
     </td>
   </tr>
+  {% if run.exception %}
+  <tr>
+    <td class="col-md-1">Exception</td>
+    <td>
+      <i>{{ run.exception.type }}</i> <code>{{ run.exception.message }}</code>
+      {% if run.exception.traceback %}
+      <br /><strong>Traceback:</strong>
+      <pre>{{ run.exception.traceback | highlight(query) | safe }}</pre>
+      {% endif %}
+    </td>
+  </tr>
+  {% endif %}
   <tr>
     <td class="col-md-1">Environment</td>
     <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
