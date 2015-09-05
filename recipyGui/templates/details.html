@@ -29,7 +29,7 @@
 
 <div class="row">
   <div class="col-md-6">
-    <h3>Run {{ run.unique_id | string }}</h3>
+    <h3>Run {{ run.unique_id | string | highlight(query) | safe }}</h3>
   </div>
   <div class="col-md-2 col-md-offset-4">
     <div class="pull-right align-with-header">

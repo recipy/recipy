@@ -39,7 +39,7 @@
               </form>
             </td>
             <td>
-              Run ID: {{ run.unique_id }}
+              Run ID: {{ run.unique_id | highlight(query) | safe }}
               <br> Created by
               <span class="text-primary">{{ run.author }}</span>
               on
