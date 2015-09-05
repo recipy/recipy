@@ -3,69 +3,75 @@
 {% block content %}
 {{ super() }}
 
-{% if query %}
-<h3>Search results</h3>
-{% else %}
-<h3>Runs</h3>
-{% endif %}
+<div class="row">
+  <div class="col-md-12">
+    {% if query %}
+      <h3>Search results</h3>
+    {% else %}
+      <h3>Runs</h3>
+    {% endif %}
+  </div>
+</div>
 
-{% if runs | length > 0 %}
-<table class="table table-hover">
-  {% for run in runs %}
-  <tr>
-    <td>
-      <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
-        <input type="hidden" name="id" value="{{ run.eid }}"></input>
-        <input type="hidden" name="query" value="{{ query }}"></input>
-        <button type="submit" class="btn btn-info">
-          View details
-        </button>
-      </form>
-    </td>
-    <td>
-      Run ID: {{ run.unique_id }}
-      <br> Created by
-      <span class="text-primary">{{ run.author }}</span>
-      on
-      <span class="text-primary">{{ run.date | datetimefilter }}</span>
-      <br> Ran
-      <code>{{ run.script }}</code> using
-      <code>{{ run.command }}</code>
-      <br> {% if run.command_args|length > 0 %}
-      Command-line arguments: {{ run.command_args | safe }}
-      <br>
-      {% endif %}
-      Environment: {{ run.environment|join(", ") }}
-      <br>
-      {% if run.inputs | length == 0 %}
-      Inputs: <em>none</em>
-      {% else %}
-      Inputs:
-      <code>{{ run.inputs | join('</code>,
-      <code>') | safe }}</code>
-      {% endif %}
-      <br>
-      {% if run.outputs | length == 0 %}
-      Outputs: <em>none</em>
-      {% else %}
-      Outputs:
-      <code>{{ run.outputs | join('</code>,
-      <code>') | highlight(query) | safe }}</code>
-      {% endif %}
-      {% if run.exception %}
-      <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
-      {% endif %}
-      {% if run.notes %}
-      <br>Notes:
-      <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
-      {% endif %}
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+<div class="row">
+  <div class="col-md-12">
+    {% if runs | length > 0 %}
+      <table class="table table-hover">
+        {% for run in runs %}
+          <tr>
+            <td>
+              <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
+                <input type="hidden" name="id" value="{{ run.eid }}"></input>
+                <input type="hidden" name="query" value="{{ query }}"></input>
+                <button type="submit" class="btn btn-info">View details</button>
+              </form>
+            </td>
+            <td>
+              Run ID: {{ run.unique_id }}
+              <br> Created by
+              <span class="text-primary">{{ run.author }}</span>
+              on
+              <span class="text-primary">{{ run.date | datetimefilter }}</span>
+              <br> Ran
+              <code>{{ run.script }}</code> using
+              <code>{{ run.command }}</code>
+              <br> {% if run.command_args|length > 0 %}
+              Command-line arguments: {{ run.command_args | safe }}
+              <br>
+              {% endif %}
+              Environment: {{ run.environment|join(", ") }}
+              <br>
+              {% if run.inputs | length == 0 %}
+              Inputs: <em>none</em>
+              {% else %}
+              Inputs:
+              <code>{{ run.inputs | join('</code>,
+              <code>') | safe }}</code>
+              {% endif %}
+              <br>
+              {% if run.outputs | length == 0 %}
+              Outputs: <em>none</em>
+              {% else %}
+              Outputs:
+              <code>{{ run.outputs | join('</code>,
+              <code>') | highlight(query) | safe }}</code>
+              {% endif %}
+              {% if run.exception %}
+              <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
+              {% endif %}
+              {% if run.notes %}
+              <br>Notes:
+              <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
 
-{% else %}
-No runs found.
-{% endif %}
+    {% else %}
+      No runs found.
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}

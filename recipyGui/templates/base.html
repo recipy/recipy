@@ -40,24 +40,25 @@
 {% block content %}
 <div class="container">
   <div class="row">
+    <div class="col-md-12">
 
-    <!-- Search bar -->
-    <form class="form" role="form" action="{{ url_for('index') }}" method="get">
-      <div class="input-group col-md-12">
-        <input type="text"
-               class="form-control input-lg"
-               placeholder="Search runs"
-               id="query"
-               name="query"
-               value="{{ query }}" />
-        <span class="input-group-btn">
-          <button type="submit" class="btn btn-info btn-lg">
-            <i class="glyphicon glyphicon-search"></i>
-          </button>
-        </span>
-      </div>
-    </form>
-
+      <!-- Search bar -->
+      <form class="form" role="form" action="{{ url_for('index') }}" method="get">
+        <div class="input-group">
+          <input type="text"
+                 class="form-control input-lg"
+                 placeholder="Search runs"
+                 id="query"
+                 name="query"
+                 value="{{ query }}" />
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-info btn-lg">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+    </div>
   </div>
-
-  {% endblock %}
+{% endblock %}
+</div>
