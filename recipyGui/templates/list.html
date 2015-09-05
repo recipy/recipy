@@ -52,10 +52,12 @@
       <code>{{ run.outputs | join('</code>,
       <code>') | highlight(query) | safe }}</code>
       {% endif %}
-      <br>Notes:
-      <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
       {% if run.exception %}
       <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
+      {% endif %}
+      {% if run.notes %}
+      <br>Notes:
+      <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
       {% endif %}
     </td>
   </tr>
