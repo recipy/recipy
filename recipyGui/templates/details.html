@@ -28,8 +28,16 @@
 </div>
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-6">
     <h3>Run {{ run.unique_id | string }}</h3>
+  </div>
+  <div class="col-md-2 col-md-offset-4">
+    <div class="pull-right align-with-header">
+      <form role="form" action="{{ url_for('runs2json') }}" method="post">
+        <input type="hidden" name="run_ids" value="[{{ run.eid }}]"></input>
+        <button type="submit" class="btn btn-info">Save as JSON</button>
+      </form>
+    </div>
   </div>
 </div>
 
