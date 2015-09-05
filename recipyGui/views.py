@@ -20,7 +20,7 @@ if not os.path.exists(os.path.dirname(recipyGui.config.get('tinydb'))):
 def index():
     form = SearchForm()
 
-    query = request.args.get('query', '')
+    query = request.args.get('query', '').strip()
 
     db = TinyDB(recipyGui.config.get('tinydb'))
 
