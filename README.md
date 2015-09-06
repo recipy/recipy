@@ -49,7 +49,7 @@ Alternatively, run an unmodified script with `python -m recipy SCRIPT [ARGS ...]
 
 it will produce an output called `test.npy`. To find out the details of the run which created this file you can search using
 
-    ./recipy search newplot.pdf
+    ./recipy search test.npy
 
 and it will display information like the following:
 
@@ -58,10 +58,9 @@ and it will display information like the following:
 	Git: commit 91a245e5ea82f33ae58380629b6586883cca3ac4, in repo /Users/robin/code/recipy, with origin git@github.com:recipy/recipy.git
 	Environment: Darwin-14.3.0-x86_64-i386-64bit, python 2.7.9 (default, Feb 10 2015, 03:28:08)
 	Inputs:
-	  /Users/robin/code/recipy/data.csv
 
 	Outputs:
-	  /Users/robin/code/recipy/newplot.pdf
+	  /Users/robin/code/recipy/test.npy
 
 An alternative way to view this is to use the GUI. Just run `recipy gui` and a browser window will open with an interface that you can use to search all of your recipy 'runs':
 
