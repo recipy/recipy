@@ -29,19 +29,23 @@ To find out what has changed since the last release, see the [changelog](https:/
 ## Usage
 Simply add the following line to the top of your Python script:
 
-    import recipy
+``` python
+import recipy
+```
 
 Note that this **must** be the **very top** line of your script, before you import anything else.
 
 Then just run your script as usual, and all of the data will be logged into the TinyDB database (don't worry, the database is automatically created if needed). You can then use the `recipy` script to quickly query the database to find out what run of your code produced what output file. So, for example, if you run some code like this:
 
-	import recipy
-	import numpy
+``` python
+import recipy
+import numpy
 
-	arr = numpy.arange(10)
-	arr = arr + 500
+arr = numpy.arange(10)
+arr = arr + 500
 
-	numpy.save('test.npy', arr)
+numpy.save('test.npy', arr)
+```
 
 (Note the addition of `import recipy` at the beginning of script - but there are no other changes from a standard script)
 
@@ -123,25 +127,27 @@ When you import recipy it adds a number of classes to `sys.meta_path`. These are
 
 Generally, most of the complexity is hidden away in `PatchImporter` and `PatchSimple` (plus `utils.py`), so the actual code to wrap a module, such as `numpy` is fairly simple:
 
-	# Inherit from PatchSimple
-	class PatchNumpy(PatchSimple):
-		# Specify the full name of the module
-	    modulename = 'numpy'
+``` python
+# Inherit from PatchSimple
+class PatchNumpy(PatchSimple):
+    # Specify the full name of the module
+    modulename = 'numpy'
 
-	    # List functions that are involved in input/output
-	    # these can be anything that can go after "modulename."
-	    # so they could be something like "pyplot.savefig" for example
-	    input_functions = ['genfromtxt', 'loadtxt', 'load', 'fromfile']
-	    output_functions = ['save', 'savez', 'savez_compressed', 'savetxt']
+    # List functions that are involved in input/output
+    # these can be anything that can go after "modulename."
+    # so they could be something like "pyplot.savefig" for example
+    input_functions = ['genfromtxt', 'loadtxt', 'load', 'fromfile']
+    output_functions = ['save', 'savez', 'savez_compressed', 'savetxt']
 
-	    # Define the functions that will be used to wrap the input/output
-	    # functions.
-	    # In this case we are calling the log_input function to log it to the DB
-	    # and we are giving it the 0th argument from the function (because all of
-	    # the functions above take the filename as the 0th argument), and telling
-	    # it that it came from numpy.
-	    input_wrapper = create_wrapper(log_input, 0, 'numpy')
-	    output_wrapper = create_wrapper(log_output, 0, 'numpy')
+    # Define the functions that will be used to wrap the input/output
+    # functions.
+    # In this case we are calling the log_input function to log it to the DB
+    # and we are giving it the 0th argument from the function (because all of
+    # the functions above take the filename as the 0th argument), and telling
+    # it that it came from numpy.
+    input_wrapper = create_wrapper(log_input, 0, 'numpy')
+    output_wrapper = create_wrapper(log_output, 0, 'numpy')
+```
 
 A class like this must be implemented for each module whose input/output needs logging. At the moment all of the input/output functions for the following modules are wrapped:
 
