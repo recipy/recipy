@@ -17,6 +17,7 @@ Options:
   -i --id       Search based on (a fragment of) the run ID
   -v --verbose  Be verbose
   -d --diff     Show diff
+  --no-browser  Do not open browser window
   --debug       Turn on debugging mode
 
 """
@@ -117,8 +118,9 @@ def gui(args):
   port = get_free_port()
   url = "http://127.0.0.1:{0}".format(port)
 
-  # Give the application some time before it starts
-  threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+  if not args['--no-browser']:
+      # Give the application some time before it starts
+      threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
 
   # Turn off reloading by setting debug = False (this also fixes starting the
   # application twice)
