@@ -38,3 +38,8 @@ def get_db_path():
     except Error:
         return os.path.expanduser('~/.recipy/recipyDB.json')
     
+def get_gui_port():
+    try:
+        return int(conf.get('general', 'port'))
+    except Error:
+        return 9000

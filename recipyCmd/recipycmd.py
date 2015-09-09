@@ -110,7 +110,8 @@ def gui(args):
 
   def get_free_port():
       port = None
-      for trial_port in range(9000,9005):
+      base_port = config.get_gui_port()
+      for trial_port in range(base_port,base_port+5):
           try:
               s = socket.socket()
               s.bind(('', trial_port))
