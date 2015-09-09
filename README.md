@@ -108,6 +108,7 @@ This simply instructs recipy not to save `git diff` information when it records 
  * `[general]`
 	 * `debug` - print debug mesages
 	 * `quiet` - don't print any messages
+	 * `port` - specify port to use for the gui
  *  `[database]`
  	 * `path = /path/to/file.json` - set the path to the database file
  * `[ignored metadata]`
