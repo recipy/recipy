@@ -109,10 +109,23 @@ def gui(args):
   import threading, webbrowser, socket
 
   def get_free_port():
-      s = socket.socket()
-      s.bind(('', 0))
-      port = s.getsockname()[1]
-      s.close()
+      port = None
+      for trial_port in range(9000,9005):
+          try:
+              s = socket.socket()
+              s.bind(('', trial_port))
+              s.close()
+              port = trial_port
+              break
+          except OSError:
+              # port already bound
+              pass
+      if not port:
+          # no free ports above, fall back to random
+          s = socket.socket()
+          s.bind(('', 0))
+          port = s.getsockname()[1]
+          s.close()
       return port
 
   port = get_free_port()
