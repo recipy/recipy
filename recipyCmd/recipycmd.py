@@ -17,6 +17,7 @@ Options:
   -i --id       Search based on (a fragment of) the run ID
   -v --verbose  Be verbose
   -d --diff     Show diff
+  --no-browser  Do not open browser window
   --debug       Turn on debugging mode
 
 """
@@ -108,17 +109,32 @@ def gui(args):
   import threading, webbrowser, socket
 
   def get_free_port():
-      s = socket.socket()
-      s.bind(('', 0))
-      port = s.getsockname()[1]
-      s.close()
+      port = None
+      base_port = config.get_gui_port()
+      for trial_port in range(base_port,base_port+5):
+          try:
+              s = socket.socket()
+              s.bind(('', trial_port))
+              s.close()
+              port = trial_port
+              break
+          except OSError:
+              # port already bound
+              pass
+      if not port:
+          # no free ports above, fall back to random
+          s = socket.socket()
+          s.bind(('', 0))
+          port = s.getsockname()[1]
+          s.close()
       return port
 
   port = get_free_port()
   url = "http://127.0.0.1:{0}".format(port)
 
-  # Give the application some time before it starts
-  threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+  if not args['--no-browser']:
+      # Give the application some time before it starts
+      threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
 
   # Turn off reloading by setting debug = False (this also fixes starting the
   # application twice)
