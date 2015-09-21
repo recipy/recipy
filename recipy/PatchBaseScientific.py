@@ -35,11 +35,13 @@ class PatchMPL(PatchSimple):
 class PatchNumpy(PatchSimple):
     modulename = 'numpy'
 
-    input_functions = ['genfromtxt', 'loadtxt', 'load', 'fromfile']
+    # The `load` function is *deliberately* not included here
+    # as it calls fromfile internally, and then we get two duplicate
+    # entries recorded in the log
+    input_functions = ['genfromtxt', 'loadtxt', 'fromfile']
     output_functions = ['save', 'savez', 'savez_compressed', 'savetxt']
 
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 
-#sys.meta_path += [PatchPandas(), PatchMPL(), PatchNumpy()]
 multiple_insert(sys.meta_path, [PatchPandas(), PatchMPL(), PatchNumpy()])

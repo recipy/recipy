@@ -92,6 +92,11 @@ def log_init():
     sys.excepthook = log_exception
 
 def log_input(filename, source):
+    if type(filename) is not str:
+        try:
+            filename = filename.name
+        except:
+            pass
     filename = os.path.abspath(filename)
     if option_set('general', 'debug'):
         print("Input from %s using %s" % (filename, source))
@@ -101,6 +106,11 @@ def log_input(filename, source):
     db.close()
 
 def log_output(filename, source):
+    if type(filename) is not str:
+        try:
+            filename = filename.name
+        except:
+            pass
     filename = os.path.abspath(filename)
     if option_set('general', 'debug'):
         print("Output to %s using %s" % (filename, source))
