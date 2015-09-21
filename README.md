@@ -70,7 +70,13 @@ An alternative way to view this is to use the GUI. Just run `recipy gui` and a b
 
 ![Screenshot of GUI](http://rtwilson.com/images/RecipyGUI.png)
 
-Run `./recipy --help` to see the other options: you can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
+Once you've got some runs in your database, you can 'annotate' these runs with any notes that you want to keep about them. This can be particularly useful for recording which runs worked well, or particular problems you ran into. This can be done from the 'details' page in the GUI, or by running
+
+	recipy annotate
+
+which will open an editor to allow you to write notes that will be attached to the run. These will then be viewable via the command-line and the GUI when searching for runs.
+
+There are other features in the command-line interface too: `./recipy --help` to see the other options. You can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
 
 	recipy - a frictionless provenance tool for Python
 
@@ -78,6 +84,7 @@ Run `./recipy --help` to see the other options: you can view diffs, see all runs
 	  recipy search [options] <outputfile>
 	  recipy latest [options]
 	  recipy gui [options]
+	  recipy annotate [options]
 	  recipy (-h | --help)
 	  recipy --version
 
@@ -90,6 +97,8 @@ Run `./recipy --help` to see the other options: you can view diffs, see all runs
 	  -i --id       Search based on (a fragment of) the run ID
 	  -v --verbose  Be verbose
 	  -d --diff     Show diff
+	  -j --json     Show output as JSON
+	  --no-browser  Do not open browser window
 	  --debug       Turn on debugging mode
 
 ## Configuration
@@ -108,7 +117,7 @@ This simply instructs recipy not to save `git diff` information when it records 
  * `[general]`
 	 * `debug` - print debug mesages
 	 * `quiet` - don't print any messages
-	 * `port` - specify port to use for the gui
+	 * `port` - specify port to use for the GUI
  *  `[database]`
  	 * `path = /path/to/file.json` - set the path to the database file
  * `[ignored metadata]`

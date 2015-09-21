@@ -3,6 +3,10 @@
 ## [v0.2.0](https://github.com/recipy/recipy/tree/v0.2.0) (2015-09-21)
 [Full Changelog](https://github.com/recipy/recipy/compare/v0.1.0...v0.2.0)
 
+This is the first new release of recipy since its debut at EuroSciPy 2015. Sorry for the delay in getting this out, life has been rather chaotic for all of the members of the recipy team. We want to say a huge thank you to all of the people who have submitted issues and pull requests: we couldn't have done this without you!
+
+Full details are below, but the major new features include logging command-line arguments, exporting runs to JSON, adding more configuration options, and adding more commands to the GUI. A number of bugs have also been fixed.
+
 **Implemented enhancements:**
 
 - Add export option to the GUI [\#68](https://github.com/recipy/recipy/issues/68)
