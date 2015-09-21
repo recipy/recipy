@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 This script creates CHANGELOG.md sensibly, leaving manual edits to previous
 bits of the changelog untouched.
