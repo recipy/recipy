@@ -5,6 +5,7 @@ Usage:
   recipy search [options] <outputfile>
   recipy latest [options]
   recipy gui [options]
+  recipy annotate [options]
   recipy (-h | --help)
   recipy --version
 
@@ -24,6 +25,7 @@ Options:
 import os
 import re
 import sys
+import tempfile
 
 from docopt import docopt
 from pprint import pprint
@@ -39,7 +41,7 @@ from recipyCommon import config, utils
 db = utils.open_or_create_db()
 
 
-def print_result(r):
+def template_result(r):
   # Print a single result from the search
     template = """Run ID: {{ unique_id }}
 Created by {{ author }} on {{ date }} UTC
@@ -69,9 +71,15 @@ Outputs:
 {% for output in outputs %}
   {{ output }}
 {% endfor %}
-{% endif %}"""
+{% endif %}
+
+{% if notes is defined %}
+Notes:
+{{ notes }}
+{% endif %}
+"""
     template = Template(template, trim_blocks=True)
-    print(template.render(**r))
+    return template.render(**r)
 
 
 def main():
@@ -100,6 +108,45 @@ def main():
     latest(args)
   elif args['gui']:
     gui(args)
+  elif args['annotate']:
+    annotate(args)
+
+def annotate(args):
+  # Grab latest run from the DB
+  run = get_latest_run()
+
+  # Get temp filename
+  f = tempfile.NamedTemporaryFile(delete=False, mode='w')
+
+  # Write something to the bottom of it
+  f.write('\n'+'-'*80+'\n')
+  f.write('\n')
+  f.write('Enter your notes on this run above this line')
+  f.write('\n'*3)
+  f.write(template_result(run))
+
+  f.close()
+
+  # Open your editor
+  os.system('$EDITOR %s' % f.name)
+
+  # Grab the text
+  annotation = ""
+  with open(f.name, 'r') as f:
+    for line in f:
+      if line == '-'*80+'\n':
+        break
+      annotation += line
+
+  notes = annotation.strip()
+
+  if notes == "":
+    print('No annotation entered, exiting.')
+    return
+
+  # Store in the DB
+  db.update({'notes': notes}, where('unique_id') == run['unique_id'])
+  db.close()
 
 def gui(args):
   """
@@ -140,7 +187,7 @@ def gui(args):
   # application twice)
   recipyGui.run(debug = args['--debug'], port=port)
 
-def latest(args):
+def get_latest_run():
   results = db.all()
 
   results = [_change_date(result) for result in results]
@@ -148,12 +195,17 @@ def latest(args):
   # Sort the results
   results = sorted(results, key = lambda x: parse(x['date']))
 
-  print_result(results[-1])
+  return results[-1]
+
+def latest(args):
+
+  run = get_latest_run()
+  print(template_result(run))
 
   if args['--diff']:
-    if 'diff' in results[-1]:
+    if 'diff' in run:
       print("\n\n")
-      print(results[-1]['diff'])
+      print(run['diff'])
 
   db.close()
 
@@ -182,11 +234,11 @@ def search(args):
   else:
       if args['--all']:
           for r in results[:-1]:
-              print_result(r)
+              print(template_result(r))
               print("-"*40)
-          print_result(results[-1])
+          print(template_result(results[-1]))
       else:
-          print_result(results[-1])
+          print(template_result(results[-1]))
           if len(results) > 1:
               print("** Previous runs creating this output have been found. Run with --all to show. **")
 
