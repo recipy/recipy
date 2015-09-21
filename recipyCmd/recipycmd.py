@@ -18,6 +18,7 @@ Options:
   -i --id       Search based on (a fragment of) the run ID
   -v --verbose  Be verbose
   -d --diff     Show diff
+  -j --json     Show output as JSON
   --no-browser  Do not open browser window
   --debug       Turn on debugging mode
 
@@ -32,6 +33,7 @@ from pprint import pprint
 from jinja2 import Template
 from tinydb import TinyDB, where
 from dateutil.parser import parse
+from json import dumps
 import six
 
 from . import __version__
@@ -200,14 +202,17 @@ def get_latest_run():
 def latest(args):
 
   run = get_latest_run()
-  print(template_result(run))
 
-  if args['--diff']:
-    if 'diff' in run:
-      print("\n\n")
-      print(run['diff'])
+  if args['--json']:
+    output = dumps(run, indent=2, sort_keys=True)
+    print(output)
+  else:
+    print(template_result(run))
 
-  db.close()
+    if args['--diff']:
+      if 'diff' in run:
+        print("\n\n")
+        print(run['diff'])
 
 def search(args):
   filename = args['<outputfile>']
@@ -229,23 +234,31 @@ def search(args):
   # Sort the results
   results = sorted(results, key = lambda x: parse(x['date']))
 
-  if len(results) == 0:
-      print("No results found")
+  if args['--json']:
+    if args['--all']:
+      res_to_output = results
+    else:
+      res_to_output = results[-1]
+    output = dumps(res_to_output, indent=2, sort_keys=True)
+    print(output)
   else:
-      if args['--all']:
-          for r in results[:-1]:
-              print(template_result(r))
-              print("-"*40)
-          print(template_result(results[-1]))
-      else:
-          print(template_result(results[-1]))
-          if len(results) > 1:
-              print("** Previous runs creating this output have been found. Run with --all to show. **")
+    if len(results) == 0:
+        print("No results found")
+    else:
+        if args['--all']:
+            for r in results[:-1]:
+                print(template_result(r))
+                print("-"*40)
+            print(template_result(results[-1]))
+        else:
+            print(template_result(results[-1]))
+            if len(results) > 1:
+                print("** Previous runs creating this output have been found. Run with --all to show. **")
 
-          if args['--diff']:
-            if 'diff' in results[-1]:
-              print("\n\n")
-              print(results[-1]['diff'])
+            if args['--diff']:
+              if 'diff' in results[-1]:
+                print("\n\n")
+                print(results[-1]['diff'])
 
   db.close()
 
