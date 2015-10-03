@@ -1,5 +1,14 @@
 # Change Log
 
+## [v0.2.1](https://github.com/recipy/recipy/tree/v0.2.1)
+[Full Changelog](https://github.com/recipy/recipy/compare/v0.2.0...HEAD)
+
+Minor bug-fix release.
+
+**Fixed bugs:**
+
+- Patching of Pillow does not work due to [\#52](https://github.com/recipy/recipy/issues/52), which caused matplotlib imports to fail. Fixed by removing Pillow support for the moment
+
 ## [v0.2.0](https://github.com/recipy/recipy/tree/v0.2.0) (2015-09-21)
 [Full Changelog](https://github.com/recipy/recipy/compare/v0.1.0...v0.2.0)
 
