@@ -32,14 +32,14 @@ class PatchSKImage(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'sklearn')
     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
 
-class PatchPillow(PatchSimple):
-    modulename = 'PIL'
+# class PatchPillow(PatchSimple):
+#     modulename = 'PIL'
 
-    input_functions = ['Image.open']
-    output_functions = ['Image.save']
+#     input_functions = ['Image.open']
+#     output_functions = ['Image.save']
 
-    input_wrapper = create_wrapper(log_input, 0, 'Pillow')
-    output_wrapper = create_wrapper(log_output, 0, 'Pillow')
+#     input_wrapper = create_wrapper(log_input, 0, 'Pillow')
+#     output_wrapper = create_wrapper(log_output, 0, 'Pillow')
 
 class PatchNIBabel(PatchSimple):
     modulename = 'nibabel'
@@ -52,4 +52,4 @@ class PatchNIBabel(PatchSimple):
     output_wrapper = create_wrapper(log_output, 0, 'nibabel')
 
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(), PatchSKImage(),
-                                PatchPillow(), PatchNIBabel()])
+                                PatchNIBabel()])
