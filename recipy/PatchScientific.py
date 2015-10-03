@@ -29,8 +29,8 @@ class PatchSKImage(PatchSimple):
     input_functions = ['io.imread', 'io.load_sift', 'io.load_surf', 'external.tifffile.imread']
     output_functions = ['io.imsave', 'external.tifffile.imsave']
 
-    input_wrapper = create_wrapper(log_input, 0, 'sklearn')
-    output_wrapper = create_wrapper(log_output, 0, 'sklearn')
+    input_wrapper = create_wrapper(log_input, 0, 'skimage')
+    output_wrapper = create_wrapper(log_output, 0, 'skimage')
 
 # class PatchPillow(PatchSimple):
 #     modulename = 'PIL'
