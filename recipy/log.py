@@ -102,7 +102,7 @@ def log_input(filename, source):
         print("Input from %s using %s" % (filename, source))
     #Update object in DB
     db = open_or_create_db()
-    db.update(append("inputs", filename), eids=[RUN_ID])
+    db.update(append("inputs", filename, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_output(filename, source):
@@ -116,14 +116,14 @@ def log_output(filename, source):
         print("Output to %s using %s" % (filename, source))
     #Update object in DB
     db = open_or_create_db()
-    db.update(append("outputs", filename), eids=[RUN_ID])
+    db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_update(field, filename, source):
     filename = os.path.abspath(filename)
     print("Adding %s to %s using $s" % (field, filename, source))
     db = open_or_create_db()
-    db.update(append(field, filename), eids=[RUN_ID])
+    db.update(append(field, filename, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_exception(typ, value, traceback):
@@ -139,13 +139,16 @@ def log_exception(typ, value, traceback):
     # Done logging, call default exception handler
     sys.__excepthook__(typ, value, traceback)
 
-def append(field, value):
+def append(field, value, no_duplicates=False):
     """
     Append a given value to a given array field.
     Keep an eye on https://github.com/msiemens/tinydb/issues/66
     """
     def transform(element):
-        element[field].append(value)
+        if no_duplicates and value in element[field]:
+            pass
+        else:
+            element[field].append(value)
 
     return transform
 
