@@ -51,5 +51,24 @@ class PatchNIBabel(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'nibabel')
     output_wrapper = create_wrapper(log_output, 0, 'nibabel')
 
+class PatchTifffile(PatchSimple):
+    modulename = 'tifffile'
+
+    input_functions = ['imread']
+    output_functions = ['imsave']
+
+    input_wrapper = create_wrapper(log_input, 0, 'tifffile')
+    output_wrapper = create_wrapper(log_output, 0, 'tifffile')
+
+class PatchImageio(PatchSimple):
+    modulename = 'imageio'
+
+    input_functions = ['core.functions.get_reader', 'core.functions.read']
+    output_functions = ['core.functions.get_writer']
+
+    input_wrapper = create_wrapper(log_input, 0, 'imageio')
+    output_wrapper = create_wrapper(log_output, 0, 'imageio')
+
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
-                                PatchNIBabel()])
+                                PatchNIBabel(), PatchTifffile(),
+                                PatchImageio()])
