@@ -4,7 +4,7 @@ from . import PatchScientific
 
 from .log import *
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 # Patch built-in open function
 # orig_open = __builtins__['open']
