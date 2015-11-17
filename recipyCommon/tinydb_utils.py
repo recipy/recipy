@@ -1,8 +1,8 @@
 import datetime
 
 from tinydb.storages import JSONStorage
-from tinydb.serialize import Serializer
-from tinydb.middlewares import SerializationMiddleware
+from tinydb_serialization import Serializer, SerializationMiddleware
+
 
 class DateTimeSerializer(Serializer):
     OBJ_CLASS = datetime.datetime  # The class this serializer handles

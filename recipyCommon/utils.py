@@ -3,7 +3,7 @@ import imp
 import os
 
 from tinydb import TinyDB
-from .tinydb_serialization import serialization
+from .tinydb_utils import serialization
 
 from .config import get_db_path
 
@@ -66,4 +66,3 @@ def recursive_find_module(name, path):
                 file_obj.close()
 
     return imp.find_module(subnames[-1], path)
-
