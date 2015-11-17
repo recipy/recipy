@@ -1,5 +1,14 @@
 # Change Log
 
+## [v0.2.3](https://github.com/recipy/recipy/tree/HEAD)
+[Full Changelog](https://github.com/recipy/recipy/compare/v0.2.3...HEAD)
+
+This is a very small release to fix recipy to work with the latest version of TinyDB (v3.0.0).
+
+**Fixed bugs:**
+
+- TinyDB import error [\#92](https://github.com/recipy/recipy/issues/92)
+
 ## [v0.2.1](https://github.com/recipy/recipy/tree/v0.2.1)
 [Full Changelog](https://github.com/recipy/recipy/compare/v0.2.0...HEAD)
 
@@ -91,10 +100,3 @@ This is the first public release of recipy. The changes listed below are compare
 - Add hooks for more commonly-used Python modules [\#3](https://github.com/recipy/recipy/issues/3)
 - Store full paths to files [\#2](https://github.com/recipy/recipy/issues/2)
 - Make recipy-cmd search with fuzzy matches [\#1](https://github.com/recipy/recipy/issues/1)
-
-
-
-
-
-
-
