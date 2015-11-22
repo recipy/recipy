@@ -64,7 +64,6 @@ def colordiff(diff):
     diff = diff.strip()
     diff = diff.replace('\n', '&nbsp;\n')
     diffData = diff.split('\n')
-    print(diffData)
     openTag = '<tr><td class="'
     openTagEnd = '">'
     nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;'
