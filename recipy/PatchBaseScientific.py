@@ -44,4 +44,24 @@ class PatchNumpy(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 
-multiple_insert(sys.meta_path, [PatchPandas(), PatchMPL(), PatchNumpy()])
+class PatchLXML(PatchSimple):
+    modulename = 'lxml.etree'
+
+    input_functions = ['parse', 'iterparse']
+    output_functions = []
+
+    input_wrapper = create_wrapper(log_input, 0, 'lxml')
+    output_wrapper = create_wrapper(log_output, 0, 'lxml')
+
+class PatchBS4(PatchSimple):
+    modulename = 'bs4'
+
+    input_functions = ['BeautifulSoup']
+    output_functions = []
+
+    input_wrapper = create_wrapper(log_input, 0, 'bs4')
+    output_wrapper = create_wrapper(log_output, 0, 'bs4')
+
+
+multiple_insert(sys.meta_path, [PatchNumpy(), PatchPandas(), PatchMPL(),
+                PatchBS4(), PatchLXML()])
