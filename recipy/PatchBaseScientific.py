@@ -62,6 +62,16 @@ class PatchBS4(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'bs4')
     output_wrapper = create_wrapper(log_output, 0, 'bs4')
 
+class PatchCodecs(PatchSimple):
+    modulename = 'codecs'
+
+    # just trying different things here
+    input_functions = ['open', 'StreamReaderWriter.readlines', 'readlines']
+    output_functions = []
+
+    input_wrapper = create_wrapper(log_input, 0, 'codecs')
+    output_wrapper = create_wrapper(log_output, 0, 'codecs')
+
 
 multiple_insert(sys.meta_path, [PatchNumpy(), PatchPandas(), PatchMPL(),
-                PatchBS4(), PatchLXML()])
+                PatchBS4(), PatchLXML(), PatchCodecs()])
