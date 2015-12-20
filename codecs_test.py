@@ -1,10 +1,12 @@
 import recipy
 
-import lxml
+# new bit I've added here
+import sys
+del sys.modules['codecs']
+
 import codecs
 
 with codecs.open('UTF-8-demo.txt', 'r', encoding='utf-8') as f:
-    print f.__class__
     lines = f.readlines()
 
 # when this script is run, is does not show modules are being patched,
