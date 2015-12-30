@@ -5,6 +5,7 @@ import sys
 import getpass
 import platform
 import sys
+import atexit
 from traceback import format_tb
 from tinydb import TinyDB
 import uuid
@@ -46,9 +47,9 @@ def log_init():
 
     # Create the unique ID for this run
     guid = str(uuid.uuid4())
-    
-    
-    
+
+
+
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
         "author": getpass.getuser(),
@@ -59,6 +60,7 @@ def log_init():
         "command": sys.executable,
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow(),
+        "exit_date": None,  # updated at script exit
         "command_args": " ".join(cmd_args)}
 
     if not option_set('ignored metadata', 'git'):
@@ -78,7 +80,7 @@ def log_init():
         except (InvalidGitRepositoryError, ValueError):
             # We can't store git info for some reason, so just skip it
             pass
-    
+
     # Put basics into DB
     RUN_ID = db.insert(run)
 
@@ -153,3 +155,14 @@ def append(field, value, no_duplicates=False):
     return transform
 
 
+# atexit functions will run on script exit (even on exception)
+@atexit.register
+def store_exit_date():
+    # Save the record with the timestamp of the script's completion.
+    db = open_or_create_db()
+
+    run = db.get(eid=RUN_ID)
+    exit_date = datetime.datetime.utcnow()
+
+    db.update({'exit_date': exit_date}, eids=[RUN_ID])
+    db.close()
