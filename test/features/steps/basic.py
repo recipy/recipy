@@ -10,7 +10,7 @@ from behave_utils import get_record_from_db, run_script_and_get_id
 @given('the user opted in to hash data')
 def step_impl(context):
     with open('.recipyrc', 'a') as f:
-        f.write("[general]\nhash_data = true")
+        f.write("[data]\nhash_inputs = true\nhash_outputs = true")
 
 @when('we run some code')
 def step_impl(context):

@@ -74,7 +74,7 @@ def log_input(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-    if option_set('general', 'hash_data'):
+    if option_set('data', 'hash_inputs'):
         record = (filename, git_hash_object(filename))
     else:
         record = filename
@@ -150,7 +150,7 @@ def log_exit():
 @atexit.register
 def hash_outputs():
     # Writing to output files is complete; we can now compute hashes.
-    if not option_set('general', 'hash_data'):
+    if not option_set('data', 'hash_outputs'):
         return
 
     db = open_or_create_db()
