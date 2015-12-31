@@ -93,16 +93,12 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-    if option_set('general', 'hash_data'):
-        record = (filename, git_hash_object(filename))
-    else:
-        record = filename
-
     if option_set('general', 'debug'):
-        print("Output to %s using %s" % (record, source))
+        print("Output to %s using %s" % (filename, source))
     #Update object in DB
+    # data hash will be hashed at script exit, if enabled
     db = open_or_create_db()
-    db.update(append("outputs", record, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_update(field, filename, source):
@@ -149,4 +145,17 @@ def log_exit():
     exit_date = datetime.datetime.utcnow()
     db = open_or_create_db()
     db.update({'exit_date': exit_date}, eids=[RUN_ID])
+    db.close()
+
+@atexit.register
+def hash_outputs():
+    # Writing to output files is complete; we can now compute hashes.
+    if not option_set('general', 'hash_data'):
+        return
+
+    db = open_or_create_db()
+    run = db.get(eid=RUN_ID)
+    new_outputs = [(filename, git_hash_object(filename))
+                   for filename in run.get('outputs')]
+    db.update({'outputs': new_outputs}, eids=[RUN_ID])
     db.close()
