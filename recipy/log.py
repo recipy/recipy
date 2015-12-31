@@ -8,18 +8,11 @@ import atexit
 from traceback import format_tb
 import uuid
 
-from git import Repo, InvalidGitRepositoryError
-
+from .version_control import add_git_info
 from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
-
-def get_origin(repo):
-    try:
-        return repo.remotes.origin.url
-    except:
-        return None
 
 def new_run():
     log_init()
@@ -60,22 +53,7 @@ def log_init():
         "command_args": " ".join(cmd_args)}
 
     if not option_set('ignored metadata', 'git'):
-        try:
-            repo = Repo(scriptpath, search_parent_directories=True)
-            run["gitrepo"] = repo.working_dir
-            run["gitcommit"] =  repo.head.commit.hexsha
-            run["gitorigin"] = get_origin(repo)
-
-            if not option_set('ignored metadata', 'diff'):
-                whole_diff = ''
-                diffs = repo.index.diff(None, create_patch=True)
-                for diff in diffs:
-                    whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
-
-                run['diff'] = whole_diff
-        except (InvalidGitRepositoryError, ValueError):
-            # We can't store git info for some reason, so just skip it
-            pass
+        add_git_info(run, scriptpath)
 
     # Put basics into DB
     RUN_ID = db.insert(run)
@@ -153,9 +131,11 @@ def append(field, value, no_duplicates=False):
 
 # atexit functions will run on script exit (even on exception)
 @atexit.register
-def store_exit_date():
+def log_exit():
     # Update the record with the timestamp of the script's completion.
     # We don't save the duration because it's harder to serialize a timedelta.
+    if option_set('general', 'debug'):
+        print("recipy run complete")
     exit_date = datetime.datetime.utcnow()
     db = open_or_create_db()
     db.update({'exit_date': exit_date}, eids=[RUN_ID])
