@@ -1,11 +1,16 @@
-from git import Repo, InvalidGitRepositoryError
+from git import Git, Repo, InvalidGitRepositoryError
 
 from recipyCommon.config import option_set
 
 
+def git_hash_object(path):
+    # Evaluate git-hash-object on path (even for files outside of repo)
+    return Git().hash_object(path)
+
 def add_git_info(run, scriptpath):
     try:
         repo = Repo(scriptpath, search_parent_directories=True)
+        run["githash"] = git_hash_object(scriptpath)
         run["gitrepo"] = repo.working_dir
         run["gitcommit"] =  repo.head.commit.hexsha
         try:

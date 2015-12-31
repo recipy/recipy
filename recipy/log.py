@@ -8,7 +8,7 @@ import atexit
 from traceback import format_tb
 import uuid
 
-from .version_control import add_git_info
+from .version_control import add_git_info, git_hash_object
 from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
@@ -74,11 +74,16 @@ def log_input(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
+    if option_set('general', 'hash_data'):
+        record = (filename, git_hash_object(filename))
+    else:
+        record = filename
+
     if option_set('general', 'debug'):
-        print("Input from %s using %s" % (filename, source))
+        print("Input from %s using %s" % (record, source))
     #Update object in DB
     db = open_or_create_db()
-    db.update(append("inputs", filename, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("inputs", record, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_output(filename, source):
@@ -88,11 +93,16 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
+    if option_set('general', 'hash_data'):
+        record = (filename, git_hash_object(filename))
+    else:
+        record = filename
+
     if option_set('general', 'debug'):
-        print("Output to %s using %s" % (filename, source))
+        print("Output to %s using %s" % (record, source))
     #Update object in DB
     db = open_or_create_db()
-    db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("outputs", record, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_update(field, filename, source):

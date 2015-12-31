@@ -1,4 +1,4 @@
-from behave import when, then
+from behave import given, when, then
 
 import os, sys
 import subprocess
@@ -6,6 +6,11 @@ from datetime import datetime
 
 from behave_utils import get_record_from_db, run_script_and_get_id
 
+
+@given('the user opted in to hash data')
+def step_impl(context):
+    with open('.recipyrc', 'a') as f:
+        f.write("[general]\nhash_data = true")
 
 @when('we run some code')
 def step_impl(context):
@@ -25,3 +30,9 @@ def step_impl(context):
 def step_impl(context):
     run = get_record_from_db(context.run_id, context.db_file)[0]
     assert type(run.get('exit_date')) is datetime
+
+@then('each output should have a SHA-1 hash')
+def step_impl(context):
+    run = get_record_from_db(context.run_id, context.db_file)[0]
+    for filename, sha1 in run.get('outputs'):
+        assert len(sha1) == 40
