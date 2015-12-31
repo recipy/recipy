@@ -8,4 +8,4 @@ python:
 
 install: "pip install -e . behave"
 
-script: "cd tests/ && behave"
+script: "cd test/ && behave"
