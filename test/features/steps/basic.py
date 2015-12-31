@@ -2,6 +2,7 @@ from behave import when, then
 
 import os, sys
 import subprocess
+from datetime import datetime
 
 from behave_utils import get_record_from_db, run_script_and_get_id
 
@@ -23,5 +24,4 @@ def step_impl(context):
 @then('it should have a recorded exit date')
 def step_impl(context):
     run = get_record_from_db(context.run_id, context.db_file)[0]
-    assert 'exit_date' in run
-    assert run['exit_date'] is not None
+    assert type(run.get('exit_date')) is datetime

@@ -1,4 +1,3 @@
-import wrapt
 import os
 import datetime
 import sys
@@ -7,7 +6,6 @@ import platform
 import sys
 import atexit
 from traceback import format_tb
-from tinydb import TinyDB
 import uuid
 
 from git import Repo, InvalidGitRepositoryError
@@ -47,8 +45,6 @@ def log_init():
 
     # Create the unique ID for this run
     guid = str(uuid.uuid4())
-
-
 
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
@@ -158,11 +154,9 @@ def append(field, value, no_duplicates=False):
 # atexit functions will run on script exit (even on exception)
 @atexit.register
 def store_exit_date():
-    # Save the record with the timestamp of the script's completion.
-    db = open_or_create_db()
-
-    run = db.get(eid=RUN_ID)
+    # Update the record with the timestamp of the script's completion.
+    # We don't save the duration because it's harder to serialize a timedelta.
     exit_date = datetime.datetime.utcnow()
-
+    db = open_or_create_db()
     db.update({'exit_date': exit_date}, eids=[RUN_ID])
     db.close()

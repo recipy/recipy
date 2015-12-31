@@ -1,10 +1,10 @@
 import os, sys, subprocess
 from tinydb import TinyDB, where
 
-from recipyCommon.tinydb_utils import serialization
+from recipyCommon.tinydb_utils import serializer
 
 def get_record_from_db(id, dbfile):
-    db = TinyDB(dbfile, storage=serialization)
+    db = TinyDB(dbfile, storage=serializer)
     res = db.search(where('unique_id') == id)
 
     return res
