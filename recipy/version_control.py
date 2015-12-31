@@ -1,11 +1,14 @@
-from git import Git, Repo, InvalidGitRepositoryError
+from git import Git, Repo, GitCommandError, InvalidGitRepositoryError
 
 from recipyCommon.config import option_set
 
 
 def git_hash_object(path):
     # Evaluate git-hash-object on path (even for files outside of repo)
-    return Git().hash_object(path)
+    try:
+        return Git().hash_object(path)
+    except GitCommandError:  # e.g. file does not exist
+        return None
 
 def add_git_info(run, scriptpath):
     try:
