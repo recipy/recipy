@@ -114,6 +114,11 @@ def main():
     annotate(args)
 
 def annotate(args):
+  # check that $EDITOR is defined
+  if os.environ.get('EDITOR') is None:
+    print('No environment variable $EDITOR defined, exiting.')
+    return
+
   # Grab latest run from the DB
   run = get_latest_run()
 
