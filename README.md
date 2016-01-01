@@ -53,7 +53,7 @@ Alternatively, run an unmodified script with `python -m recipy SCRIPT [ARGS ...]
 
 it will produce an output called `test.npy`. To find out the details of the run which created this file you can search using
 
-    ./recipy search test.npy
+    recipy search test.npy
 
 and it will display information like the following:
 
@@ -76,7 +76,7 @@ Once you've got some runs in your database, you can 'annotate' these runs with a
 
 which will open an editor to allow you to write notes that will be attached to the run. These will then be viewable via the command-line and the GUI when searching for runs.
 
-There are other features in the command-line interface too: `./recipy --help` to see the other options. You can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
+There are other features in the command-line interface too: `recipy --help` to see the other options. You can view diffs, see all runs that created a file with a given name, search based on ids, show the latest entry and more:
 
 	recipy - a frictionless provenance tool for Python
 
