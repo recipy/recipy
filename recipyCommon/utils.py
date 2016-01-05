@@ -3,7 +3,7 @@ import imp
 import os
 
 from tinydb import TinyDB
-from .tinydb_utils import serialization
+from .tinydb_utils import serializer
 
 from .config import get_db_path
 
@@ -12,7 +12,7 @@ def open_or_create_db(path=get_db_path()):
     if not os.path.exists(os.path.dirname(path)):
         os.mkdir(os.path.dirname(path))
 
-    db = TinyDB(path, storage=serialization)
+    db = TinyDB(path, storage=serializer)
 
     return db
 

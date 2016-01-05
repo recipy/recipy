@@ -115,9 +115,12 @@ An example configuration is:
 This simply instructs recipy not to save `git diff` information when it records metadata about a run, and also to print debug messages (which can be really useful if you're trying to work out why certain functions aren't patched). At the moment, the only possible options are:
 
  * `[general]`
-	 * `debug` - print debug mesages
+	 * `debug` - print debug messages
 	 * `quiet` - don't print any messages
 	 * `port` - specify port to use for the GUI
+ *  `[data]`
+	 * `hash_inputs` - compute and store SHA-1 hashes of input files, via [`git-hash-object`](https://git-scm.com/docs/git-hash-object)
+	 * `hash_outputs` - compute and store SHA-1 hashes of output files, via [`git-hash-object`](https://git-scm.com/docs/git-hash-object)
  *  `[database]`
  	 * `path = /path/to/file.json` - set the path to the database file
  * `[ignored metadata]`

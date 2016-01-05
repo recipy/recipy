@@ -1,19 +1,19 @@
-import datetime
+from datetime import datetime
 
 from tinydb.storages import JSONStorage
 from tinydb_serialization import Serializer, SerializationMiddleware
 
 
 class DateTimeSerializer(Serializer):
-    OBJ_CLASS = datetime.datetime  # The class this serializer handles
+    OBJ_CLASS = datetime  # The class this serializer handles
+    FORMAT = '%Y-%m-%dT%H:%M:%S'
 
     def encode(self, obj):
-        return obj.strftime('%Y-%m-%dT%H:%M:%S')
+        return obj.strftime(self.FORMAT)
 
     def decode(self, s):
-        return datetime.strptime(s, '%Y-%m-%dT%H:%M:%S')
+        return datetime.strptime(s, self.FORMAT)
 
 
-
-serialization = SerializationMiddleware()
-serialization.register_serializer(DateTimeSerializer(), 'TinyDate')
+serializer = SerializationMiddleware()
+serializer.register_serializer(DateTimeSerializer(), 'TinyDate')
