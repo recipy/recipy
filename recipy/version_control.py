@@ -1,21 +1,28 @@
-from git import Git, Repo, GitCommandError, InvalidGitRepositoryError
-
+from git import Repo, InvalidGitRepositoryError
+import hashlib
 from recipyCommon.config import option_set
 
 
-def git_hash_object(path):
-    # Evaluate git-hash-object on path (even for files outside of repo)
+def hash_file(path):
     try:
-        return Git().hash_object(path)
-    except GitCommandError:  # e.g. file does not exist
+        BLOCKSIZE = 65536
+        hasher = hashlib.sha1()
+        with open(path, 'rb') as afile:
+            buf = afile.read(BLOCKSIZE)
+            while len(buf) > 0:
+                hasher.update(buf)
+                buf = afile.read(BLOCKSIZE)
+        return hasher.hexdigest()
+    except Exception:
         return None
+
 
 def add_git_info(run, scriptpath):
     try:
         repo = Repo(scriptpath, search_parent_directories=True)
-        run["githash"] = git_hash_object(scriptpath)
+        run["githash"] = hash_file(scriptpath)
         run["gitrepo"] = repo.working_dir
-        run["gitcommit"] =  repo.head.commit.hexsha
+        run["gitcommit"] = repo.head.commit.hexsha
         try:
             run["gitorigin"] = repo.remotes.origin.url
         except:
