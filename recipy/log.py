@@ -8,7 +8,7 @@ import atexit
 from traceback import format_tb
 import uuid
 
-from .version_control import add_git_info, git_hash_object
+from .version_control import add_git_info, hash_file
 from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
@@ -75,7 +75,7 @@ def log_input(filename, source):
             pass
     filename = os.path.abspath(filename)
     if option_set('data', 'hash_inputs'):
-        record = (filename, git_hash_object(filename))
+        record = (filename, hash_file(filename))
     else:
         record = filename
 
@@ -155,7 +155,7 @@ def hash_outputs():
 
     db = open_or_create_db()
     run = db.get(eid=RUN_ID)
-    new_outputs = [(filename, git_hash_object(filename))
+    new_outputs = [(filename, hash_file(filename))
                    for filename in run.get('outputs')]
     db.update({'outputs': new_outputs}, eids=[RUN_ID])
     db.close()
