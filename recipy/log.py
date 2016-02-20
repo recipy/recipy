@@ -8,7 +8,7 @@ import atexit
 from traceback import format_tb
 import uuid
 
-from .version_control import add_git_info, hash_file
+from recipyCommon.version_control import add_git_info, hash_file
 from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
