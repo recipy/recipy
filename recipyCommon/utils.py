@@ -9,6 +9,10 @@ from .config import get_db_path
 
 
 def open_or_create_db(path=get_db_path()):
+    """Get a TinyDB database object for the recipy database.
+
+    This opens the DB, creating it if it doesn't exist.
+    """
     if not os.path.exists(os.path.dirname(path)):
         os.mkdir(os.path.dirname(path))
 
@@ -16,11 +20,26 @@ def open_or_create_db(path=get_db_path()):
 
     return db
 
+
 def multiple_insert(lst, items):
+    """Inserts all of the items into the list lst"""
     for item in items:
         lst.insert(0, item)
 
+
 def recursive_getattr(obj, attr):
+    """Does the same as the builtin getattr function, but works with multiple sub-attributes.
+
+    So, for example:
+
+    getattr(obj, 'attribute')
+
+    works fine, but
+
+    getattr(obj, 'attribute.anotherattribute')
+
+    doesn't. This fixes that. Use in exactly the same way as getattr.
+    """
     prev_part = obj
 
     for part in attr.split("."):
@@ -28,7 +47,20 @@ def recursive_getattr(obj, attr):
 
     return prev_part
 
+
 def recursive_setattr(obj, attr, value):
+    """Does the same as the builtin setattr function, but works with multiple sub-attributes.
+
+    So, for example:
+
+    setattr(obj, 'attribute', value)
+
+    works fine, but
+
+    setattr(obj, 'attribute.anotherattribute', value)
+
+    doesn't. This fixes that. Use in exactly the same way as getattr.
+    """
     prev_part = obj
 
     for part in attr.split(".")[:-1]:
@@ -36,11 +68,13 @@ def recursive_setattr(obj, attr, value):
 
     setattr(prev_part, attr.split(".")[-1], value)
 
+
 def patch_function(mod, function, wrapper):
         old_f_name = '_%s' % function.replace(".", "_")
         setattr(mod, old_f_name, recursive_getattr(mod, function))
 
         recursive_setattr(mod, function, wrapper(getattr(mod, old_f_name)))
+
 
 def create_wrapper(function, arg_loc, source):
     @wrapt.decorator
@@ -49,6 +83,7 @@ def create_wrapper(function, arg_loc, source):
         return wrapped(*args, **kwargs)
 
     return f
+
 
 def recursive_find_module(name, path):
     subnames = name.split(".")

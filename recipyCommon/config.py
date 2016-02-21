@@ -9,6 +9,7 @@ except:
 
 import os
 
+
 def read_config_file():
     """
     Reads the recipy configuration file, which is in Windows INI-style format
@@ -16,7 +17,7 @@ def read_config_file():
     Try .recipyrc and recipy in the current directory, and then ~/.recipy/recipyrc
     """
     CONFIG = SafeConfigParser(allow_no_value=True)
-    
+
     # Try reading files in the current directory first
     files_read = CONFIG.read(['.recipyrc', 'recipyrc'])
 
@@ -29,15 +30,18 @@ def read_config_file():
 
 conf = read_config_file()
 
+
 def option_set(section, name):
     return conf.has_option(section, name)
+
 
 def get_db_path():
     try:
         return conf.get('database', 'path')
     except Error:
         return os.path.expanduser('~/.recipy/recipyDB.json')
-    
+
+
 def get_gui_port():
     try:
         return int(conf.get('general', 'port'))

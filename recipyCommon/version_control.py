@@ -18,6 +18,7 @@ def hash_file(path):
 
 
 def add_git_info(run, scriptpath):
+    """Add information about the git repository holding the source file to the database"""
     try:
         repo = Repo(scriptpath, search_parent_directories=True)
         run["githash"] = hash_file(scriptpath)

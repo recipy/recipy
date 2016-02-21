@@ -5,6 +5,7 @@ import functools
 from recipyCommon.config import option_set
 from recipyCommon.utils import recursive_find_module
 
+
 class PatchImporter(object):
     """A class that handles finding modules, importing them
     and calling a `patch` method.
@@ -23,7 +24,7 @@ class PatchImporter(object):
             self.path = path
             return self
         return None
-    
+
     def load_module(self, name):
         """Module loading method. It imports the module normally,
         and then calls the `patch` method to wrap the functions we need.
@@ -35,7 +36,7 @@ class PatchImporter(object):
                               self.__class__.__name__)
         if name in sys.modules:
             return sys.modules[name]    # already imported and patched
-        
+
         # Find the module
         file_obj, pathname, desc = recursive_find_module(name, sys.path)
 
@@ -44,7 +45,7 @@ class PatchImporter(object):
         finally:
             if file_obj:
                 file_obj.close()
-        
+
         if option_set('general', 'debug'):
             print("Patching %s" % mod.__name__)
 
@@ -56,6 +57,5 @@ class PatchImporter(object):
 
         return mod
 
-    
     def patch(self, mod):
         return mod
