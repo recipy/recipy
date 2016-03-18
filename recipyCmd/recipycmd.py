@@ -105,8 +105,8 @@ def main():
 
     if args['search']:
         search(args)
-    elif args['search-hash']:
-        search_hash(args)
+    #elif args['search-hash']:
+    #    search_hash(args)
     elif args['latest']:
         latest(args)
     elif args['gui']:
