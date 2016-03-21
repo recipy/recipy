@@ -1,6 +1,7 @@
 import sys
 from .PatchImporter import PatchImporter
 import wrapt
+import imp
 
 from .log import *
 from recipyCommon.utils import *
@@ -14,12 +15,27 @@ class PatchSimple(PatchImporter):
     This should not be used directly, but subclasses which set these attributes
     should be created.
     """
+    def __init__(self):
+        pass
+        #if self.modulename in sys.modules:
+        #    del sys.modules[self.modulename]
+
+        #    fp, pathname, description = imp.find_module(self.modulename)
+        #    print(pathname)
+        #    print(description)
+
+        #    try:
+        #        imp.load_module(self.modulename, fp, pathname, description)
+        #        print('Loaded %s' % self.modulename)
+        #    finally:
+                # Since we may exit via an exception, close fp explicitly.
+        #        if fp:
+        #            fp.close()
 
     def patch(self, mod):
         """Do the patching of `input_functions` and `output_functions`
         in `mod` using `input_wrapper` and `output_wrapper` respectively.
         """
-        
         if not self._ignore_input():
             for f in self.input_functions:
                 if option_set('general', 'debug'):
