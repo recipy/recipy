@@ -1,3 +1,6 @@
+# To test with docker:
+# - in /path/to/recipy run: docker build -t recpiy .
+# - run: docker run recipy python /codecs_test.py
 import recipy
 
 import sys
