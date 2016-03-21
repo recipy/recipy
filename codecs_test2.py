@@ -11,7 +11,7 @@ import codecs
 import numpy as np
 from matplotlib.pyplot import *
 
-with codecs.open('UTF-8-demo.txt', 'r', encoding='utf-8') as f:
+with codecs.open('/UTF-8-demo.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
 
 data = pd.DataFrame(np.random.randint(0,100,size=(100, 4)), columns=list('ABCD'))
