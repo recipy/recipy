@@ -1,12 +1,13 @@
 import recipy
 
+# importing pandas before deleting and reimporting codecs works
+import pandas as pd
+
 import sys
 del sys.modules['codecs']
 
 import codecs
 
-# importing pandas after deleting and reimporting codecs does not work
-import pandas as pd
 import numpy as np
 from matplotlib.pyplot import *
 
