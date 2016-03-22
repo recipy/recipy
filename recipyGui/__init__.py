@@ -29,6 +29,9 @@ register_blueprints(recipyGui)
 @recipyGui.template_filter()
 def highlight(text, query=None):
     """Filter to highlight query terms in search results."""
+    if text is None:
+        text = str(text)
+
     if query:
         replacement = r'<mark class="no-side-padding">\1</mark>'
         for q in query.split(' '):
