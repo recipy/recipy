@@ -172,8 +172,10 @@ def gui(args):
               s.close()
               port = trial_port
               break
-          except OSError:
+          except Exception:
               # port already bound
+              # Please note that this also happens when the gui is run in debug
+              # mode!
               pass
       if not port:
           # no free ports above, fall back to random
