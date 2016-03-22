@@ -129,3 +129,19 @@ class TestRecipyGui(TestCase):
 
             for k, v in six.iteritems(run2):
                 self.assertEqual(run.get(k), v)
+
+    def test_dbfile_is_set_in_views(self):
+        """The database file should be displayed in the index, run_details, and
+        latest_run views.
+        """
+        eid = self.db.insert(self.testRuns[0])
+
+        views = ['/', '/run_details?id={}'.format(eid), '/latest_run']
+
+        for v in views:
+            response = self.client.get(v)
+            dbfile2 = self.get_context_variable('dbfile')
+            # is the right value set?
+            self.assertEqual(recipyGui.config.get('tinydb'), dbfile2)
+            # is the value displayed?
+            assert recipyGui.config.get('tinydb') in response.data
