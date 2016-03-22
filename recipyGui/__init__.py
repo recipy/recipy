@@ -15,8 +15,9 @@ Bootstrap(recipyGui)
 # Function to easily find your assets
 # In your template use <link rel=stylesheet href="{{ static('filename') }}">
 recipyGui.jinja_env.globals['static'] = (
-    lambda filename: url_for('static', filename = filename)
+    lambda filename: url_for('static', filename=filename)
 )
+
 
 def register_blueprints(app):
     # Prevents circular imports
@@ -24,6 +25,7 @@ def register_blueprints(app):
     recipyGui.register_blueprint(routes)
 
 register_blueprints(recipyGui)
+
 
 # Custom filters
 @recipyGui.template_filter()
@@ -40,6 +42,7 @@ def highlight(text, query=None):
 
 recipyGui.jinja_env.filters['highlight'] = highlight
 
+
 @recipyGui.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
@@ -47,6 +50,7 @@ def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     return strftime(format, value) + " UTC"
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter
+
 
 @recipyGui.template_filter()
 def gitorigin2url(origin):
@@ -59,10 +63,11 @@ def gitorigin2url(origin):
 
 recipyGui.jinja_env.filters['gitorigin2url'] = gitorigin2url
 
+
 @recipyGui.template_filter()
 def colordiff(diff):
     """convert git diff data to html/bootstrap color code"""
-    if diff=='':
+    if diff == '':
         return ''
     diff = diff.strip()
     diff = diff.replace('\n', '&nbsp;\n')
@@ -70,7 +75,14 @@ def colordiff(diff):
     openTag = '<tr><td class="'
     openTagEnd = '">'
     nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;'
-    data = '\n'.join([('%s%s%s%s<samp>%s</samp><td></tr>' % (openTag, 'bg-danger' if line.startswith('-') else ('bg-success' if line.startswith('+') else ('bg-info' if line.startswith('@') else '')), openTagEnd, nbsp*line.count('\t') ,line)) for line in diffData])
-    return '<table width="100%">'+data+'</table>'
+    data = '\n'.join([('%s%s%s%s<samp>%s</samp><td></tr>' %
+                      (openTag,
+                       'bg-danger' if line.startswith('-')
+                       else ('bg-success' if line.startswith('+')
+                             else ('bg-info' if line.startswith('@')
+                                   else '')),
+                       openTagEnd,
+                       nbsp * line.count('\t'), line)) for line in diffData])
+    return '<table width="100%">' + data + '</table>'
 
 recipyGui.jinja_env.filters['colordiff'] = colordiff
