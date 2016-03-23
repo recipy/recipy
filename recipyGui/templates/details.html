@@ -110,6 +110,16 @@
         <td class="col-md-1">Environment</td>
         <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
       </tr>
+      {% if run.warnings %}
+      <tr>
+        <td class="col-md-1">Warnings</td>
+        <td>
+          <ul>
+            {% for w in run.warnings %}<li><em>{{ w.message }}</em> (<code>{{ w.script }}</code>, line {{ w.lineno }})</li>{% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
       <tr>
         <td class="col-md-1">Notes</td>
         <td>

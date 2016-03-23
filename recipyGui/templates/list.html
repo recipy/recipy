@@ -71,6 +71,12 @@
               {% if run.exception %}
               <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
               {% endif %}
+              {% if run.warnings %}
+              <br> Warnings:
+                <ul>
+                  {% for w in run.warnings %}<li><em>{{ w.message }}</em> (<code>{{ w.script }}</code>, line {{ w.lineno }})</li>{% endfor %}
+                </ul>
+              {% endif %}
               {% if run.notes %}
               <br>Notes:
               <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
