@@ -1,4 +1,5 @@
-# These two lines ARE needed, as they actually set up sys.meta_path
+# These lines ARE needed, as they actually set up sys.meta_path
+from . import PatchWarnings
 from . import PatchBaseScientific
 from . import PatchScientific
 

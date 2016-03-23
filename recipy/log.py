@@ -8,6 +8,7 @@ import sys
 from traceback import format_tb
 from tinydb import TinyDB
 import uuid
+import warnings
 
 from git import Repo, InvalidGitRepositoryError
 
@@ -46,9 +47,9 @@ def log_init():
 
     # Create the unique ID for this run
     guid = str(uuid.uuid4())
-    
-    
-    
+
+
+
     # Get general metadata, environment info, etc
     run = {"unique_id": guid,
         "author": getpass.getuser(),
@@ -78,7 +79,7 @@ def log_init():
         except (InvalidGitRepositoryError, ValueError):
             # We can't store git info for some reason, so just skip it
             pass
-    
+
     # Put basics into DB
     RUN_ID = db.insert(run)
 
@@ -139,6 +140,12 @@ def log_exception(typ, value, traceback):
     # Done logging, call default exception handler
     sys.__excepthook__(typ, value, traceback)
 
+
+def log_warning(*args, **kwargs):
+    print('This is the patch of warnings.showwarning')
+    sys.stderr.write(warnings.formatwarning(*args))
+
+
 def append(field, value, no_duplicates=False):
     """
     Append a given value to a given array field.
@@ -151,5 +158,3 @@ def append(field, value, no_duplicates=False):
             element[field].append(value)
 
     return transform
-
-
