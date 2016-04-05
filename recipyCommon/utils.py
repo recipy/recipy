@@ -21,10 +21,6 @@ def open_or_create_db(path=get_db_path()):
 
 def multiple_insert(lst, items):
     for item in items:
-        if item.modulename in sys.modules:
-            msg = 'unable to patch module; recipy was imported after {}'. \
-                format(item.modulename)
-            warnings.warn(msg, stacklevel=4)
         lst.insert(0, item)
 
 def recursive_getattr(obj, attr):

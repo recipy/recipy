@@ -16,6 +16,8 @@ from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
+PATCHED_MODULES = []
+
 
 def get_origin(repo):
     try:
@@ -42,60 +44,64 @@ def log_init():
 
     global RUN_ID
 
-    # A RUN_ID could have already been assigned.
-    # This happens when a patched module was imported before recipy was
-    # imported.
-    if not RUN_ID:
-        # Open the database
-        db = open_or_create_db()
+    # Open the database
+    db = open_or_create_db()
 
-        # Create the unique ID for this run
-        guid = str(uuid.uuid4())
+    # Create the unique ID for this run
+    guid = str(uuid.uuid4())
 
-        # Get general metadata, environment info, etc
-        run = {
-            "unique_id": guid,
-            "author": getpass.getuser(),
-            "description": "",
-            "inputs": [],
-            "outputs": [],
-            "script": scriptpath,
-            "command": sys.executable,
-            "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
-            "date": datetime.datetime.utcnow(),
-            "command_args": " ".join(cmd_args),
-            "warnings": []
-        }
+    # Get general metadata, environment info, etc
+    run = {
+        "unique_id": guid,
+        "author": getpass.getuser(),
+        "description": "",
+        "inputs": [],
+        "outputs": [],
+        "script": scriptpath,
+        "command": sys.executable,
+        "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
+        "date": datetime.datetime.utcnow(),
+        "command_args": " ".join(cmd_args),
+        "warnings": []
+    }
 
-        if not option_set('ignored metadata', 'git'):
-            try:
-                repo = Repo(scriptpath, search_parent_directories=True)
-                run["gitrepo"] = repo.working_dir
-                run["gitcommit"] = repo.head.commit.hexsha
-                run["gitorigin"] = get_origin(repo)
+    if not option_set('ignored metadata', 'git'):
+        try:
+            repo = Repo(scriptpath, search_parent_directories=True)
+            run["gitrepo"] = repo.working_dir
+            run["gitcommit"] = repo.head.commit.hexsha
+            run["gitorigin"] = get_origin(repo)
 
-                if not option_set('ignored metadata', 'diff'):
-                    whole_diff = ''
-                    diffs = repo.index.diff(None, create_patch=True)
-                    for diff in diffs:
-                        whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
+            if not option_set('ignored metadata', 'diff'):
+                whole_diff = ''
+                diffs = repo.index.diff(None, create_patch=True)
+                for diff in diffs:
+                    whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
 
-                    run['diff'] = whole_diff
-            except (InvalidGitRepositoryError, ValueError):
-                # We can't store git info for some reason, so just skip it
-                pass
+                run['diff'] = whole_diff
+        except (InvalidGitRepositoryError, ValueError):
+            # We can't store git info for some reason, so just skip it
+            pass
 
-        # Put basics into DB
-        RUN_ID = db.insert(run)
+    # Put basics into DB
+    RUN_ID = db.insert(run)
 
-        # Print message
-        if not option_set('general', 'quiet'):
-            print("recipy run inserted, with ID %s" % (guid))
+    # Print message
+    if not option_set('general', 'quiet'):
+        print("recipy run inserted, with ID %s" % (guid))
 
-        db.close()
+    db.close()
 
-        # Register exception hook so exceptions can be logged
-        sys.excepthook = log_exception
+    # Register exception hook so exceptions can be logged
+    sys.excepthook = log_exception
+
+    global PATCHED_MODULES
+    print PATCHED_MODULES
+    for m in PATCHED_MODULES:
+        if m in sys.modules:
+            msg = 'unable to patch module; recipy was imported after {}'. \
+                format(m)
+            warnings.warn(msg, stacklevel=3)
 
 def log_input(filename, source):
     if type(filename) is not str:
@@ -146,21 +152,16 @@ def log_exception(typ, value, traceback):
     sys.__excepthook__(typ, value, traceback)
 
 
-def log_warning(*args, **kwargs):
+def log_warning(msg, typ, script, lineno, **kwargs):
     if option_set('general', 'debug'):
-        print('Logging warning "%s"' % args[0])
+        print('Logging warning "%s"' % str(msg))
 
     warning = {
-        'type': args[1].__name__,
-        'message': str(args[0]),
-        'script': args[2],
-        'lineno': args[3]
+        'type': typ.__name__,
+        'message': str(msg),
+        'script': script,
+        'lineno': lineno
     }
-
-    # Create a new run (happens if a patched module was imported before recipy
-    # was imported.
-    if not RUN_ID:
-        new_run()
 
     # Update object in DB
     db = open_or_create_db()
@@ -168,7 +169,7 @@ def log_warning(*args, **kwargs):
     db.close()
 
     # Done logging, print warning to stderr
-    sys.stderr.write(warnings.formatwarning(*args))
+    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
 
 
 def append(field, value, no_duplicates=False):

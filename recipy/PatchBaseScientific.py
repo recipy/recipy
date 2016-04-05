@@ -3,7 +3,7 @@ from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 import wrapt
 
-from .log import log_input, log_output
+from .log import log_input, log_output, PATCHED_MODULES
 from recipyCommon.utils import create_wrapper, multiple_insert
 
 class PatchPandas(PatchSimple):
@@ -22,6 +22,8 @@ class PatchPandas(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'pandas')
     output_wrapper = create_wrapper(log_output, 0, 'pandas')
+
+    PATCHED_MODULES.append(modulename)
 
 class PatchMPL(PatchSimple):
     modulename = 'matplotlib.pyplot'
