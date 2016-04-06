@@ -35,6 +35,9 @@ class PatchMPL(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'matplotlib')
     output_wrapper = create_wrapper(log_output, 0, 'matplotlib')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
+
 class PatchNumpy(PatchSimple):
     modulename = 'numpy'
 
@@ -47,6 +50,9 @@ class PatchNumpy(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
+
 class PatchLXML(PatchSimple):
     modulename = 'lxml.etree'
 
@@ -56,6 +62,9 @@ class PatchLXML(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'lxml')
     output_wrapper = create_wrapper(log_output, 0, 'lxml')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
+
 class PatchBS4(PatchSimple):
     modulename = 'bs4'
 
@@ -64,6 +73,8 @@ class PatchBS4(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'bs4')
     output_wrapper = create_wrapper(log_output, 0, 'bs4')
+
+    add_module_to_db(modulename, input_functions, output_functions)
 
 
 multiple_insert(sys.meta_path, [PatchNumpy(), PatchPandas(), PatchMPL(),
