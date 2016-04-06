@@ -23,7 +23,7 @@ class PatchPandas(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'pandas')
     output_wrapper = create_wrapper(log_output, 0, 'pandas')
 
-    add_module_to_db(modulename)
+    add_module_to_db(modulename, input_functions, output_functions)
 
 
 class PatchMPL(PatchSimple):

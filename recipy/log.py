@@ -91,12 +91,11 @@ def log_init():
 
     # check whether patched modules were imported before recipy was imported
     patches = db.table('patches')
-    p = patches.get(eid=1)
 
-    for m in p['modules']:
-        if m in sys.modules:
+    for p in patches.all():
+        if p['modulename'] in sys.modules:
             msg = 'not tracking inputs and outputs for {}; recipy was ' \
-                  'imported after this module'.format(m)
+                  'imported after this module'.format(p['modulename'])
             warnings.warn(msg, stacklevel=3)
 
     db.close()
@@ -174,10 +173,13 @@ def log_warning(msg, typ, script, lineno, **kwargs):
     sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
 
 
-def add_module_to_db(modulename, db_path=get_db_path()):
+def add_module_to_db(modulename, input_functions, output_functions,
+                     db_path=get_db_path()):
     db = open_or_create_db(path=db_path)
     patches = db.table('patches')
-    patches.update(append('modules', modulename, no_duplicates=True), eids=[1])
+    patches.insert({'modulename': modulename,
+                    'input_functions': input_functions,
+                    'output_functions': output_functions})
     db.close()
 
 
