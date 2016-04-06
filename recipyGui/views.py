@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
-    escape, make_response
+    escape, make_response, jsonify
 from recipyGui import recipyGui
 from .forms import SearchForm, AnnotateRunForm
 from tinydb import TinyDB, where
@@ -105,3 +105,16 @@ def runs2json():
     response.headers['content-type'] = 'application/json'
     response.headers['Content-Disposition'] = 'attachment; filename=runs.json'
     return response
+
+
+@recipyGui.route('/patched_modules')
+def patched_modules():
+    db = TinyDB(recipyGui.config.get('tinydb'))
+    modules = db.table('patches').all()
+    db.close()
+
+    form = SearchForm()
+
+    return render_template('patched_modules.html', form=form,
+                           active_page='patched_modules', modules=modules,
+                           dbfile=recipyGui.config.get('tinydb'))
