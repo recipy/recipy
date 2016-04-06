@@ -26,9 +26,15 @@
         {% for mod in modules %}
           <tr>
             <td><code>{{ mod.modulename }}</code></td>
-            <td><code>{{ mod.input_functions|join('</code>, <code>')|safe }}</code>
+            <td>
+              {% if mod.input_functions | length > 0 %}
+                <code>{{ mod.input_functions|join('</code>, <code>')|safe }}</code>
+              {% endif %}
             </td>
-            <td><code>{{ mod.output_functions|join('</code>, <code>')|safe }}</code>
+            <td>
+              {% if mod.output_functions | length > 0 %}
+                <code>{{ mod.output_functions|join('</code>, <code>')|safe }}</code>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
