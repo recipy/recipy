@@ -95,8 +95,8 @@ def log_init():
 
     for m in p['modules']:
         if m in sys.modules:
-            msg = 'unable to patch module; recipy was imported after {}'. \
-                format(m)
+            msg = 'not tracking inputs and outputs for {}; recipy was ' \
+                  'imported after this module'.format(m)
             warnings.warn(msg, stacklevel=3)
 
     db.close()
