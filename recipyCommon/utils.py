@@ -9,7 +9,6 @@ from .tinydb_utils import serialization
 
 from .config import get_db_path
 
-
 def open_or_create_db(path=get_db_path()):
     if not os.path.exists(os.path.dirname(path)):
         os.mkdir(os.path.dirname(path))
@@ -17,6 +16,14 @@ def open_or_create_db(path=get_db_path()):
     db = TinyDB(path, storage=serialization)
 
     return db
+
+
+def reset_patches_table(db_path=get_db_path()):
+    db = open_or_create_db(path=db_path)
+    patches = db.table('patches')
+    patches.purge()
+    patches.insert({'modules': []})
+    db.close()
 
 
 def multiple_insert(lst, items):

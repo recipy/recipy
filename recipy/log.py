@@ -12,7 +12,7 @@ import warnings
 
 from git import Repo, InvalidGitRepositoryError
 
-from recipyCommon.config import option_set
+from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
@@ -172,6 +172,13 @@ def log_warning(msg, typ, script, lineno, **kwargs):
 
     # Done logging, print warning to stderr
     sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
+
+
+def add_module_to_db(modulename, db_path=get_db_path()):
+    db = open_or_create_db(path=db_path)
+    patches = db.table('patches')
+    patches.update(append('modules', modulename, no_duplicates=True), eids=[1])
+    db.close()
 
 
 def append(field, value, no_duplicates=False):

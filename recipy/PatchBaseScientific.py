@@ -3,8 +3,8 @@ from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 import wrapt
 
-from .log import log_input, log_output, append
-from recipyCommon.utils import create_wrapper, multiple_insert, open_or_create_db
+from .log import log_input, log_output, add_module_to_db
+from recipyCommon.utils import create_wrapper, multiple_insert
 
 class PatchPandas(PatchSimple):
     modulename = 'pandas'
@@ -23,10 +23,7 @@ class PatchPandas(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'pandas')
     output_wrapper = create_wrapper(log_output, 0, 'pandas')
 
-    db = open_or_create_db()
-    patches = db.table('patches')
-    patches.update(append('modules', modulename, no_duplicates=True), eids=[1])
-    db.close()
+    add_module_to_db(modulename)
 
 
 class PatchMPL(PatchSimple):
