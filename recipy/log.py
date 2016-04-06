@@ -16,7 +16,6 @@ from recipyCommon.config import option_set
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
-PATCHED_MODULES = []
 
 
 def get_origin(repo):
@@ -90,18 +89,21 @@ def log_init():
     if not option_set('general', 'quiet'):
         print("recipy run inserted, with ID %s" % (guid))
 
+    # check whether patched modules were imported before recipy was imported
+    patches = db.table('patches')
+    p = patches.get(eid=1)
+
+    for m in p['modules']:
+        if m in sys.modules:
+            msg = 'unable to patch module; recipy was imported after {}'. \
+                format(m)
+            warnings.warn(msg, stacklevel=3)
+
     db.close()
 
     # Register exception hook so exceptions can be logged
     sys.excepthook = log_exception
 
-    global PATCHED_MODULES
-    print PATCHED_MODULES
-    for m in PATCHED_MODULES:
-        if m in sys.modules:
-            msg = 'unable to patch module; recipy was imported after {}'. \
-                format(m)
-            warnings.warn(msg, stacklevel=3)
 
 def log_input(filename, source):
     if type(filename) is not str:
