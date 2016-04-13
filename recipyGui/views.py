@@ -30,8 +30,8 @@ def index():
         # Search run outputs using the query string
         runs = db.search(
             where('outputs').any(lambda x: re.match(".+%s.+" % query, x)) |
-            where('notes').contains(query) |
-            where('unique_id').contains(query))
+            where('notes').search(query) |
+            where('unique_id').search(query))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
 
     run_ids = []
@@ -43,7 +43,8 @@ def index():
     db.close()
 
     return render_template('list.html', runs=runs, query=query, form=form,
-                           run_ids=str(run_ids))
+                           run_ids=str(run_ids),
+                           dbfile=recipyGui.config.get('tinydb'))
 
 
 @recipyGui.route('/run_details')
@@ -59,7 +60,8 @@ def run_details():
         db.close()
 
         return render_template('details.html', query=query, form=form,
-                               annotateRunForm=annotateRunForm, run=r)
+                               annotateRunForm=annotateRunForm, run=r,
+                               dbfile=recipyGui.config.get('tinydb'))
 
 
 @recipyGui.route('/latest_run')
@@ -76,7 +78,8 @@ def latest_run():
 
     return render_template('details.html', query='', form=form, run=runs[0],
                            annotateRunForm=annotateRunForm,
-                           active_page='latest_run')
+                           active_page='latest_run',
+                           dbfile=recipyGui.config.get('tinydb'))
 
 @recipyGui.route('/annotate', methods=['POST'])
 def annotate():
