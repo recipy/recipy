@@ -31,13 +31,13 @@ import tempfile
 from docopt import docopt
 from pprint import pprint
 from jinja2 import Template
-from tinydb import TinyDB, where, Query
+from tinydb import TinyDB, where
+from dateutil.parser import parse
 from json import dumps
 import six
 
 from . import __version__
 from recipyCommon import config, utils
-from recipyCommon.version_control import hash_file
 
 
 db = utils.open_or_create_db()
@@ -105,8 +105,6 @@ def main():
 
     if args['search']:
         search(args)
-    #elif args['search-hash']:
-    #    search_hash(args)
     elif args['latest']:
         latest(args)
     elif args['gui']:
@@ -116,6 +114,11 @@ def main():
 
 
 def annotate(args):
+    # check that $EDITOR is defined
+    if os.environ.get('EDITOR') is None:
+        print('No environment variable $EDITOR defined, exiting.')
+        return
+
     # Grab latest run from the DB
     run = get_latest_run()
 
@@ -172,8 +175,10 @@ def gui(args):
                 s.close()
                 port = trial_port
                 break
-            except OSError:
+            except Exception:
                 # port already bound
+                # Please note that this also happens when the gui is run in
+                # debug mode!
                 pass
         if not port:
             # no free ports above, fall back to random
@@ -198,13 +203,16 @@ def gui(args):
 def get_latest_run():
     results = db.all()
 
+    results = [_change_date(result) for result in results]
+
     # Sort the results
-    results = sorted(results, key=lambda x: x['date'])
+    results = sorted(results, key=lambda x: parse(x['date']))
 
     return results[-1]
 
 
 def latest(args):
+
     run = get_latest_run()
 
     if args['--json']:
@@ -213,99 +221,33 @@ def latest(args):
     else:
         print(template_result(run))
 
-    if args['--diff']:
-        if 'diff' in run:
-            print("\n\n")
-            print(run['diff'])
-
-
-def find_by_hash(x, val):
-    for output in x:
-        if output[1] == val:
-            return True
-
-
-def find_by_filepath(x, val):
-    for output in x:
-        if output[0] == val:
-            return True
-
-
-def find_by_regex(x, val):
-    for output in x:
-        if re.match(val, output[0]):
-            return True
-
-
-def search_hash(args):
-    try:
-        hash_value = hash_file(args['<outputfile>'])
-    except Exception:
-        # Probably an invalid filename/path so assume it is a raw hash value instead
-        hash_value = args['<outputfile>']
-
-    Run = Query()
-    results = db.search(Run.outputs.test(find_by_hash, hash_value))
-
-    results = sorted(results, key=lambda x: x['date'])
-
-    if args['--json']:
-        if args['--all']:
-            res_to_output = results
-        else:
-            res_to_output = results[-1]
-        output = dumps(res_to_output, indent=2, sort_keys=True)
-        print(output)
-    else:
-        if len(results) == 0:
-            print("No results found")
-        else:
-            if args['--all']:
-                for r in results[:-1]:
-                    print(template_result(r))
-                    print("-" * 40)
-                print(template_result(results[-1]))
-            else:
-                print(template_result(results[-1]))
-                if len(results) > 1:
-                    print("** Previous runs creating this output have been found. Run with --all to show. **")
-
-                if args['--diff']:
-                    if 'diff' in results[-1]:
-                        print("\n\n")
-                        print(results[-1]['diff'])
-
-    db.close()
+        if args['--diff']:
+            if 'diff' in run:
+                print("\n\n")
+                print(run['diff'])
 
 
 def search(args):
-    if args['--fuzzy'] or args['--id'] or args['--regex']:
-        search_text(args)
-    else:
-        search_hash(args)
-
-
-def search_text(args):
     filename = args['<outputfile>']
 
-    Run = Query()
-
     if args['--fuzzy']:
-        #results = db.search(where('outputs').any(lambda x: re.match(".+%s.+" % filename, x)))
-        results = db.search(Run.outputs.test(find_by_regex, ".+%s.+" % filename))
+        results = db.search(where('outputs').any(
+            lambda x: re.match(".+%s.+" % filename, x)))
     elif args['--regex']:
-        #results = db.search(where('outputs').any(lambda x: re.match(filename, x)))
-        results = db.search(Run.outputs.test(find_by_regex, filename))
+        results = db.search(where('outputs').any(
+            lambda x: re.match(filename, x)))
     elif args['--id']:
-        results = db.search(where('unique_id').matches('%s.*' % filename))
+        results = db.search(where('unique_id').matches('%s.+' % filename))
         # Automatically turn on display of all results so we don't misleadingly
         # suggest that their shortened ID is unique when it isn't
         args['--all'] = True
     else:
-        results = db.search(Run.outputs.test(find_by_filepath, os.path.abspath(filename)))
+        results = db.search(where('outputs').any(os.path.abspath(filename)))
+
+    results = [_change_date(result) for result in results]
 
     # Sort the results
-    results = sorted(results, key=lambda x: x['date'])
+    results = sorted(results, key=lambda x: parse(x['date']))
 
     if args['--json']:
         if args['--all']:
@@ -326,7 +268,8 @@ def search_text(args):
             else:
                 print(template_result(results[-1]))
                 if len(results) > 1:
-                    print("** Previous runs creating this output have been found. Run with --all to show. **")
+                    print("** Previous runs creating this output have been " +
+                          "found. Run with --all to show. **")
 
                 if args['--diff']:
                     if 'diff' in results[-1]:
@@ -335,6 +278,10 @@ def search_text(args):
 
     db.close()
 
+
+def _change_date(result):
+    result['date'] = result['date'].replace('{TinyDate}:', '')
+    return result
 
 if __name__ == '__main__':
     main()
