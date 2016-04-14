@@ -31,6 +31,8 @@ def index():
         # Search run outputs using the query string
         runs = db.search(
             where('outputs').any(lambda x: listsearch(query, x)) |
+            where('inputs').any(lambda x: listsearch(query, x)) |
+            where('script').search(query) |
             where('notes').search(query) |
             where('unique_id').search(query))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)

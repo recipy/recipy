@@ -45,7 +45,7 @@
               on
               <span class="text-primary">{{ run.date | datetimefilter }}</span>
               <br> Ran
-              <code>{{ run.script }}</code> using
+              <code>{{ run.script | highlight(query) | safe }}</code> using
               <code>{{ run.command }}</code>
               <br> {% if run.command_args|length > 0 %}
               Command-line arguments: {{ run.command_args | safe }}
@@ -58,7 +58,7 @@
               {% else %}
               Inputs:
               <code>{{ run.inputs | join('</code>,
-              <code>') | safe }}</code>
+              <code>') | highlight(query) | safe }}</code>
               {% endif %}
               <br>
               {% if run.outputs | length == 0 %}
