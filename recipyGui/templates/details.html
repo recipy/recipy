@@ -63,9 +63,7 @@
       </tr>
       <tr>
         <td class="col-md-1">Script</td>
-        <td>
-          <code>{{ run.script | highlight(query) | safe }}</code>
-        </td>
+        <td>{{ code_with_search_link(run.script, query) }}</td>
       </tr>
       {% if run.command_args|length > 0 %}
       <tr>
