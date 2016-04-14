@@ -35,11 +35,12 @@ def listsearch(query, item):
             A file name or a list containing a file name and hash
 
     Returns:
-        None or something that is True
+        boolean
     """
     fh = ''
     if not isinstance(item, six.string_types):
-        item = item[0]
         fh = item[1]
+        item = item[0]
 
-    return re.match(".+%s.+" % query, item) or re.match(".+%s.+" % query, fh)
+    return bool(re.search(query, item) or
+                re.search(query, fh))
