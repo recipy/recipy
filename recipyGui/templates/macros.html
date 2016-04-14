@@ -5,16 +5,17 @@
 {% macro display_file_list(files) %}
   {% if files | length > 0 %}
     {% if files[0] is string %}
-      {% for item in files %}
-        {{ code_with_search_link(item) }}
-        <br>
-      {% endfor %}
+      <ul class="list-unstyled">
+        {% for item in files %}
+          <li>{{ code_with_search_link(item) }}</li>
+        {% endfor %}
+      <ul>
     {% else %}
-      {% for item in files %}
-        {{ code_with_search_link(item[0]) }} (hash: {{ code_with_search_link(item[1])}})
-        <br>
-      {% endfor %}
-      <br>
+      <ul class="list-unstyled">
+        {% for item in files %}
+          <li>{{ code_with_search_link(item[0]) }} (hash: {{ code_with_search_link(item[1])}})</li>
+        {% endfor %}
+      </ul>
     {% endif %}
   {% else %}
     <em>none</em>
