@@ -78,13 +78,13 @@
       <tr>
         <td class="col-md-1">Inputs</td>
         <td>
-          {{ display_file_list(run.inputs) }}
+          {{ display_file_list(run.inputs, query) }}
         </td>
       </tr>
       <tr>
         <td class="col-md-1">Outputs</td>
         <td>
-          {{ display_file_list(run.outputs) }}
+          {{ display_file_list(run.outputs, query) }}
         </td>
       </tr>
       {% if run.exception %}

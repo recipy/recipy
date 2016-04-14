@@ -1,19 +1,19 @@
-{% macro code_with_search_link(query) %}
-    <a href="{{ url_for('index', query=query) }}"><code>{{ query }}</code></a>
+{% macro code_with_search_link(text, query) %}
+    <a href="{{ url_for('index', query=text) }}"><code>{{ text | highlight(query) | safe }}</code></a>
 {% endmacro %}
 
-{% macro display_file_list(files) %}
+{% macro display_file_list(files, query) %}
   {% if files | length > 0 %}
     {% if files[0] is string %}
       <ul class="list-unstyled">
         {% for item in files %}
-          <li>{{ code_with_search_link(item) }}</li>
+          <li>{{ code_with_search_link(item, query) }}</li>
         {% endfor %}
       <ul>
     {% else %}
       <ul class="list-unstyled">
         {% for item in files %}
-          <li>{{ code_with_search_link(item[0]) }} (hash: {{ code_with_search_link(item[1])}})</li>
+          <li>{{ code_with_search_link(item[0], query) }} (hash: {{ code_with_search_link(item[1], query)}})</li>
         {% endfor %}
       </ul>
     {% endif %}
