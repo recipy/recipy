@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% from 'macros.html' import code_with_search_link, display_file_list %}
+
 {% block title %}ReciPy - Run Details
   {% if active_page == 'latest_run' %} - Latest Run{% endif %}
 {% endblock %}
@@ -76,31 +78,13 @@
       <tr>
         <td class="col-md-1">Inputs</td>
         <td>
-          {% if run.inputs | length > 0 %}
-            <code>{{ run.inputs | join('</code><br><code>') | highlight(query) | safe }}
-          {% else %}
-            <em>none</em>
-          {% endif %}
+          {{ display_file_list(run.inputs) }}
         </td>
       </tr>
       <tr>
         <td class="col-md-1">Outputs</td>
         <td>
-          {% if run.outputs | length > 0 %}
-            {% if run.outputs[0] is string %}
-              <code>{{ run.outputs | join('</code><br><code>') | highlight(query) | safe }}</code>
-            {% else %}
-              {% for item in run.outputs %}
-                <a href="{{ url_for('index', query=item[0]) }}" data-toggle="tooltip" title="Hooray!"><code>{{ item[0] }}</code></a>
-                (hash: <a href="{{ url_for('index', query=item[1]) }}"><code>{{ item[1] }}</code></a>)
-                <br>
-              {% endfor %}
-              <br>
-
-            {% endif %}
-          {% else %}
-            <em>none</em>
-          {% endif %}
+          {{ display_file_list(run.outputs) }}
         </td>
       </tr>
       {% if run.exception %}
