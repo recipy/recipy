@@ -280,7 +280,7 @@ def search(args):
 
 
 def _change_date(result):
-    result['date'] = result['date'].replace('{TinyDate}:', '')
+    result['date'] = str(result['date']).replace('{TinyDate}:', '')
     return result
 
 if __name__ == '__main__':
