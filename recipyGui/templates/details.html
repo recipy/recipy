@@ -30,6 +30,7 @@
 <div class="row">
   <div class="col-md-6">
     <h3>Run {{ run.unique_id | string | highlight(query) | safe }}</h3>
+    <p class="small text-muted">Click file names or hash codes to search.</p>
   </div>
   <div class="col-md-2 col-md-offset-4">
     <div class="pull-right align-with-header">
@@ -76,8 +77,7 @@
         <td class="col-md-1">Inputs</td>
         <td>
           {% if run.inputs | length > 0 %}
-            <code>{{ run.inputs | join('</code>,
-            <code>') | highlight(query) | safe }}
+            <code>{{ run.inputs | join('</code><br><code>') | highlight(query) | safe }}
           {% else %}
             <em>none</em>
           {% endif %}
@@ -87,8 +87,17 @@
         <td class="col-md-1">Outputs</td>
         <td>
           {% if run.outputs | length > 0 %}
-            <code>{{ run.outputs | join('</code>,
-            <code>') | highlight(query) | safe }}</code>
+            {% if run.outputs[0] is string %}
+              <code>{{ run.outputs | join('</code><br><code>') | highlight(query) | safe }}</code>
+            {% else %}
+              {% for item in run.outputs %}
+                <a href="{{ url_for('index', query=item[0]) }}" data-toggle="tooltip" title="Hooray!"><code>{{ item[0] }}</code></a>
+                (hash: <a href="{{ url_for('index', query=item[1]) }}"><code>{{ item[1] }}</code></a>)
+                <br>
+              {% endfor %}
+              <br>
+
+            {% endif %}
           {% else %}
             <em>none</em>
           {% endif %}
