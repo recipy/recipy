@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% from 'macros.html' import code_with_search_link, display_file_list_single_line %}
+
 {% block content %}
 {{ super() }}
 
@@ -10,6 +12,7 @@
     {% else %}
       <h3>Runs</h3>
     {% endif %}
+    <p class="small text-muted">Click file names or hash codes to search.</p>
   </div>
   <div class="col-md-4 col-md-offset-5">
     <div class="pull-right align-with-header">
@@ -40,40 +43,26 @@
             </td>
             <td>
               Run ID: {{ run.unique_id | highlight(query) | safe }}
-              <br> Created by
-              <span class="text-primary">{{ run.author }}</span>
-              on
-              <span class="text-primary">{{ run.date | datetimefilter }}</span>
-              <br> Ran
-              <code>{{ run.script | highlight(query) | safe }}</code> using
+              <br> Created by <span class="text-primary">{{ run.author }}</span>
+              on <span class="text-primary">{{ run.date | datetimefilter }}</span>
+              <br> Ran {{ code_with_search_link(run.script, query) }} using
               <code>{{ run.command }}</code>
-              <br> {% if run.command_args|length > 0 %}
-              Command-line arguments: {{ run.command_args | safe }}
               <br>
+              {% if run.command_args|length > 0 %}
+                Command-line arguments: {{ run.command_args | safe }}
+                <br>
               {% endif %}
               Environment: {{ run.environment|join(", ") }}
               <br>
-              {% if run.inputs | length == 0 %}
-              Inputs: <em>none</em>
-              {% else %}
-              Inputs:
-              <code>{{ run.inputs | join('</code>,
-              <code>') | highlight(query) | safe }}</code>
-              {% endif %}
+              Inputs: {{ display_file_list_single_line(run.inputs, query) }}
               <br>
-              {% if run.outputs | length == 0 %}
-              Outputs: <em>none</em>
-              {% else %}
-              Outputs:
-              <code>{{ run.outputs | join('</code>,
-              <code>') | highlight(query) | safe }}</code>
-              {% endif %}
+              Outputs: {{ display_file_list_single_line(run.outputs, query) }}
               {% if run.exception %}
-              <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
+                <br> <strong>Exception: <i>{{ run.exception.type }}</i></strong> <code>{{ run.exception.message }}</code>
               {% endif %}
               {% if run.notes %}
-              <br>Notes:
-              <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
+                <br>Notes:
+                <span class="pre-wrap-white-space text-primary">{{ run.notes | highlight(query) | safe }}</span>
               {% endif %}
             </td>
           </tr>
