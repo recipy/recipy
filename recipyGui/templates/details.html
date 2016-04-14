@@ -134,7 +134,7 @@
       <tr>
         <td class="col-md-1">Git Repo</td>
         <td>
-          <code>{{ run.gitrepo | highlight(query) | safe }}</code>
+          <code>{{ run.gitrepo }}</code>
           {% if run.gitorigin and run.gitorigin | length > 0 %}
           (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
           {% endif %}
@@ -143,7 +143,7 @@
       <tr>
         <td class="col-md-1">Git Origin</td>
         <td>
-          {{ run.gitorigin | highlight(query) | safe }}
+          {{ run.gitorigin }}
         </td>
       </tr>
       <tr>
