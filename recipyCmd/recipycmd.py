@@ -64,7 +64,11 @@ Inputs: none
 {% else %}
 Inputs:
 {% for input in inputs %}
+{% if input is string %}
   {{ input }}
+{% else %}
+  {{ input[0] }} ({{ input[1] }})
+{% endif %}
 {% endfor %}
 {% endif %}
 {% if outputs | length == 0 %}
@@ -72,7 +76,11 @@ Outputs: none
 {% else %}
 Outputs:
 {% for output in outputs %}
+{% if output is string %}
   {{ output }}
+{% else %}
+  {{ output[0] }} ({{ output[1] }})
+{% endif %}
 {% endfor %}
 {% endif %}
 
