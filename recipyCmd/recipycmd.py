@@ -38,6 +38,7 @@ import six
 
 from . import __version__
 from recipyCommon import config, utils
+from recipyCommon.tinydb_utils import listsearch
 
 
 db = utils.open_or_create_db()
@@ -235,14 +236,15 @@ def search(args):
             lambda x: re.match(".+%s.+" % filename, x)))
     elif args['--regex']:
         results = db.search(where('outputs').any(
-            lambda x: re.match(filename, x)))
+            lambda x: listsearch(filename, x)))
     elif args['--id']:
         results = db.search(where('unique_id').matches('%s.+' % filename))
         # Automatically turn on display of all results so we don't misleadingly
         # suggest that their shortened ID is unique when it isn't
         args['--all'] = True
     else:
-        results = db.search(where('outputs').any(os.path.abspath(filename)))
+        results = db.search(where('outputs').any(
+            lambda x: listsearch(os.path.abspath(filename), x)))
 
     results = [_change_date(result) for result in results]
 
