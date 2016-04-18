@@ -1,4 +1,4 @@
-import sys
+import six
 
 from .log import log_input, log_output
 
@@ -16,13 +16,20 @@ def open(*args, **kwargs):
     If python 2 is used, and an `encoding` parameter is passed to this
     function, `codecs` is used to open the file with proper encoding.
     """
-    if 'mode' in kwargs.keys():
-        mode = kwargs['mode']       # Python 3
+    if six.PY3:
+        mode = kwargs['mode']
+        f = __builtins__['open'](*args, **kwargs)
     else:
         try:
-            mode = args[1]          # Python 2
+            mode = args[1]
         except:
-            mode = 'r'              # Default (in Python 2)
+            mode = 'r'
+
+        if 'encoding' in kwargs.keys():
+            import codecs
+            f = codecs.open(*args, **kwargs)
+        else:
+            f = __builtins__['open'](*args, **kwargs)
 
     # open file for reading?
     for c in 'r+':
@@ -33,14 +40,5 @@ def open(*args, **kwargs):
     for c in 'wax+':
         if c in mode:
             log_output(args[0], 'recipy.open')
-
-    if sys.version_info[0] == 2:
-        if 'encoding' in kwargs.keys():
-            import codecs
-            f = codecs.open(*args, **kwargs)
-        else:
-            f = __builtins__['open'](*args, **kwargs)
-    else:
-        f = __builtins__['open'](*args, **kwargs)
 
     return(f)
