@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% from 'macros.html' import code_with_search_link, display_file_list %}
+
 {% block title %}ReciPy - Run Details
   {% if active_page == 'latest_run' %} - Latest Run{% endif %}
 {% endblock %}
@@ -30,6 +32,7 @@
 <div class="row">
   <div class="col-md-6">
     <h3>Run {{ run.unique_id | string | highlight(query) | safe }}</h3>
+    <p class="small text-muted">Click file names or hash codes to search.</p>
   </div>
   <div class="col-md-2 col-md-offset-4">
     <div class="pull-right align-with-header">
@@ -60,9 +63,7 @@
       </tr>
       <tr>
         <td class="col-md-1">Script</td>
-        <td>
-          <code>{{ run.script | highlight(query) | safe }}</code>
-        </td>
+        <td>{{ code_with_search_link(run.script, query) }}</td>
       </tr>
       {% if run.command_args|length > 0 %}
       <tr>
@@ -75,23 +76,13 @@
       <tr>
         <td class="col-md-1">Inputs</td>
         <td>
-          {% if run.inputs | length > 0 %}
-            <code>{{ run.inputs | join('</code>,
-            <code>') | highlight(query) | safe }}
-          {% else %}
-            <em>none</em>
-          {% endif %}
+          {{ display_file_list(run.inputs, query) }}
         </td>
       </tr>
       <tr>
         <td class="col-md-1">Outputs</td>
         <td>
-          {% if run.outputs | length > 0 %}
-            <code>{{ run.outputs | join('</code>,
-            <code>') | highlight(query) | safe }}</code>
-          {% else %}
-            <em>none</em>
-          {% endif %}
+          {{ display_file_list(run.outputs, query) }}
         </td>
       </tr>
       {% if run.exception %}
@@ -141,7 +132,7 @@
       <tr>
         <td class="col-md-1">Git Repo</td>
         <td>
-          <code>{{ run.gitrepo | highlight(query) | safe }}</code>
+          <code>{{ run.gitrepo }}</code>
           {% if run.gitorigin and run.gitorigin | length > 0 %}
           (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
           {% endif %}
@@ -150,7 +141,7 @@
       <tr>
         <td class="col-md-1">Git Origin</td>
         <td>
-          {{ run.gitorigin | highlight(query) | safe }}
+          {{ run.gitorigin }}
         </td>
       </tr>
       <tr>

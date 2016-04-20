@@ -38,6 +38,7 @@ import six
 
 from . import __version__
 from recipyCommon import config, utils
+from recipyCommon.tinydb_utils import listsearch
 
 
 db = utils.open_or_create_db()
@@ -63,7 +64,11 @@ Inputs: none
 {% else %}
 Inputs:
 {% for input in inputs %}
+{% if input is string %}
   {{ input }}
+{% else %}
+  {{ input[0] }} ({{ input[1] }})
+{% endif %}
 {% endfor %}
 {% endif %}
 {% if outputs | length == 0 %}
@@ -71,7 +76,11 @@ Outputs: none
 {% else %}
 Outputs:
 {% for output in outputs %}
+{% if output is string %}
   {{ output }}
+{% else %}
+  {{ output[0] }} ({{ output[1] }})
+{% endif %}
 {% endfor %}
 {% endif %}
 
@@ -235,14 +244,15 @@ def search(args):
             lambda x: re.match(".+%s.+" % filename, x)))
     elif args['--regex']:
         results = db.search(where('outputs').any(
-            lambda x: re.match(filename, x)))
+            lambda x: listsearch(filename, x)))
     elif args['--id']:
         results = db.search(where('unique_id').matches('%s.+' % filename))
         # Automatically turn on display of all results so we don't misleadingly
         # suggest that their shortened ID is unique when it isn't
         args['--all'] = True
     else:
-        results = db.search(where('outputs').any(os.path.abspath(filename)))
+        results = db.search(where('outputs').any(
+            lambda x: listsearch(os.path.abspath(filename), x)))
 
     results = [_change_date(result) for result in results]
 
@@ -280,7 +290,7 @@ def search(args):
 
 
 def _change_date(result):
-    result['date'] = result['date'].replace('{TinyDate}:', '')
+    result['date'] = str(result['date']).replace('{TinyDate}:', '')
     return result
 
 if __name__ == '__main__':

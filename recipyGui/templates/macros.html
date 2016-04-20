@@ -1,0 +1,39 @@
+{% macro code_with_search_link(text, query) %}
+    <a href="{{ url_for('index', query=text) }}"><code>{{ text | highlight(query) | safe }}</code></a>
+{% endmacro %}
+
+{% macro display_file_list(files, query) %}
+  {% if files | length > 0 %}
+    {% if files[0] is string %}
+      <ul class="list-unstyled">
+        {% for item in files %}
+          <li>{{ code_with_search_link(item, query) }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <ul class="list-unstyled">
+        {% for item in files %}
+          <li>{{ code_with_search_link(item[0], query) }} (hash code: {{ code_with_search_link(item[1], query)}})</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <em>none</em>
+  {% endif %}
+{% endmacro %}
+
+{% macro display_file_list_single_line(files, query) %}
+  {% if files | length > 0 %}
+    {% if files[0] is string %}
+      {% for item in files %}
+        <span class="glyphicon glyphicon-file"></span> {{ code_with_search_link(item, query) }}{% if not loop.last %} &middot; {% endif %}
+      {% endfor %}
+    {% else %}
+      {% for item in files %}
+        <span class="glyphicon glyphicon-file"></span> {{ code_with_search_link(item[0], query) }} (hash code: {{ code_with_search_link(item[1], query)}}){% if not loop.last %} &middot; {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    <em>none</em>
+  {% endif %}
+{% endmacro %}

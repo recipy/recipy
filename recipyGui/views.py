@@ -8,6 +8,7 @@ from dateutil.parser import parse
 import os
 from ast import literal_eval
 from json import dumps
+from recipyCommon.tinydb_utils import listsearch
 
 
 routes = Blueprint('routes', __name__, template_folder='templates')
@@ -29,7 +30,9 @@ def index():
     else:
         # Search run outputs using the query string
         runs = db.search(
-            where('outputs').any(lambda x: re.match(".+%s.+" % query, x)) |
+            where('outputs').any(lambda x: listsearch(query, x)) |
+            where('inputs').any(lambda x: listsearch(query, x)) |
+            where('script').search(query) |
             where('notes').search(query) |
             where('unique_id').search(query))
     runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
