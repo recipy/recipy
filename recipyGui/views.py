@@ -56,6 +56,7 @@ def run_details():
         annotateRunForm = AnnotateRunForm()
         query = request.args.get('query', '')
         run_id = int(request.args.get('id'))
+        active_page = request.args.get('active_page', '')
 
         db = TinyDB(recipyGui.config.get('tinydb'))
         r = db.get(eid=run_id)
@@ -66,14 +67,11 @@ def run_details():
         return render_template('details.html', query=query, form=form,
                                annotateRunForm=annotateRunForm, run=r,
                                dbfile=recipyGui.config.get('tinydb'),
-                               diffs=diffs)
+                               diffs=diffs, active_page=active_page)
 
 
 @recipyGui.route('/latest_run')
 def latest_run():
-    form = SearchForm()
-    annotateRunForm = AnnotateRunForm()
-
     db = TinyDB(recipyGui.config.get('tinydb'))
 
     runs = db.all()
@@ -81,10 +79,8 @@ def latest_run():
 
     db.close()
 
-    return render_template('details.html', query='', form=form, run=runs[0],
-                           annotateRunForm=annotateRunForm,
-                           active_page='latest_run',
-                           dbfile=recipyGui.config.get('tinydb'))
+    return redirect(url_for('run_details', query='', id=runs[0].eid,
+                    active_page='latest_run'))
 
 @recipyGui.route('/annotate', methods=['POST'])
 def annotate():

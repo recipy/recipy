@@ -131,12 +131,12 @@ class TestRecipyGui(TestCase):
                 self.assertEqual(run.get(k), v)
 
     def test_dbfile_is_set_in_views(self):
-        """The database file should be displayed in the index, run_details, and
-        latest_run views.
+        """The database file should be displayed in the index, and run_details
+        views.
         """
         eid = self.db.insert(self.testRuns[0])
 
-        views = ['/', '/run_details?id={}'.format(eid), '/latest_run']
+        views = ['/', '/run_details?id={}'.format(eid)]
 
         for v in views:
             response = self.client.get(v)
