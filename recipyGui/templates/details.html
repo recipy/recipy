@@ -171,4 +171,21 @@
 </div>
 {% endif %}
 
+{% if diffs | length > 0 %}
+<div class="row">
+  <div class="col-md-12">
+    <h3>Output file diffs</h3>
+      {% for f in diffs %}
+        <h4>{{ f.filename }}</h4>
+        {% if f.diff %}
+          {{ f.diff | colordiff | highlight(query) | safe }}
+        {% else %}
+          No changes.
+        {% endif %}
+        <hr>
+      {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}

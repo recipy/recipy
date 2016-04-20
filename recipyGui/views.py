@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, \
     escape, make_response
 from recipyGui import recipyGui
 from .forms import SearchForm, AnnotateRunForm
-from tinydb import TinyDB, where
+from tinydb import TinyDB, Query, where
 import re
 from dateutil.parser import parse
 import os
@@ -59,12 +59,14 @@ def run_details():
 
         db = TinyDB(recipyGui.config.get('tinydb'))
         r = db.get(eid=run_id)
+        diffs = db.table('filediffs').search(Query().run_id == run_id)
 
         db.close()
 
         return render_template('details.html', query=query, form=form,
                                annotateRunForm=annotateRunForm, run=r,
-                               dbfile=recipyGui.config.get('tinydb'))
+                               dbfile=recipyGui.config.get('tinydb'),
+                               diffs=diffs)
 
 
 @recipyGui.route('/latest_run')
