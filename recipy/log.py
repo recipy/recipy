@@ -6,9 +6,13 @@ import platform
 import atexit
 from traceback import format_tb
 import uuid
+import tempfile
+import shutil
+from tinydb import Query
+import difflib
 
 from recipyCommon.version_control import add_git_info, hash_file
-from recipyCommon.config import option_set
+from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
@@ -118,6 +122,15 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
+
+    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
+        print('Output file "{}" already exists; copying file'.format(filename))
+        tf = tempfile.NamedTemporaryFile(delete=False)
+        db = open_or_create_db()
+        shutil.copy2(filename, tf.name)
+        add_file_diff_to_db(filename, tf.name, db_path=get_db_path())
+        print('copied file to tempfile named "{}"'.format(tf.name))
+
     if option_set('general', 'debug'):
         print("Output to %s using %s" % (filename, source))
     #Update object in DB
@@ -138,6 +151,15 @@ def log_exception(typ, value, traceback):
     db.close()
     # Done logging, call default exception handler
     sys.__excepthook__(typ, value, traceback)
+
+
+def add_file_diff_to_db(filename, tempfilename, db_path=get_db_path()):
+    db = open_or_create_db(path=db_path)
+    diffs = db.table('filediffs')
+    diffs.insert({'run_id': RUN_ID,
+                  'filename': filename,
+                  'tempfilename': tempfilename})
+    db.close()
 
 
 def append(field, value, no_duplicates=False):
@@ -178,4 +200,26 @@ def hash_outputs():
     new_outputs = [(filename, hash_file(filename))
                    for filename in run.get('outputs')]
     db.update({'outputs': new_outputs}, eids=[RUN_ID])
+    db.close()
+
+
+@atexit.register
+def output_file_diffs():
+    # Writing to output files is complete; we can now compute file diffs.
+    if not option_set('data', 'file_diff_outputs'):
+        return
+
+    db = open_or_create_db()
+    diffs_table = db.table('filediffs')
+    diffs = diffs_table.search(Query().run_id == RUN_ID)
+    for item in diffs:
+        diff = difflib.unified_diff(open(item['filename']).readlines(),
+                                    open(item['tempfilename']).readlines(),
+                                    fromfile='before this run',
+                                    tofile='after this run')
+        diffs_table.update({'diff': ''.join([l for l in diff])},
+                           eids=[item.eid])
+
+        # delete temporary file
+        os.remove(item['tempfilename'])
     db.close()
