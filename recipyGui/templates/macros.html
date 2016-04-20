@@ -2,21 +2,37 @@
     <a href="{{ url_for('index', query=text) }}"><code>{{ text | highlight(query) | safe }}</code></a>
 {% endmacro %}
 
-{% macro display_file_list(files, query) %}
+{% macro file_diff_link(filename) %}
+    <a href="#diff-{{filename}}">file diff</a>
+{% endmacro %}
+
+{% macro display_file_list(files, query, diffs) %}
   {% if files | length > 0 %}
-    {% if files[0] is string %}
-      <ul class="list-unstyled">
-        {% for item in files %}
-          <li>{{ code_with_search_link(item, query) }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <ul class="list-unstyled">
-        {% for item in files %}
-          <li>{{ code_with_search_link(item[0], query) }} (hash code: {{ code_with_search_link(item[1], query)}})</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+    <ul class="list-unstyled">
+      {% for item in files %}
+        {% set info = [] %}
+
+        {% if not files[0] is string %}
+          {% set filename = item[0] %}
+          {% do info.append(code_with_search_link(item[1], query)) %}
+        {% else %}
+          {% set filename = item %}
+        {% endif %}
+
+        {% if diffs %}
+          {% do info.append(file_diff_link(item[0])) %}
+        {% endif %}
+
+        <li>{{ code_with_search_link(filename, query) }}
+          {% if info | length > 0 %}
+            >>>
+            {% for inf in info %}
+              {{inf}}{% if not loop.last %} <b>&middot;</b> {% endif %}
+            {% endfor %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
   {% else %}
     <em>none</em>
   {% endif %}

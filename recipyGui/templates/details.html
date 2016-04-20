@@ -76,13 +76,13 @@
       <tr>
         <td class="col-md-1">Inputs</td>
         <td>
-          {{ display_file_list(run.inputs, query) }}
+          {{ display_file_list(run.inputs, query, diffs=None) }}
         </td>
       </tr>
       <tr>
         <td class="col-md-1">Outputs</td>
         <td>
-          {{ display_file_list(run.outputs, query) }}
+          {{ display_file_list(run.outputs, query, diffs) }}
         </td>
       </tr>
       {% if run.exception %}
@@ -175,17 +175,30 @@
 <div class="row">
   <div class="col-md-12">
     <h3>Output file diffs</h3>
-      {% for f in diffs %}
-        <h4>{{ f.filename }}</h4>
-        {% if f.diff %}
-          {{ f.diff | colordiff | highlight(query) | safe }}
-        {% else %}
-          No changes.
-        {% endif %}
-        <hr>
-      {% endfor %}
   </div>
 </div>
+
+{% for f in diffs %}
+<div class="row">
+  <div class="col-md-11">
+    <h4 id="diff-{{f.filename}}">{{ f.filename }} diff</h4>
+  </div>
+  <div class="col-md-1">
+    <a href="#top">top</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {% if f.diff %}
+      {{ f.diff | colordiff | highlight(query) | safe }}
+    {% else %}
+      No changes.
+    {% endif %}
+    <hr>
+  </div>
+</div>
+{% endfor %}
+
 {% endif %}
 
 {% endblock %}
