@@ -20,7 +20,7 @@
         {% endif %}
 
         {% if diffs %}
-          {% do info.append(file_diff_link(item[0])) %}
+          {% do info.append(file_diff_link(filename)) %}
         {% endif %}
 
         <li>{{ code_with_search_link(filename, query) }}
