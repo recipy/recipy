@@ -70,6 +70,11 @@ An alternative way to view this is to use the GUI. Just run `recipy gui` and a b
 
 ![Screenshot of GUI](http://rtwilson.com/images/RecipyGUI.png)
 
+If you want to log inputs and outputs of files read or written with built-in open, you need to do a little more work. Either use `recipy.open` (only requires `import recipy` at the top of your script), or add `from recipy import open` and just use `open`.
+This workaround is required, because many libraries use built-in open internally, and you only want to record the files you explicitly opened yourself.
+
+If you use Python 2, you can pass an `encoding` parameter to `recipy.open`. In this case `codecs` is used to open the file with proper encoding.
+
 Once you've got some runs in your database, you can 'annotate' these runs with any notes that you want to keep about them. This can be particularly useful for recording which runs worked well, or particular problems you ran into. This can be done from the 'details' page in the GUI, or by running
 
 	recipy annotate
