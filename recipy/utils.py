@@ -18,18 +18,11 @@ def open(*args, **kwargs):
     """
     if six.PY3:
         mode = kwargs['mode']
-        f = __builtins__['open'](*args, **kwargs)
     else:
         try:
             mode = args[1]
         except:
             mode = 'r'
-
-        if 'encoding' in kwargs.keys():
-            import codecs
-            f = codecs.open(*args, **kwargs)
-        else:
-            f = __builtins__['open'](*args, **kwargs)
 
     # open file for reading?
     for c in 'r+':
@@ -40,5 +33,19 @@ def open(*args, **kwargs):
     for c in 'wax+':
         if c in mode:
             log_output(args[0], 'recipy.open')
+
+    # This if statement cannot be combined with the previous if statement,
+    # because otherwise, files will be opened before they is logged.
+    # This causes problems with logging of file diffs, because when a file is
+    # opened for writing, its contents will be discarded.
+    # TODO: add tests for this
+    if six.PY3:
+        f = __builtins__['open'](*args, **kwargs)
+    else:
+        if 'encoding' in kwargs.keys():
+            import codecs
+            f = codecs.open(*args, **kwargs)
+        else:
+            f = __builtins__['open'](*args, **kwargs)
 
     return(f)

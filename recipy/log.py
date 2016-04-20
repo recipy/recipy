@@ -124,12 +124,10 @@ def log_output(filename, source):
     filename = os.path.abspath(filename)
 
     if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
-        print('Output file "{}" already exists; copying file'.format(filename))
         tf = tempfile.NamedTemporaryFile(delete=False)
         db = open_or_create_db()
         shutil.copy2(filename, tf.name)
         add_file_diff_to_db(filename, tf.name, db_path=get_db_path())
-        print('copied file to tempfile named "{}"'.format(tf.name))
 
     if option_set('general', 'debug'):
         print("Output to %s using %s" % (filename, source))
@@ -213,8 +211,8 @@ def output_file_diffs():
     diffs_table = db.table('filediffs')
     diffs = diffs_table.search(Query().run_id == RUN_ID)
     for item in diffs:
-        diff = difflib.unified_diff(open(item['filename']).readlines(),
-                                    open(item['tempfilename']).readlines(),
+        diff = difflib.unified_diff(open(item['tempfilename']).readlines(),
+                                    open(item['filename']).readlines(),
                                     fromfile='before this run',
                                     tofile='after this run')
         diffs_table.update({'diff': ''.join([l for l in diff])},
