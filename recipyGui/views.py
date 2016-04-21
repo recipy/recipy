@@ -52,22 +52,22 @@ def index():
 
 @recipyGui.route('/run_details')
 def run_details():
-        form = SearchForm()
-        annotateRunForm = AnnotateRunForm()
-        query = request.args.get('query', '')
-        run_id = int(request.args.get('id'))
-        active_page = request.args.get('active_page', '')
+    form = SearchForm()
+    annotateRunForm = AnnotateRunForm()
+    query = request.args.get('query', '')
+    run_id = int(request.args.get('id'))
+    active_page = request.args.get('active_page', '')
 
-        db = TinyDB(recipyGui.config.get('tinydb'))
-        r = db.get(eid=run_id)
-        diffs = db.table('filediffs').search(Query().run_id == run_id)
+    db = TinyDB(recipyGui.config.get('tinydb'))
+    r = db.get(eid=run_id)
+    diffs = db.table('filediffs').search(Query().run_id == run_id)
 
-        db.close()
+    db.close()
 
-        return render_template('details.html', query=query, form=form,
-                               annotateRunForm=annotateRunForm, run=r,
-                               dbfile=recipyGui.config.get('tinydb'),
-                               diffs=diffs, active_page=active_page)
+    return render_template('details.html', query=query, form=form,
+                           annotateRunForm=annotateRunForm, run=r,
+                           dbfile=recipyGui.config.get('tinydb'), diffs=diffs,
+                           active_page=active_page)
 
 
 @recipyGui.route('/latest_run')
