@@ -78,6 +78,61 @@ class TestRecipyGui(TestCase):
                 'outputs': ['C:\\Code\\test-recipy\\testNGCM_2.npy'],
                 'script': 'C:\\Code\\test-recipy\\example_script2.py',
                 'unique_id': '6daab87a-8cf2-4e3d-afb9-1ee5b6b8ecdb'
+            },
+            # Run with warnings
+            {
+                "author": "jvdzwaan",
+                "command": "/home/jvdzwaan/.virtualenvs/recipy/bin/python",
+                "command_args": "",
+                "date": "{TinyDate}:2016-03-23T13:56:30",
+                "description": "",
+                "diff": "\n\n\n--- a/.recipyrc\n+++ /dev/null\n@@ -1,2 +0,0 @@\n-[database]\n-path = /home/jvdzwaan/data/tmp/recipy-demo.json\n\n\n\n--- a/example_script.py\n+++ b/example_script.py\n@@ -1,11 +1,33 @@\n-import recipy\n+import warnings\n+#warnings.showwarning = log_warning\n+\n+import sys\n import pandas as pd\n-from matplotlib.pyplot import *\n+#print sys.modules.keys()\n+print 'pandas' in sys.modules.keys()\n+\n+import recipy\n+\n+import numpy as np\n+#print sys.modules.keys()\n+\n+warnings.warn('tes warning in script')\n+\n+# importing\n+#import pandas as pd\n+#from matplotlib.pyplot import *\n+\n+#import sys\n+#del sys.modules['codecs']\n+#import codecs\n+\n+#import pandas as pd\n+#from matplotlib.pyplot import *\n \n data = pd.read_csv('data.csv')\n \n-data.plot(x='year', y='temperature')\n-savefig('newplot.pdf')\n+#data.plot(x='year', y='temperature')\n+#savefig('newplot.pdf')\n \n-data.temperature = data.temperature * 100.0\n+data.temperature = data.temperature * 150.0\n data.to_csv('output2.csv')\n",
+                "environment": ["Linux-3.19.0-56-generic-x86_64-with-Ubuntu-14.04-trusty", "python 2.7.6 (default, Jun 22 2015, 17:58:13) "],
+                "gitcommit": "c753b702e2a8ec79b6a5b055c9a4005c8e2f3cd8",
+                "gitorigin": None,
+                "gitrepo": "/home/jvdzwaan/code/recipy-demo",
+                "inputs": [],
+                "outputs": [],
+                "script": "/home/jvdzwaan/code/recipy-demo/example_script.py",
+                "unique_id": "5958ac06-1beb-45e6-8223-1a02b058e026",
+                "warnings": [
+                    {
+                        "lineno": 9,
+                        "message": "unable to patch module; recipy was imported after numpy",
+                        "script": "example_script.py",
+                        "type": "UserWarning"
+                    },
+                    {
+                        "lineno": 9,
+                        "message": "unable to patch module; recipy was imported after pandas",
+                        "script": "example_script.py",
+                        "type": "UserWarning"
+                    },
+                    {
+                        "lineno": 14,
+                        "message": "tes warning in script",
+                        "script": "example_script.py",
+                        "type": "UserWarning"
+                    }
+                ]
+            },
+            # Run with empty warnings
+            {
+                "author": "jvdzwaan",
+                "command": "/home/jvdzwaan/.virtualenvs/recipy/bin/python",
+                "command_args": "",
+                "date": "{TinyDate}:2016-03-23T13:56:30",
+                "description": "",
+                "diff": "\n\n\n--- a/.recipyrc\n+++ /dev/null\n@@ -1,2 +0,0 @@\n-[database]\n-path = /home/jvdzwaan/data/tmp/recipy-demo.json\n\n\n\n--- a/example_script.py\n+++ b/example_script.py\n@@ -1,11 +1,33 @@\n-import recipy\n+import warnings\n+#warnings.showwarning = log_warning\n+\n+import sys\n import pandas as pd\n-from matplotlib.pyplot import *\n+#print sys.modules.keys()\n+print 'pandas' in sys.modules.keys()\n+\n+import recipy\n+\n+import numpy as np\n+#print sys.modules.keys()\n+\n+warnings.warn('tes warning in script')\n+\n+# importing\n+#import pandas as pd\n+#from matplotlib.pyplot import *\n+\n+#import sys\n+#del sys.modules['codecs']\n+#import codecs\n+\n+#import pandas as pd\n+#from matplotlib.pyplot import *\n \n data = pd.read_csv('data.csv')\n \n-data.plot(x='year', y='temperature')\n-savefig('newplot.pdf')\n+#data.plot(x='year', y='temperature')\n+#savefig('newplot.pdf')\n \n-data.temperature = data.temperature * 100.0\n+data.temperature = data.temperature * 150.0\n data.to_csv('output2.csv')\n",
+                "environment": ["Linux-3.19.0-56-generic-x86_64-with-Ubuntu-14.04-trusty", "python 2.7.6 (default, Jun 22 2015, 17:58:13) "],
+                "gitcommit": "c753b702e2a8ec79b6a5b055c9a4005c8e2f3cd8",
+                "gitorigin": None,
+                "gitrepo": "/home/jvdzwaan/code/recipy-demo",
+                "inputs": [],
+                "outputs": [],
+                "script": "/home/jvdzwaan/code/recipy-demo/example_script.py",
+                "unique_id": "5958ac06-1beb-45e6-8223-1a02b058e026",
+                "warnings": []
             }
         ]
 
@@ -145,3 +200,19 @@ class TestRecipyGui(TestCase):
             self.assertEqual(recipyGui.config.get('tinydb'), dbfile2)
             # is the value displayed?
             assert recipyGui.config.get('tinydb') in response.data
+
+    def test_display_warnings_in_views(self):
+        """If the run contains warnings, they must be displayed in the index
+        and run_details view.
+        """
+        for run in self.testRuns:
+            eid = self.db.insert(run)
+            response = self.client.get('/run_details?id={}'.format(eid))
+            if 'warnings' in run.keys():
+                if run['warnings'] != []:
+                    for w in run['warnings']:
+                        assert w['message'] in response.data
+                else:
+                    assert 'Warnings' not in response.data
+            else:
+                assert 'Warnings' not in response.data

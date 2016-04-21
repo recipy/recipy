@@ -2,7 +2,7 @@ import sys
 from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 
-from .log import log_input, log_output
+from .log import log_input, log_output, add_module_to_db
 from recipyCommon.utils import create_wrapper, multiple_insert
 
 
@@ -15,6 +15,8 @@ class PatchGDAL(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'gdal')
     output_wrapper = create_wrapper(log_output, 0, 'gdal')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
 
 class PatchSKLearn(PatchSimple):
     modulename = 'sklearn'
@@ -24,6 +26,8 @@ class PatchSKLearn(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'sklearn')
     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
+
+    add_module_to_db(modulename, input_functions, output_functions)
 
 # class PatchSKImage(PatchSimple):
 #     modulename = 'skimage'
@@ -56,6 +60,9 @@ class PatchNIBabel(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'nibabel')
     output_wrapper = create_wrapper(log_output, 0, 'nibabel')
+
+    add_module_to_db(modulename, input_functions, output_functions)
+
 
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
                                 PatchNIBabel()])

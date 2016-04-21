@@ -3,7 +3,7 @@ from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 import wrapt
 
-from .log import log_input, log_output
+from .log import log_input, log_output, add_module_to_db
 from recipyCommon.utils import create_wrapper, multiple_insert
 
 
@@ -24,6 +24,8 @@ class PatchPandas(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'pandas')
     output_wrapper = create_wrapper(log_output, 0, 'pandas')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
 
 class PatchMPL(PatchSimple):
     modulename = 'matplotlib.pyplot'
@@ -33,6 +35,8 @@ class PatchMPL(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'matplotlib')
     output_wrapper = create_wrapper(log_output, 0, 'matplotlib')
+
+    add_module_to_db(modulename, input_functions, output_functions)
 
 
 class PatchNumpy(PatchSimple):
@@ -47,6 +51,8 @@ class PatchNumpy(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
 
 class PatchLXML(PatchSimple):
     modulename = 'lxml.etree'
@@ -57,6 +63,8 @@ class PatchLXML(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'lxml')
     output_wrapper = create_wrapper(log_output, 0, 'lxml')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
 
 class PatchBS4(PatchSimple):
     modulename = 'bs4'
@@ -66,6 +74,8 @@ class PatchBS4(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'bs4')
     output_wrapper = create_wrapper(log_output, 0, 'bs4')
+
+    add_module_to_db(modulename, input_functions, output_functions)
 
 
 multiple_insert(sys.meta_path, [PatchNumpy(), PatchPandas(), PatchMPL(),

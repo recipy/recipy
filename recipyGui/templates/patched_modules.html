@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="row">
+  <div class="col-md-12">
+    <h1>Patched modules</h1>
+    {% if modules | length > 0 %}
+      <p>This table lists the modules recipy has patches for, and the input and output functions that are patched.</p>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Input functions</th>
+            <th>Output functions</th>
+          </tr>
+        </thead>
+        {% for mod in modules %}
+          <tr>
+            <td><code>{{ mod.modulename }}</code></td>
+            <td>
+              {% if mod.input_functions | length > 0 %}
+                <code>{{ mod.input_functions|join('</code>, <code>')|safe }}</code>
+              {% endif %}
+            </td>
+            <td>
+              {% if mod.output_functions | length > 0 %}
+                <code>{{ mod.output_functions|join('</code>, <code>')|safe }}</code>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+
+    {% else %}
+      No patched modules found. Please <code>import recipy</code> to register available patches.
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

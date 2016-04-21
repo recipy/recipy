@@ -1,6 +1,8 @@
 import wrapt
 import imp
 import os
+import sys
+import warnings
 
 from tinydb import TinyDB
 from .tinydb_utils import serializer
@@ -19,6 +21,13 @@ def open_or_create_db(path=get_db_path()):
     db = TinyDB(path, storage=serializer)
 
     return db
+
+
+def reset_patches_table(db_path=get_db_path()):
+    db = open_or_create_db(path=db_path)
+    patches = db.table('patches')
+    patches.purge()
+    db.close()
 
 
 def multiple_insert(lst, items):

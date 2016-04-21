@@ -10,12 +10,22 @@ import tempfile
 import shutil
 from tinydb import Query
 import difflib
+import warnings
+
+from git import Repo, InvalidGitRepositoryError
 
 from recipyCommon.version_control import add_git_info, hash_file
 from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 
 RUN_ID = {}
+
+
+def get_origin(repo):
+    try:
+        return repo.remotes.origin.url
+    except:
+        return None
 
 
 def new_run():
@@ -53,20 +63,37 @@ def log_init():
     guid = str(uuid.uuid4())
 
     # Get general metadata, environment info, etc
-    run = {"unique_id": guid,
-           "author": getpass.getuser(),
-           "description": "",
-           "inputs": [],
-           "outputs": [],
-           "script": scriptpath,
-           "command": sys.executable,
-           "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
-           "date": datetime.datetime.utcnow(),
-           "exit_date": None,  # updated at script exit
-           "command_args": " ".join(cmd_args)}
+    run = {
+        "unique_id": guid,
+        "author": getpass.getuser(),
+        "description": "",
+        "inputs": [],
+        "outputs": [],
+        "script": scriptpath,
+        "command": sys.executable,
+        "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
+        "date": datetime.datetime.utcnow(),
+        "command_args": " ".join(cmd_args),
+        "warnings": []
+    }
 
     if not option_set('ignored metadata', 'git'):
-        add_git_info(run, scriptpath)
+        try:
+            repo = Repo(scriptpath, search_parent_directories=True)
+            run["gitrepo"] = repo.working_dir
+            run["gitcommit"] = repo.head.commit.hexsha
+            run["gitorigin"] = get_origin(repo)
+
+            if not option_set('ignored metadata', 'diff'):
+                whole_diff = ''
+                diffs = repo.index.diff(None, create_patch=True)
+                for diff in diffs:
+                    whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
+
+                run['diff'] = whole_diff
+        except (InvalidGitRepositoryError, ValueError):
+            # We can't store git info for some reason, so just skip it
+            pass
 
     # Put basics into DB
     RUN_ID = db.insert(run)
@@ -74,6 +101,15 @@ def log_init():
     # Print message
     if not option_set('general', 'quiet'):
         print("recipy run inserted, with ID %s" % (guid))
+
+    # check whether patched modules were imported before recipy was imported
+    patches = db.table('patches')
+
+    for p in patches.all():
+        if p['modulename'] in sys.modules:
+            msg = 'not tracking inputs and outputs for {}; recipy was ' \
+                  'imported after this module'.format(p['modulename'])
+            warnings.warn(msg, stacklevel=3)
 
     db.close()
 
@@ -151,13 +187,42 @@ def log_exception(typ, value, traceback):
     sys.__excepthook__(typ, value, traceback)
 
 
+def log_warning(msg, typ, script, lineno, **kwargs):
+    if option_set('general', 'debug'):
+        print('Logging warning "%s"' % str(msg))
+
+    warning = {
+        'type': typ.__name__,
+        'message': str(msg),
+        'script': script,
+        'lineno': lineno
+    }
+
+    # Update object in DB
+    db = open_or_create_db()
+    db.update(append("warnings", warning, no_duplicates=True), eids=[RUN_ID])
+    db.close()
+
+    # Done logging, print warning to stderr
+    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
+
+
+def add_module_to_db(modulename, input_functions, output_functions,
+                     db_path=get_db_path()):
+    db = open_or_create_db(path=db_path)
+    patches = db.table('patches')
+    patches.insert({'modulename': modulename,
+                    'input_functions': input_functions,
+                    'output_functions': output_functions})
+    db.close()
+
+
 def add_file_diff_to_db(filename, tempfilename, db_path=get_db_path()):
     db = open_or_create_db(path=db_path)
     diffs = db.table('filediffs')
     diffs.insert({'run_id': RUN_ID,
                   'filename': filename,
                   'tempfilename': tempfilename})
-    db.close()
 
 
 def append(field, value, no_duplicates=False):
