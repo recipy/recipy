@@ -101,6 +101,12 @@
         <td class="col-md-1">Environment</td>
         <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
       </tr>
+      {% if run.libraries %}
+      <tr>
+        <td class="col-md-1">Libraries</td>
+        <td>{{ run.libraries | join(' <b>&middot;</b> ') | safe }}</td>
+      </tr>
+      {% endif %}
       {% if run.warnings %}
       <tr>
         <td class="col-md-1">Warnings</td>
