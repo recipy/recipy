@@ -159,17 +159,17 @@ def log_output(filename, source):
             pass
     filename = os.path.abspath(filename)
 
+    db = open_or_create_db()
+
     if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
         tf = tempfile.NamedTemporaryFile(delete=False)
-        db = open_or_create_db()
         shutil.copy2(filename, tf.name)
-        add_file_diff_to_db(filename, tf.name, db_path=get_db_path())
+        add_file_diff_to_db(filename, tf.name, db)
 
     if option_set('general', 'debug'):
         print("Output to %s using %s" % (filename, source))
     #Update object in DB
     # data hash will be hashed at script exit, if enabled
-    db = open_or_create_db()
     db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
@@ -217,8 +217,7 @@ def add_module_to_db(modulename, input_functions, output_functions,
     db.close()
 
 
-def add_file_diff_to_db(filename, tempfilename, db_path=get_db_path()):
-    db = open_or_create_db(path=db_path)
+def add_file_diff_to_db(filename, tempfilename, db):
     diffs = db.table('filediffs')
     diffs.insert({'run_id': RUN_ID,
                   'filename': filename,
