@@ -17,6 +17,7 @@ from git import Repo, InvalidGitRepositoryError
 from recipyCommon.version_control import add_git_info, hash_file
 from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
+from recipyCommon.libraryversions import get_version
 
 RUN_ID = {}
 
@@ -74,7 +75,8 @@ def log_init():
         "environment": [platform.platform(), "python " + sys.version.split('\n')[0]],
         "date": datetime.datetime.utcnow(),
         "command_args": " ".join(cmd_args),
-        "warnings": []
+        "warnings": [],
+        "libraries": [get_version('recipy')]
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -141,6 +143,7 @@ def log_input(filename, source):
     #Update object in DB
     db = open_or_create_db()
     db.update(append("inputs", record, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 
@@ -171,6 +174,7 @@ def log_output(filename, source):
     #Update object in DB
     # data hash will be hashed at script exit, if enabled
     db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 def log_exception(typ, value, traceback):
