@@ -10,3 +10,7 @@ def test_get_version_recipy():
 
 def test_get_version_unknown_library():
     assert_equal(libraryversions.get_version('unknown'), 'unknown v?')
+
+
+def test_get_version_not_just_module():
+    assert_equal(libraryversions.get_version('recipy.open'), 'recipy v{}'.format(__version__))
