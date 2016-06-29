@@ -2,9 +2,19 @@ import warnings
 
 from .log import log_warning
 
-from recipyCommon.utils import open_or_create_db, reset_patches_table
+from recipyCommon.utils import reset_patches_table
 
-warnings.showwarning = log_warning
+
+old_showwarning = warnings.showwarning
+
+
+def showwarning(msg, typ, script, lineno, **kwargs):
+    log_warning(msg, typ, script, lineno, **kwargs)
+
+    # Done logging, print warning to stderr
+    return old_showwarning(msg, typ, script, lineno)
+
+warnings.showwarning = showwarning
 
 # reset list of modules to be patched
 reset_patches_table()

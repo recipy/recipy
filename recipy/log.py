@@ -76,7 +76,7 @@ def log_init():
         "date": datetime.datetime.utcnow(),
         "command_args": " ".join(cmd_args),
         "warnings": [],
-        "libraries": [get_version('recipy')]
+        "libraries": []
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -103,6 +103,13 @@ def log_init():
     # Print message
     if not option_set('general', 'quiet'):
         print("recipy run inserted, with ID %s" % (guid))
+
+    # Add recipy version
+    # This must be done after the run was inserted, because get_version might
+    # raise a warning, and because warnings are patched, the run must exist
+    # before a warning can be added.
+    db.update(append('libraries', get_version('recipy'), no_duplicates=True),
+              eids=[RUN_ID])
 
     # check whether patched modules were imported before recipy was imported
     patches = db.table('patches')
@@ -205,10 +212,8 @@ def log_warning(msg, typ, script, lineno, **kwargs):
     # Update object in DB
     db = open_or_create_db()
     db.update(append("warnings", warning, no_duplicates=True), eids=[RUN_ID])
-    db.close()
-
-    # Done logging, print warning to stderr
-    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
+    # Do not close the database, because a warning might be raised by recipy.
+    # Closing the database will lead to subsequent write errors.
 
 
 def add_module_to_db(modulename, input_functions, output_functions,
