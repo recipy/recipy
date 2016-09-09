@@ -88,12 +88,17 @@ Using command-line arguments: {{ command_args }}
 {% endif %}
 """
 
-template_str = template_str.replace('\a', term.bold)
-template_str = template_str.replace('\b', term.normal)
+template_str_withcolor = template_str.replace('\a', term.bold).replace('\b', term.normal)
+template_str_nocolor = template_str.replace('\a', '').replace('\b', '')
 
 
-def template_result(r):
+def template_result(r, nocolor=False):
     # Print a single result from the search
+    if nocolor:
+        template_str = template_str_nocolor
+    else:
+        template_str = template_str_withcolor
+
     template = Template(template_str, trim_blocks=True)
     return template.render(**r)
 
@@ -147,7 +152,7 @@ def annotate(args):
     f.write('\n')
     f.write('Enter your notes on this run above this line')
     f.write('\n' * 3)
-    f.write(template_result(run))
+    f.write(template_result(run, nocolor=True))
 
     f.close()
 
