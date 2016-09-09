@@ -1,7 +1,6 @@
 import sys
 import imp
 
-import functools
 from recipyCommon.config import option_set
 from recipyCommon.utils import recursive_find_module
 

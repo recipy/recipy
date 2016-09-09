@@ -91,6 +91,7 @@ Using command-line arguments: {{ command_args }}
 template_str = template_str.replace('\a', term.bold)
 template_str = template_str.replace('\b', term.normal)
 
+
 def template_result(r):
     # Print a single result from the search
     template = Template(template_str, trim_blocks=True)

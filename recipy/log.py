@@ -12,21 +12,12 @@ from tinydb import Query
 import difflib
 import warnings
 
-from git import Repo, InvalidGitRepositoryError
-
 from recipyCommon.version_control import add_git_info, hash_file
 from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
 
 RUN_ID = {}
-
-
-def get_origin(repo):
-    try:
-        return repo.remotes.origin.url
-    except:
-        return None
 
 
 def new_run():
@@ -80,23 +71,7 @@ def log_init():
     }
 
     if not option_set('ignored metadata', 'git'):
-        try:
-            repo = Repo(scriptpath, search_parent_directories=True)
-            run["gitrepo"] = repo.working_dir
-            run["gitcommit"] = repo.head.commit.hexsha
-            run["gitorigin"] = get_origin(repo)
-
-            if not option_set('ignored metadata', 'diff'):
-                whole_diff = ''
-                diffs = repo.index.diff(None, create_patch=True)
-                for diff in diffs:
-                    whole_diff += "\n\n\n" + "--- {}\n+++ {}\n".format(
-                        diff.a_path, diff.b_path) + diff.diff.decode("utf-8")
-
-                run['diff'] = whole_diff
-        except (InvalidGitRepositoryError, ValueError):
-            # We can't store git info for some reason, so just skip it
-            pass
+        add_git_info(run, scriptpath)
 
     # Put basics into DB
     RUN_ID = db.insert(run)

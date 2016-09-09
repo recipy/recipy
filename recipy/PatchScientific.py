@@ -1,5 +1,4 @@
 import sys
-from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
 
 from .log import log_input, log_output, add_module_to_db

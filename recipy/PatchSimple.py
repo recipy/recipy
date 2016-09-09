@@ -1,6 +1,4 @@
-import sys
 from .PatchImporter import PatchImporter
-import wrapt
 
 from recipyCommon.utils import patch_function
 from recipyCommon.config import option_set
@@ -48,4 +46,5 @@ class PatchSimple(PatchImporter):
     def _ignore_output(self):
         root_modulename = self.modulename.split('.')[0]
 
-        return option_set('ignored outputs', root_modulename) or option_set('ignored outputs', 'all')
+        return (option_set('ignored outputs', root_modulename) or
+                option_set('ignored outputs', 'all'))

@@ -118,4 +118,4 @@ def json_serializer(obj):
         # Serialize datetime as the ISO formatted string
         serial = obj.isoformat()
         return serial
-    raise TypeError ("Type not serializable")
+    raise TypeError("Type not serializable")

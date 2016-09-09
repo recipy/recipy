@@ -1,7 +1,5 @@
 import sys
-from .PatchImporter import PatchImporter
 from .PatchSimple import PatchSimple
-import wrapt
 
 from .log import log_input, log_output, add_module_to_db
 from recipyCommon.utils import create_wrapper, multiple_insert

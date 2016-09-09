@@ -1,5 +1,4 @@
 from flask import Flask, url_for
-import os
 from flask_bootstrap import Bootstrap
 import re
 from time import strptime, strftime

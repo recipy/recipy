@@ -17,23 +17,27 @@ def hash_file(path):
         return None
 
 
+def get_origin(repo):
+    try:
+        return repo.remotes.origin.url
+    except:
+        return None
+
+
 def add_git_info(run, scriptpath):
     """Add information about the git repository holding the source file to the database"""
     try:
         repo = Repo(scriptpath, search_parent_directories=True)
-        run["githash"] = hash_file(scriptpath)
         run["gitrepo"] = repo.working_dir
         run["gitcommit"] = repo.head.commit.hexsha
-        try:
-            run["gitorigin"] = repo.remotes.origin.url
-        except:
-            run["gitorigin"] = None
+        run["gitorigin"] = get_origin(repo)
 
         if not option_set('ignored metadata', 'diff'):
             whole_diff = ''
             diffs = repo.index.diff(None, create_patch=True)
             for diff in diffs:
-                whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
+                whole_diff += "\n\n\n" + "--- {}\n+++ {}\n".format(
+                    diff.a_path, diff.b_path) + diff.diff.decode("utf-8")
 
             run['diff'] = whole_diff
     except (InvalidGitRepositoryError, ValueError):
