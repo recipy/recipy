@@ -25,20 +25,18 @@ Options:
 """
 import os
 import re
-import sys
 import tempfile
 
 from docopt import docopt
-from pprint import pprint
 from jinja2 import Template
-from tinydb import TinyDB, where
+from tinydb import where, Query
 from dateutil.parser import parse
 from json import dumps
 import six
 
 from . import __version__
 from recipyCommon import config, utils
-from recipyCommon.tinydb_utils import listsearch
+from recipyCommon.version_control import hash_file
 
 
 db = utils.open_or_create_db()
@@ -243,28 +241,35 @@ def latest(args):
                 print(run['diff'])
 
 
-def search(args):
-    filename = args['<outputfile>']
+def find_by_hash(x, val):
+    for output in x:
+        if output[1] == val:
+            return True
 
-    if args['--fuzzy']:
-        results = db.search(where('outputs').any(
-            lambda x: re.match(".+%s.+" % filename, x)))
-    elif args['--regex']:
-        results = db.search(where('outputs').any(
-            lambda x: listsearch(filename, x)))
-    elif args['--id']:
-        results = db.search(where('unique_id').matches('%s.+' % filename))
-        # Automatically turn on display of all results so we don't misleadingly
-        # suggest that their shortened ID is unique when it isn't
-        args['--all'] = True
-    else:
-        results = db.search(where('outputs').any(
-            lambda x: listsearch(os.path.abspath(filename), x)))
 
-    results = [_change_date(result) for result in results]
+def find_by_filepath(x, val):
+    for output in x:
+        if output[0] == val:
+            return True
 
-    # Sort the results
-    results = sorted(results, key=lambda x: parse(x['date']))
+
+def find_by_regex(x, val):
+    for output in x:
+        if re.match(val, output[0]):
+            return True
+
+
+def search_hash(args):
+    try:
+        hash_value = hash_file(args['<outputfile>'])
+    except Exception:
+        # Probably an invalid filename/path so assume it is a raw hash value instead
+        hash_value = args['<outputfile>']
+
+    Run = Query()
+    results = db.search(Run.outputs.test(find_by_hash, hash_value))
+
+    results = sorted(results, key=lambda x: x['date'])
 
     if args['--json']:
         if args['--all']:
@@ -285,7 +290,64 @@ def search(args):
             else:
                 print(template_result(results[-1]))
                 if len(results) > 1:
-                    print("** Previous runs creating this output have been " +
+                    print("** Previous runs creating this output have been"
+                          "found. Run with --all to show. **")
+
+                if args['--diff']:
+                    if 'diff' in results[-1]:
+                        print("\n\n")
+                        print(results[-1]['diff'])
+
+    db.close()
+
+
+def search(args):
+    if args['--fuzzy'] or args['--id'] or args['--regex']:
+        search_text(args)
+    else:
+        search_hash(args)
+
+
+def search_text(args):
+    filename = args['<outputfile>']
+
+    Run = Query()
+
+    if args['--fuzzy']:
+        results = db.search(Run.outputs.test(find_by_regex, ".+%s.+" % filename))
+    elif args['--regex']:
+        results = db.search(Run.outputs.test(find_by_regex, filename))
+    elif args['--id']:
+        results = db.search(where('unique_id').matches('%s.*' % filename))
+        # Automatically turn on display of all results so we don't misleadingly
+        # suggest that their shortened ID is unique when it isn't
+        args['--all'] = True
+    else:
+        results = db.search(Run.outputs.test(find_by_filepath, os.path.abspath(filename)))
+
+    # Sort the results
+    results = sorted(results, key=lambda x: x['date'])
+
+    if args['--json']:
+        if args['--all']:
+            res_to_output = results
+        else:
+            res_to_output = results[-1]
+        output = dumps(res_to_output, indent=2, sort_keys=True)
+        print(output)
+    else:
+        if len(results) == 0:
+            print("No results found")
+        else:
+            if args['--all']:
+                for r in results[:-1]:
+                    print(template_result(r))
+                    print("-" * 40)
+                print(template_result(results[-1]))
+            else:
+                print(template_result(results[-1]))
+                if len(results) > 1:
+                    print("** Previous runs creating this output have been"
                           "found. Run with --all to show. **")
 
                 if args['--diff']:
