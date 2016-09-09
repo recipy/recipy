@@ -139,6 +139,9 @@ def annotate(args):
     # Get temp filename
     f = tempfile.NamedTemporaryFile(delete=False, mode='w')
 
+    if run.get('notes'):
+        f.write(run['notes'])
+
     # Write something to the bottom of it
     f.write('\n' + '-' * 80 + '\n')
     f.write('\n')
