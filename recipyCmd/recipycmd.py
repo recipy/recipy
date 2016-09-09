@@ -212,6 +212,10 @@ def gui(args):
 def get_latest_run():
     results = db.all()
 
+    # If no runs in the database
+    if len(results) == 0:
+        return None
+
     results = [_change_date(result) for result in results]
 
     # Sort the results
@@ -221,8 +225,11 @@ def get_latest_run():
 
 
 def latest(args):
-
     run = get_latest_run()
+
+    if not run:
+        print("Database is empty")
+        return
 
     if args['--json']:
         output = dumps(run, indent=2, sort_keys=True)
