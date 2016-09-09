@@ -170,58 +170,66 @@ class PatchNumpy(PatchSimple):
 
 A class like this must be implemented for each module whose input/output needs logging. At the moment the following input and output functions are patched:
 
---------------------------------------------------------------------------
-Module                   Input functions          Output functions
------------------------- ------------------------ ------------------------
-`pandas`                 `read_csv`,              `DataFrame.to_csv`,
-                         `read_table`,            `DataFrame.to_excel`,
-                         `read_excel`,            `DataFrame.to_hdf`,
-                         `read_hdf`,              `DataFrame.to_msgpack`,
-                         `read_pickle`,           `DataFrame.to_stata`,
-                         `read_stata`,            `DataFrame.to_pickle`,
-                         `read_msgpack`           `Panel.to_excel`,
-                                                  `Panel.to_hdf`,
-                                                  `Panel.to_msgpack`,
-                                                  `Panel.to_pickle`,
-                                                  `Series.to_csv`,
-                                                  `Series.to_hdf`,
-                                                  `Series.to_msgpack`,
-                                                  `Series.to_pickle`
+Patched modules
+===============
 
-`matplotlib.pyplot`                               `savefig`
+This table lists the modules recipy has patches for, and the input and output functions that are patched.
 
-`numpy`                  `genfromtxt`, `loadtxt`, `save`, `savez`,
-                         `fromfile`               `savez_compressed`,
-                                                  `savetxt`
-
-`lxml.etree`             `parse`, `iterparse`     
-
-`bs4`                    `BeautifulSoup`          
-
-`gdal`                   `Open`                   `Driver.Create`,
-                                                  `Driver.CreateCopy`
-
-`sklearn`                `datasets.load_svmlight_ `datasets.dump_svmlight_
-                         file`                    file`
-
-`nibabel`                `nifti1.Nifti1Image.from `nifti1.Nifti1Image.to_f
-                         _filename`,              ilename`,
-                         `nifti2.Nifti2Image.from `nifti2.Nifti2Image.to_f
-                         _filename`,              ilename`,
-                         `freesurfer.mghformat.MG `freesurfer.mghformat.MG
-                         HImage.from_filename`,   HImage.to_filename`,
-                         `spm99analyze.Spm99Analy `spm99analyze.Spm99Analy
-                         zeImage.from_filename`,  zeImage.to_filename`,
-                         `minc1.Minc1Image.from_f `minc1.Minc1Image.to_fil
-                         ilename`,                ename`,
-                         `minc2.Minc2Image.from_f `minc2.Minc2Image.to_fil
-                         ilename`,                ename`,
-                         `analyze.AnalyzeImage.fr `analyze.AnalyzeImage.to
-                         om_filename`,            _filename`,
-                         `parrec.PARRECImage.from `parrec.PARRECImage.to_f
-                         _filename`,              ilename`,
-                         `spm2analyze.Spm2Analyze `spm2analyze.Spm2Analyze
-                         Image.from_filename`     Image.to_filename`
---------------------------------------------------------------------------
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Module</th>
+<th align="left">Input functions</th>
+<th align="left">Output functions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>pandas</code></td>
+<td align="left"><code>read_csv</code>, <code>read_table</code>, <code>read_excel</code>, <code>read_hdf</code>, <code>read_pickle</code>, <code>read_stata</code>, <code>read_msgpack</code></td>
+<td align="left"><code>DataFrame.to_csv</code>, <code>DataFrame.to_excel</code>, <code>DataFrame.to_hdf</code>, <code>DataFrame.to_msgpack</code>, <code>DataFrame.to_stata</code>, <code>DataFrame.to_pickle</code>, <code>Panel.to_excel</code>, <code>Panel.to_hdf</code>, <code>Panel.to_msgpack</code>, <code>Panel.to_pickle</code>, <code>Series.to_csv</code>, <code>Series.to_hdf</code>, <code>Series.to_msgpack</code>, <code>Series.to_pickle</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>matplotlib.pyplot</code></td>
+<td align="left"></td>
+<td align="left"><code>savefig</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>numpy</code></td>
+<td align="left"><code>genfromtxt</code>, <code>loadtxt</code>, <code>fromfile</code></td>
+<td align="left"><code>save</code>, <code>savez</code>, <code>savez_compressed</code>, <code>savetxt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>lxml.etree</code></td>
+<td align="left"><code>parse</code>, <code>iterparse</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>bs4</code></td>
+<td align="left"><code>BeautifulSoup</code></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><code>gdal</code></td>
+<td align="left"><code>Open</code></td>
+<td align="left"><code>Driver.Create</code>, <code>Driver.CreateCopy</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>sklearn</code></td>
+<td align="left"><code>datasets.load_svmlight_file</code></td>
+<td align="left"><code>datasets.dump_svmlight_file</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>nibabel</code></td>
+<td align="left"><code>nifti1.Nifti1Image.from_filename</code>, <code>nifti2.Nifti2Image.from_filename</code>, <code>freesurfer.mghformat.MGHImage.from_filename</code>, <code>spm99analyze.Spm99AnalyzeImage.from_filename</code>, <code>minc1.Minc1Image.from_filename</code>, <code>minc2.Minc2Image.from_filename</code>, <code>analyze.AnalyzeImage.from_filename</code>, <code>parrec.PARRECImage.from_filename</code>, <code>spm2analyze.Spm2AnalyzeImage.from_filename</code></td>
+<td align="left"><code>nifti1.Nifti1Image.to_filename</code>, <code>nifti2.Nifti2Image.to_filename</code>, <code>freesurfer.mghformat.MGHImage.to_filename</code>, <code>spm99analyze.Spm99AnalyzeImage.to_filename</code>, <code>minc1.Minc1Image.to_filename</code>, <code>minc2.Minc2Image.to_filename</code>, <code>analyze.AnalyzeImage.to_filename</code>, <code>parrec.PARRECImage.to_filename</code>, <code>spm2analyze.Spm2AnalyzeImage.to_filename</code></td>
+</tr>
+</tbody>
+</table>
 
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
