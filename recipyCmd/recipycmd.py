@@ -230,7 +230,7 @@ def latest(args):
         return
 
     if args['--json']:
-        output = dumps(run, indent=2, sort_keys=True)
+        output = dumps(run, indent=2, sort_keys=True, default=utils.json_serializer)
         print(output)
     else:
         print(template_result(run))
@@ -276,7 +276,7 @@ def search_hash(args):
             res_to_output = results
         else:
             res_to_output = results[-1]
-        output = dumps(res_to_output, indent=2, sort_keys=True)
+        output = dumps(res_to_output, indent=2, sort_keys=True, default=utils.json_serializer)
         print(output)
     else:
         if len(results) == 0:
@@ -333,7 +333,7 @@ def search_text(args):
             res_to_output = results
         else:
             res_to_output = results[-1]
-        output = dumps(res_to_output, indent=2, sort_keys=True)
+        output = dumps(res_to_output, indent=2, sort_keys=True, default=utils.json_serializer)
         print(output)
     else:
         if len(results) == 0:

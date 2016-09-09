@@ -1,8 +1,7 @@
 import wrapt
 import imp
 import os
-import sys
-import warnings
+from datetime import datetime
 
 from tinydb import TinyDB
 from .tinydb_utils import serializer
@@ -110,3 +109,13 @@ def recursive_find_module(name, path):
                 file_obj.close()
 
     return imp.find_module(subnames[-1], path)
+
+
+def json_serializer(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        # Serialize datetime as the ISO formatted string
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
