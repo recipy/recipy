@@ -273,7 +273,10 @@ def search_hash(args):
         hash_value = args['<outputfile>']
 
     Run = Query()
+    # Search both outputs AND inputs
+    # TODO: Add a command-line argument to force searching of just one
     results = db.search(Run.outputs.test(find_by_hash, hash_value))
+    results += db.search(Run.inputs.test(find_by_hash, hash_value))
 
     results = sorted(results, key=lambda x: x['date'])
 
@@ -296,7 +299,7 @@ def search_hash(args):
             else:
                 print(template_result(results[-1]))
                 if len(results) > 1:
-                    print("** Previous runs creating this output have been"
+                    print("** Previous runs have been "
                           "found. Run with --all to show. **")
 
                 if args['--diff']:
@@ -330,6 +333,7 @@ def search_text(args):
         args['--all'] = True
     else:
         results = db.search(Run.outputs.test(find_by_filepath, os.path.abspath(filename)))
+        results += db.search(Run.inputs.test(find_by_filepath, os.path.abspath(filename)))
 
     # Sort the results
     results = sorted(results, key=lambda x: x['date'])
@@ -353,7 +357,7 @@ def search_text(args):
             else:
                 print(template_result(results[-1]))
                 if len(results) > 1:
-                    print("** Previous runs creating this output have been"
+                    print("** Previous runs have been "
                           "found. Run with --all to show. **")
 
                 if args['--diff']:
