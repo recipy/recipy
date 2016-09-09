@@ -168,15 +168,60 @@ class PatchNumpy(PatchSimple):
     output_wrapper = create_wrapper(log_output, 0, 'numpy')
 ```
 
-A class like this must be implemented for each module whose input/output needs logging. At the moment all of the input/output functions for the following modules are wrapped:
+A class like this must be implemented for each module whose input/output needs logging. At the moment the following input and output functions are patched:
 
- * `numpy`
- * `pandas`
- * `matplotlib`
- * `GDAL`
- * `scikit-learn`
- * `scikit-image`
- * `pillow`
- * `nibabel` (only the data formats in submodules imported by default)
+--------------------------------------------------------------------------
+Module                   Input functions          Output functions
+------------------------ ------------------------ ------------------------
+`pandas`                 `read_csv`,              `DataFrame.to_csv`,
+                         `read_table`,            `DataFrame.to_excel`,
+                         `read_excel`,            `DataFrame.to_hdf`,
+                         `read_hdf`,              `DataFrame.to_msgpack`,
+                         `read_pickle`,           `DataFrame.to_stata`,
+                         `read_stata`,            `DataFrame.to_pickle`,
+                         `read_msgpack`           `Panel.to_excel`,
+                                                  `Panel.to_hdf`,
+                                                  `Panel.to_msgpack`,
+                                                  `Panel.to_pickle`,
+                                                  `Series.to_csv`,
+                                                  `Series.to_hdf`,
+                                                  `Series.to_msgpack`,
+                                                  `Series.to_pickle`
+
+`matplotlib.pyplot`                               `savefig`
+
+`numpy`                  `genfromtxt`, `loadtxt`, `save`, `savez`,
+                         `fromfile`               `savez_compressed`,
+                                                  `savetxt`
+
+`lxml.etree`             `parse`, `iterparse`     
+
+`bs4`                    `BeautifulSoup`          
+
+`gdal`                   `Open`                   `Driver.Create`,
+                                                  `Driver.CreateCopy`
+
+`sklearn`                `datasets.load_svmlight_ `datasets.dump_svmlight_
+                         file`                    file`
+
+`nibabel`                `nifti1.Nifti1Image.from `nifti1.Nifti1Image.to_f
+                         _filename`,              ilename`,
+                         `nifti2.Nifti2Image.from `nifti2.Nifti2Image.to_f
+                         _filename`,              ilename`,
+                         `freesurfer.mghformat.MG `freesurfer.mghformat.MG
+                         HImage.from_filename`,   HImage.to_filename`,
+                         `spm99analyze.Spm99Analy `spm99analyze.Spm99Analy
+                         zeImage.from_filename`,  zeImage.to_filename`,
+                         `minc1.Minc1Image.from_f `minc1.Minc1Image.to_fil
+                         ilename`,                ename`,
+                         `minc2.Minc2Image.from_f `minc2.Minc2Image.to_fil
+                         ilename`,                ename`,
+                         `analyze.AnalyzeImage.fr `analyze.AnalyzeImage.to
+                         om_filename`,            _filename`,
+                         `parrec.PARRECImage.from `parrec.PARRECImage.to_f
+                         _filename`,              ilename`,
+                         `spm2analyze.Spm2Analyze `spm2analyze.Spm2Analyze
+                         Image.from_filename`     Image.to_filename`
+--------------------------------------------------------------------------
 
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
