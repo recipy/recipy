@@ -90,7 +90,8 @@ def log_init():
                 whole_diff = ''
                 diffs = repo.index.diff(None, create_patch=True)
                 for diff in diffs:
-                    whole_diff += "\n\n\n" + diff.diff.decode("utf-8")
+                    whole_diff += "\n\n\n" + "--- {}\n+++ {}\n".format(
+                        diff.a_path, diff.b_path) + diff.diff.decode("utf-8")
 
                 run['diff'] = whole_diff
         except (InvalidGitRepositoryError, ValueError):
@@ -176,6 +177,7 @@ def log_output(filename, source):
     db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
     db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
     db.close()
+
 
 def log_exception(typ, value, traceback):
     if option_set('general', 'debug'):

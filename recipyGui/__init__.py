@@ -78,10 +78,11 @@ def colordiff(diff):
     nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;'
     data = '\n'.join([('%s%s%s%s<samp>%s</samp><td></tr>' %
                       (openTag,
-                       'bg-danger' if line.startswith('-')
-                       else ('bg-success' if line.startswith('+')
-                             else ('bg-info' if line.startswith('@')
-                                   else '')),
+                       'bg-info' if line.startswith('---') or line.startswith('+++')
+                       else ('bg-danger' if line.startswith('-')
+                             else ('bg-success' if line.startswith('+')
+                                   else ('bg-info' if line.startswith('@')
+                                         else ''))),
                        openTagEnd,
                        nbsp * line.count('\t'), line)) for line in diffData])
     return '<table width="100%">' + data + '</table>'
