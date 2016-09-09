@@ -37,57 +37,63 @@ import six
 from . import __version__
 from recipyCommon import config, utils
 from recipyCommon.version_control import hash_file
+import blessings
 
 
 db = utils.open_or_create_db()
 
+term = blessings.Terminal()
 
-def template_result(r):
-    # Print a single result from the search
-    template = """Run ID: {{ unique_id }}
-Created by {{ author }} on {{ date }} UTC
-Ran {{ script }} using {{ command }}
+template_str = """\aRun ID:\b {{ unique_id }}
+\aCreated by\b {{ author }} on {{ date }} UTC
+\aRan\b {{ script }} using {{ command }}
 {% if command_args|length > 0 %}
 Using command-line arguments: {{ command_args }}
 {% endif %}
 {% if gitcommit is defined %}
-Git: commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
+\aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
-Environment: {{ environment|join(", ") }}
+\aEnvironment:\b {{ environment|join(", ") }}
 {% if exception is defined %}
-Exception: ({{ exception.type }}) {{ exception.message }}
+\aException:\b ({{ exception.type }}) {{ exception.message }}
 {% endif %}
 {% if inputs|length == 0 %}
-Inputs: none
+\aInputs:\b none
 {% else %}
-Inputs:
+\aInputs:\b
 {% for input in inputs %}
 {% if input is string %}
-  {{ input }}
+{{ input }}
 {% else %}
-  {{ input[0] }} ({{ input[1] }})
+{{ input[0] }} ({{ input[1] }})
 {% endif %}
 {% endfor %}
 {% endif %}
 {% if outputs | length == 0 %}
-Outputs: none
+\aOutputs:\b none
 {% else %}
-Outputs:
+\aOutputs:\b
 {% for output in outputs %}
 {% if output is string %}
-  {{ output }}
+{{ output }}
 {% else %}
-  {{ output[0] }} ({{ output[1] }})
+{{ output[0] }} ({{ output[1] }})
 {% endif %}
 {% endfor %}
 {% endif %}
 
 {% if notes is defined %}
-Notes:
+\aNotes:\b
 {{ notes }}
 {% endif %}
 """
-    template = Template(template, trim_blocks=True)
+
+template_str = template_str.replace('\a', term.bold)
+template_str = template_str.replace('\b', term.normal)
+
+def template_result(r):
+    # Print a single result from the search
+    template = Template(template_str, trim_blocks=True)
     return template.render(**r)
 
 
