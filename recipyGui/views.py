@@ -11,7 +11,7 @@ from .forms import SearchForm, AnnotateRunForm
 
 from recipyCommon.tinydb_utils import listsearch
 from recipyCommon import utils
-from recipyCmd.recipycmd import get_latest_run
+from recipyCmd.recipycmd import get_latest_run, _change_date
 
 
 routes = Blueprint('routes', __name__, template_folder='templates')
@@ -38,7 +38,10 @@ def index():
             where('script').search(query) |
             where('notes').search(query) |
             where('unique_id').search(query))
-    runs = sorted(runs, key=lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
+
+    runs = [_change_date(r) for r in runs]
+
+    runs = sorted(runs, key=lambda x: x['date'], reverse=True)
 
     run_ids = []
     for run in runs:
@@ -69,6 +72,8 @@ def run_details():
         flash('Run not found.', 'danger')
         diffs = []
 
+    r = _change_date(r)
+
     db.close()
 
     return render_template('details.html', query=query, form=form,
@@ -89,6 +94,8 @@ def latest_run():
     else:
         flash('No latest run (database is empty).', 'danger')
         diffs = []
+
+    r = _change_date(r)
 
     db.close()
 
