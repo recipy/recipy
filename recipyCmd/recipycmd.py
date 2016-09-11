@@ -53,7 +53,9 @@ Using command-line arguments: {{ command_args }}
 \aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
 \aEnvironment:\b {{ environment|join(", ") }}
-{% if
+{% if libraries is defined %}
+\aLibraries:\b {{ libraries|join(", ") }}
+{% endif %}
 {% if exception is defined %}
 \aException:\b ({{ exception.type }}) {{ exception.message }}
 {% endif %}
