@@ -3,218 +3,247 @@
 {% from 'macros.html' import code_with_search_link, display_file_list %}
 
 {% block title %}ReciPy - Run Details
-  {% if active_page == 'latest_run' %} - Latest Run{% endif %}
+    {% if active_page == 'latest_run' %} - Latest Run{% endif %}
 {% endblock %}
 
 {% block content %}
-{{ super() }}
+    {{ super() }}
 
-<div class="row">
-  <div class="col-md-12">
-    <div class="top-buffer">
-      <ol class="breadcrumb">
-        <li>
-          <a href="{{ url_for('index', query=query) }}">
-            <i class="glyphicon glyphicon-arrow-left"></i>
-          </a>
-          <a href="{{ url_for('index', query=query) }}">
-            back to
-            {% if query | length > 0 %} search results
-            {% else %} runs
-            {% endif %}
-          </a>
-        </li>
-      </ol>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3>Run {{ run.unique_id | string | highlight(query) | safe }}</h3>
-    <p class="small text-muted">Click file names or hash codes to search.</p>
-  </div>
-  <div class="col-md-2 col-md-offset-4">
-    <div class="pull-right align-with-header">
-      <form role="form" action="{{ url_for('runs2json') }}" method="post">
-        <input type="hidden" name="run_ids" value="[{{ run.eid }}]"></input>
-        <button type="submit" class="btn btn-info">Save as JSON</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-striped table-condensed">
-      <tr>
-        <td class="col-md-1">Date</td>
-        <td>{{ run.date | datetimefilter }}</td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Author</td>
-        <td>{{ run.author | highlight(query) | safe }}</td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Command</td>
-        <td>
-          <code>{{ run.command | highlight(query) | safe }}</code>
-        </td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Script</td>
-        <td>{{ code_with_search_link(run.script, query) }}</td>
-      </tr>
-      {% if run.command_args|length > 0 %}
-      <tr>
-        <td class="col-md-1">Command line arguments</td>
-        <td>
-          <code>{{ run.command_args | highlight(query) | safe }}</code>
-        </td>
-      </tr>
-      {% endif %}
-      <tr>
-        <td class="col-md-1">Inputs</td>
-        <td>
-          {{ display_file_list(run.inputs, query, diffs=None) }}
-        </td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Outputs</td>
-        <td>
-          {{ display_file_list(run.outputs, query, diffs) }}
-        </td>
-      </tr>
-      {% if run.exception %}
-      <tr>
-        <td class="col-md-1">Exception</td>
-        <td>
-          <i>{{ run.exception.type }}</i> <code>{{ run.exception.message }}</code>
-          {% if run.exception.traceback %}
-          <br /><strong>Traceback:</strong>
-          <pre>{{ run.exception.traceback | highlight(query) | safe }}</pre>
-          {% endif %}
-        </td>
-      </tr>
-      {% endif %}
-      <tr>
-        <td class="col-md-1">Environment</td>
-        <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
-      </tr>
-      {% if run.libraries %}
-      <tr>
-        <td class="col-md-1">Libraries</td>
-        <td>{{ run.libraries | join(' <b>&middot;</b> ') | safe }}</td>
-      </tr>
-      {% endif %}
-      {% if run.warnings %}
-      <tr>
-        <td class="col-md-1">Warnings</td>
-        <td>
-          <ul>
-            {% for w in run.warnings %}<li><em>{{ w.message }}</em> (<code>{{ w.script }}</code>, line {{ w.lineno }})</li>{% endfor %}
-          </ul>
-        </td>
-      </tr>
-      {% endif %}
-      <tr>
-        <td class="col-md-1">Notes</td>
-        <td>
-          <form class="form-inline" role="form" action="{{ url_for('annotate') }}" method="post">
-            <div class="input-group">
-              <textarea class="form-control" id="notes" name="notes" rows="5" cols="80">{{ run.notes }}</textarea>
-              {{ annotateRunForm.run_id(value=run.eid) }}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="top-buffer">
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="{{ url_for('index', query=query) }}">
+                            <i class="glyphicon glyphicon-arrow-left"></i>
+                        </a>
+                        <a href="{{ url_for('index', query=query) }}">
+                            back to
+                            {% if query | length > 0 %}
+                                search results
+                            {% else %}
+                                runs
+                            {% endif %}
+                        </a>
+                    </li>
+                </ol>
             </div>
-            <div class="input-group bottom-box">
-              <button type="submit" class="btn btn-info">Save notes</button>
-            </div>
-          </form>
-        </td>
-      </tr>
-    </table>
-  </div>
-</div>
+        </div>
+    </div>
 
-{% if run.gitcommit %}
-<div class="row">
-  <div class="col-md-12">
-    <h3>Git</h3>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-striped table-condensed">
-      <tr>
-        <td class="col-md-1">Git Repo</td>
-        <td>
-          <code>{{ run.gitrepo }}</code>
-          {% if run.gitorigin and run.gitorigin | length > 0 %}
-          (online: <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
-          {% endif %}
-        </td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Git Origin</td>
-        <td>
-          {{ run.gitorigin }}
-        </td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Git Commit</td>
-        <td>
-          {% if run.gitorigin and run.gitorigin | length > 0 %}
-          <a href="{{ run.gitorigin | gitorigin2url | safe }}/commit/{{ run.gitcommit | highlight(query) | safe }}">
-              {{ run.gitcommit | highlight(query) | safe }}
-            </a>
-            {% else %}
-            {{ run.gitcommit | highlight(query) | safe }}
-            {% endif %}
-        </td>
-      </tr>
-      <tr>
-        <td class="col-md-1">Git diff</td>
-        {% if run.diff and run.diff | length > 0 %}
-          <td style="padding: 0;">
-            {{ run.diff | colordiff | highlight(query) | safe }}
-          </td>
-        {% else %}
-          <td>No changes</td>
-        {% endif %}
-      </tr>
-    </table>
-  </div>
-</div>
-{% endif %}
-
-{% if diffs | length > 0 %}
-<div class="row">
-  <div class="col-md-12">
-    <h3>Output file diffs</h3>
-  </div>
-</div>
-
-{% for f in diffs %}
-<div class="row">
-  <div class="col-md-11">
-    <h4 id="diff-{{f.filename}}">{{ f.filename }} diff</h4>
-  </div>
-  <div class="col-md-1">
-    <a href="#top">top</a>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    {% if f.diff %}
-      {{ f.diff | colordiff | highlight(query) | safe }}
-    {% else %}
-      No changes.
+    {% with messages = get_flashed_messages(with_categories = true) %}
+    {% if messages %}
+      <div class="row">
+        <div class="col-md-12">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+        </div>
+      </div>
     {% endif %}
-    <hr>
-  </div>
-</div>
-{% endfor %}
+    {% endwith %}
 
-{% endif %}
+    {% if run %}
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Run
+                    {{ run.unique_id | string | highlight(query) | safe }}</h3>
+                <p class="small text-muted">Click file names or hash codes to search.</p>
+            </div>
+            <div class="col-md-2 col-md-offset-4">
+                <div class="pull-right align-with-header">
+                    <form role="form" action="{{ url_for('runs2json') }}" method="post">
+                        <input type="hidden" name="run_ids" value="[{{ run.eid }}]"></input>
+                        <button type="submit" class="btn btn-info">Save as JSON</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped table-condensed">
+                    <tr>
+                        <td class="col-md-1">Date</td>
+                        <td>{{ run.date | datetimefilter }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Author</td>
+                        <td>{{ run.author | highlight(query) | safe }}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Command</td>
+                        <td>
+                            <code>{{ run.command | highlight(query) | safe }}</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Script</td>
+                        <td>{{ code_with_search_link(run.script, query) }}</td>
+                    </tr>
+                    {% if run.command_args | length > 0 %}
+                        <tr>
+                            <td class="col-md-1">Command line arguments</td>
+                            <td>
+                                <code>{{ run.command_args | highlight(query) | safe }}</code>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td class="col-md-1">Inputs</td>
+                        <td>
+                            {{ display_file_list(run.inputs, query, diffs=None) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Outputs</td>
+                        <td>
+                            {{ display_file_list(run.outputs, query, diffs) }}
+                        </td>
+                    </tr>
+                    {% if run.exception %}
+                        <tr>
+                            <td class="col-md-1">Exception</td>
+                            <td>
+                                <i>{{ run.exception.type }}</i>
+                                <code>{{ run.exception.message }}</code>
+                                {% if run.exception.traceback %}
+                                    <br/>
+                                    <strong>Traceback:</strong>
+                                    <pre>{{ run.exception.traceback | highlight(query) | safe }}</pre>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td class="col-md-1">Environment</td>
+                        <td>{{ run.environment | join(' ') | highlight(query) | safe }}</td>
+                    </tr>
+                    {% if run.libraries %}
+                        <tr>
+                            <td class="col-md-1">Libraries</td>
+                            <td>{{ run.libraries | join(' <b>&middot;</b> ') | safe }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if run.warnings %}
+                        <tr>
+                            <td class="col-md-1">Warnings</td>
+                            <td>
+                                <ul>
+                                    {% for w in run.warnings %}
+                                        <li>
+                                            <em>{{ w.message }}</em>
+                                            (<code>{{ w.script }}</code>, line
+                                            {{ w.lineno }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td class="col-md-1">Notes</td>
+                        <td>
+                            <form class="form-inline" role="form" action="{{ url_for('annotate') }}" method="post">
+                                <div class="input-group">
+                                    <textarea class="form-control" id="notes" name="notes" rows="5" cols="80">{{ run.notes }}</textarea>
+                                    {{ annotateRunForm.run_id(value=run.eid) }}
+                                </div>
+                                <div class="input-group bottom-box">
+                                    <button type="submit" class="btn btn-info">Save notes</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        {% if run.gitcommit %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Git</h3>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-condensed">
+                        <tr>
+                            <td class="col-md-1">Git Repo</td>
+                            <td>
+                                <code>{{ run.gitrepo }}</code>
+                                {% if run.gitorigin and run.gitorigin | length > 0 %}
+                                    (online:
+                                    <a href="{{ run.gitorigin | gitorigin2url | safe }}">{{ run.gitorigin | gitorigin2url | safe }}</a>)
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Git Origin</td>
+                            <td>
+                                {{ run.gitorigin }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Git Commit</td>
+                            <td>
+                                {% if run.gitorigin and run.gitorigin | length > 0 %}
+                                    <a href="{{ run.gitorigin | gitorigin2url | safe }}/commit/{{ run.gitcommit | highlight(query) | safe }}">
+                                        {{ run.gitcommit | highlight(query) | safe }}
+                                    </a>
+                                {% else %}
+                                    {{ run.gitcommit | highlight(query) | safe }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Git diff</td>
+                            {% if run.diff and run.diff | length > 0 %}
+                                <td style="padding: 0;">
+                                    {{ run.diff | colordiff | highlight(query) | safe }}
+                                </td>
+                            {% else %}
+                                <td>No changes</td>
+                            {% endif %}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if diffs | length > 0 %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Output file diffs</h3>
+                </div>
+            </div>
+
+            {% for f in diffs %}
+                <div class="row">
+                    <div class="col-md-11">
+                        <h4 id="diff-{{f.filename}}">{{ f.filename }}
+                            diff</h4>
+                    </div>
+                    <div class="col-md-1">
+                        <a href="#top">top</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if f.diff %}
+                            {{ f.diff | colordiff | highlight(query) | safe }}
+                        {% else %}
+                            No changes.
+                        {% endif %}
+                        <hr>
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% endif %}
+
+    {% endif %}
 
 {% endblock %}

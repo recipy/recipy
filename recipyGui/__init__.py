@@ -46,7 +46,10 @@ recipyGui.jinja_env.filters['highlight'] = highlight
 @recipyGui.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
-    value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
+    if value.startswith('{TinyDate}'):
+        value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
+    else:
+        value = strptime(value, '%Y-%m-%d %H:%M:%S')
     return strftime(format, value) + " UTC"
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
-    escape, make_response, jsonify
+    escape, make_response, flash
 from recipyGui import recipyGui
 from .forms import SearchForm, AnnotateRunForm
 from tinydb import TinyDB, Query, where
@@ -9,6 +9,8 @@ import os
 from ast import literal_eval
 from json import dumps
 from recipyCommon.tinydb_utils import listsearch
+from recipyCommon import utils
+from recipyCmd.recipycmd import get_latest_run
 
 
 routes = Blueprint('routes', __name__, template_folder='templates')
@@ -73,12 +75,14 @@ def latest_run():
     form = SearchForm()
     annotateRunForm = AnnotateRunForm()
 
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
+    r = get_latest_run()
 
-    runs = db.all()
-    runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
-    r = db.get(eid=runs[0].eid)
-    diffs = db.table('filediffs').search(Query().run_id == r.eid)
+    if r is not None:
+        diffs = db.table('filediffs').search(Query().run_id == r.eid)
+    else:
+        flash('No latest run (database is empty).', 'danger')
+        diffs = []
 
     db.close()
 
@@ -86,6 +90,7 @@ def latest_run():
                            annotateRunForm=annotateRunForm,
                            dbfile=recipyGui.config.get('tinydb'), diffs=diffs,
                            active_page='latest_run')
+
 
 @recipyGui.route('/annotate', methods=['POST'])
 def annotate():
