@@ -2,13 +2,14 @@ from flask import Flask, url_for
 from flask_bootstrap import Bootstrap
 import re
 from time import strptime, strftime
+from os.path import abspath
 
 from recipyCommon.config import get_db_path
 
 recipyGui = Flask(__name__)
 recipyGui.jinja_env.add_extension('jinja2.ext.do')
 recipyGui.config['SECRET_KEY'] = 'geheim'
-recipyGui.config['tinydb'] = get_db_path()
+recipyGui.config['tinydb'] = abspath(get_db_path())
 
 Bootstrap(recipyGui)
 
@@ -46,7 +47,10 @@ recipyGui.jinja_env.filters['highlight'] = highlight
 @recipyGui.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
-    value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
+    if value.startswith('{TinyDate}'):
+        value = strptime(value, '{TinyDate}:%Y-%m-%dT%H:%M:%S')
+    else:
+        value = strptime(value, '%Y-%m-%d %H:%M:%S')
     return strftime(format, value) + " UTC"
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter

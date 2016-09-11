@@ -1,14 +1,17 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
-    escape, make_response, jsonify
-from recipyGui import recipyGui
-from .forms import SearchForm, AnnotateRunForm
-from tinydb import TinyDB, Query, where
-import re
+    escape, make_response, flash
+from tinydb import Query, where
 from dateutil.parser import parse
 import os
 from ast import literal_eval
 from json import dumps
+
+from recipyGui import recipyGui
+from .forms import SearchForm, AnnotateRunForm
+
 from recipyCommon.tinydb_utils import listsearch
+from recipyCommon import utils
+from recipyCmd.recipycmd import get_latest_run
 
 
 routes = Blueprint('routes', __name__, template_folder='templates')
@@ -23,7 +26,7 @@ def index():
 
     query = request.args.get('query', '').strip()
 
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
 
     if not query:
         runs = db.all()
@@ -35,7 +38,7 @@ def index():
             where('script').search(query) |
             where('notes').search(query) |
             where('unique_id').search(query))
-    runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
+    runs = sorted(runs, key=lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
 
     run_ids = []
     for run in runs:
@@ -57,9 +60,14 @@ def run_details():
     query = request.args.get('query', '')
     run_id = int(request.args.get('id'))
 
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
     r = db.get(eid=run_id)
-    diffs = db.table('filediffs').search(Query().run_id == run_id)
+
+    if r is not None:
+        diffs = db.table('filediffs').search(Query().run_id == run_id)
+    else:
+        flash('Run not found.', 'danger')
+        diffs = []
 
     db.close()
 
@@ -73,12 +81,14 @@ def latest_run():
     form = SearchForm()
     annotateRunForm = AnnotateRunForm()
 
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
+    r = get_latest_run()
 
-    runs = db.all()
-    runs = sorted(runs, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')), reverse=True)
-    r = db.get(eid=runs[0].eid)
-    diffs = db.table('filediffs').search(Query().run_id == r.eid)
+    if r is not None:
+        diffs = db.table('filediffs').search(Query().run_id == r.eid)
+    else:
+        flash('No latest run (database is empty).', 'danger')
+        diffs = []
 
     db.close()
 
@@ -87,6 +97,7 @@ def latest_run():
                            dbfile=recipyGui.config.get('tinydb'), diffs=diffs,
                            active_page='latest_run')
 
+
 @recipyGui.route('/annotate', methods=['POST'])
 def annotate():
     notes = request.form['notes']
@@ -94,16 +105,17 @@ def annotate():
 
     query = request.args.get('query', '')
 
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
     db.update({'notes': notes}, eids=[run_id])
     db.close()
 
     return redirect(url_for('run_details', id=run_id, query=query))
 
+
 @recipyGui.route('/runs2json', methods=['POST'])
 def runs2json():
     run_ids = literal_eval(request.form['run_ids'])
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = db = utils.open_or_create_db()
     runs = [db.get(eid=run_id) for run_id in run_ids]
     db.close()
 
@@ -115,7 +127,7 @@ def runs2json():
 
 @recipyGui.route('/patched_modules')
 def patched_modules():
-    db = TinyDB(recipyGui.config.get('tinydb'))
+    db = utils.open_or_create_db()
     modules = db.table('patches').all()
     db.close()
 

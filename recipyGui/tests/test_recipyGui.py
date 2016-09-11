@@ -1,10 +1,11 @@
 from recipyGui import recipyGui
 from os import remove
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 from tinydb import TinyDB
 from dateutil.parser import parse
 
 import six
+
 
 class TestRecipyGui(TestCase):
     def create_app(self):
