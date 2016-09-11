@@ -30,7 +30,6 @@ import tempfile
 from docopt import docopt
 from jinja2 import Template
 from tinydb import where, Query
-from dateutil.parser import parse
 from json import dumps
 import six
 
@@ -54,6 +53,7 @@ Using command-line arguments: {{ command_args }}
 \aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
 \aEnvironment:\b {{ environment|join(", ") }}
+{% if
 {% if exception is defined %}
 \aException:\b ({{ exception.type }}) {{ exception.message }}
 {% endif %}
@@ -232,7 +232,7 @@ def get_latest_run():
     results = [_change_date(result) for result in results]
 
     # Sort the results
-    results = sorted(results, key=lambda x: parse(x['date']))
+    results = sorted(results, key=lambda x: x['date'])
 
     return results[-1]
 

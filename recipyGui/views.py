@@ -1,7 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
     escape, make_response, flash
 from tinydb import Query, where
-from dateutil.parser import parse
 import os
 from ast import literal_eval
 from json import dumps
@@ -38,7 +37,9 @@ def index():
             where('script').search(query) |
             where('notes').search(query) |
             where('unique_id').search(query))
-    runs = sorted(runs, key=lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
+    runs = sorted(runs,
+                  key=lambda x: x['date'] if x['date'] is not None else x['eid'],
+                  reverse=True)
 
     run_ids = []
     for run in runs:
