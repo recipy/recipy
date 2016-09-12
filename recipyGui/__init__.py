@@ -47,6 +47,8 @@ recipyGui.jinja_env.filters['highlight'] = highlight
 @recipyGui.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
+    # TODO: this filter is currently not used. Can it be removed? Or do we want
+    # a different date/time format in the gui?
     return value.strftime(format) + " UTC"
 
 recipyGui.jinja_env.filters['datetimefilter'] = datetimefilter

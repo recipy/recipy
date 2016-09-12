@@ -44,7 +44,7 @@
             <td>
               Run ID: {{ run.unique_id | highlight(query) | safe }}
               <br> Created by <span class="text-primary">{{ run.author }}</span>
-              on <span class="text-primary">{{ run.date | datetimefilter }}</span>
+              on <span class="text-primary">{{ run.date }}</span>
               <br> Ran {{ code_with_search_link(run.script, query) }} using
               <code>{{ run.command }}</code>
               <br>
