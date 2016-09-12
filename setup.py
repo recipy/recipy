@@ -68,9 +68,10 @@ Please see https://github.com/recipy/recipy for further information.
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['wrapt', 'tinydb>=3.0.0', 'tinydb-serialization', 'jinja2', 'docopt', 'GitPython', 'Flask',
-                      'Flask-Script', 'flask_bootstrap', 'flask-wtf', 'python-dateutil',
-                      'six'],
+    install_requires=['wrapt', 'tinydb>=3.0.0', 'tinydb-serialization',
+                      'jinja2', 'docopt', 'GitPython', 'Flask', 'blessings',
+                      'Flask-Script', 'flask_bootstrap', 'flask-wtf',
+                      'python-dateutil', 'six'],
 
     entry_points={
         'console_scripts': [
