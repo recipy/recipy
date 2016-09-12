@@ -1,7 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
     escape, make_response, flash
 from tinydb import Query, where
-from dateutil.parser import parse
 import os
 from ast import literal_eval
 from json import dumps
