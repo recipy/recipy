@@ -268,7 +268,9 @@ def latest(args):
 def find_by_hash(x, val):
     for output in x:
         if isinstance(output, six.string_types):
-            test_val = output
+            # If it's just a string it doesn't have a hash
+            # so skip it
+            return False
         else:
             test_val = output[1]
 
