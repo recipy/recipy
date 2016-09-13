@@ -10,17 +10,18 @@ Usage:
   recipy --version
 
 Options:
-  -h --help     Show this screen
-  --version     Show version
-  -a --all      Show all results (otherwise just latest result given)
-  -f --fuzzy    Use fuzzy searching on filename
-  -r --regex    Use regex searching on filename
-  -i --id       Search based on (a fragment of) the run ID
-  -v --verbose  Be verbose
-  -d --diff     Show diff
-  -j --json     Show output as JSON
-  --no-browser  Do not open browser window
-  --debug       Turn on debugging mode
+  -h --help        Show this screen
+  --version        Show version
+  -p --filepath    Search based on filepath rather than hash
+  -f --fuzzy       Use fuzzy searching on filename
+  -r --regex       Use regex searching on filename
+  -i --id          Search based on (a fragment of) the run ID
+  -a --all         Show all results (otherwise just latest result given)
+  -v --verbose     Be verbose
+  -d --diff        Show diff
+  -j --json        Show output as JSON
+  --no-browser     Do not open browser window
+  --debug          Turn on debugging mode
 
 """
 import os
@@ -348,7 +349,7 @@ def search_hash(args):
 
 
 def search(args):
-    if args['--fuzzy'] or args['--id'] or args['--regex']:
+    if args['--fuzzy'] or args['--id'] or args['--regex'] or args['--filepath']:
         search_text(args)
     else:
         search_hash(args)
@@ -370,9 +371,13 @@ def search_text(args):
         # Automatically turn on display of all results so we don't misleadingly
         # suggest that their shortened ID is unique when it isn't
         args['--all'] = True
-    else:
+    elif args['--filepath']:
         results = db.search(Run.outputs.test(find_by_filepath, os.path.abspath(filename)))
         results += db.search(Run.inputs.test(find_by_filepath, os.path.abspath(filename)))
+    else:
+        print('Unknown arguments')
+        print(__doc__)
+        return
 
     # Sort the results
     results = sorted(results, key=lambda x: x['date'])
