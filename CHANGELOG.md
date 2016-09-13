@@ -1,5 +1,64 @@
 # Change Log
 
+## [v0.3.0](https://github.com/recipy/recipy/tree/v0.3.0) (2016-09-13)
+[Full Changelog](https://github.com/recipy/recipy/compare/v0.2.3...v0.3.0)
+
+This is a major release with a number of new features and lots of tidying up. It has been released in time for PyConUK, where we will be sprinting on recipy and hopefully developing even more new features and fixing more bugs.
+
+The major new features are:
+
+ * A hash is now computed for all input and output files, and this is used for searching for files. Practically, this means that you can create `graph.png`, send it to a colleague, and even if they send back a file called `RobinsGraph.png` you can still look up how it was created, as the hash will be the same even if the filename isn't.
+ * Hashes are computed by default, rather than hashing having to be switched on in the config file (Note: this is a change from the pre-release versions, as hashing is now working effectively).
+ * `recipy search` has gained a new option: `--filepath` (or `-p`) which forces searching based on the file and path rather than the hash.
+ * There is now a beta-quality `recipy.open` function that can be used instead of Python's standard `open` function to log files that are opened. (The reason why the standard Python `open` command can't be wrapped by recipy is a topic for a blog post, I think). There are some known issues with this function, but it should work for many use cases.
+ * Versions of the libraries that are patched by recipy are now stored with the run
+ * There is now a `recipy annotate` command that can be used to add notes to a 'recipy run'.
+ * There is a new tab in the GUI that lists all of modules and functions that are patched by this version of recipy.
+ * The terminal output from the `recipy` command is now far more easy to read, as it uses different font styles for headers and the actual content
+ * The GUI has been updated to handle and display all of the new information we're storing.
+ * Lots of bugs have been fixed (far more than listed in the issues below, as not all were recorded officially via issues) and the `recipy search` command is far more robust now.
+
+ Huge thanks must also go to [mikej888](https://github.com/mikej888) who has been working on recipy through the [Software Sustainability Institute](http://www.software.ac.uk) and has reported many bugs and give lots of ideas for improvements. He is currently working on a test suite that should make the whole package far more robust.
+
+**Implemented enhancements:**
+
+- Store hash for input/output files [\#25](https://github.com/recipy/recipy/issues/25)
+- Hook into standard `open` etc in pure python [\#44](https://github.com/recipy/recipy/issues/44)
+- Store data diffs [\#107](https://github.com/recipy/recipy/issues/107)
+- Format terminal output nicely [\#102](https://github.com/recipy/recipy/issues/102)
+- How should GUI display hashes? [\#100](https://github.com/recipy/recipy/issues/100)
+- Store versions of libraries used [\#87](https://github.com/recipy/recipy/issues/87)
+- Use colours in terminal output of CLI [\#86](https://github.com/recipy/recipy/issues/86)
+- Add 'annotate' functionality [\#69](https://github.com/recipy/recipy/issues/69)
+
+**Fixed bugs:**
+
+- Output to JSON with no results found fails with IndexError [\#142](https://github.com/recipy/recipy/issues/142)
+- recipy command fails on Windows due to blessings use [\#141](https://github.com/recipy/recipy/issues/141)
+- Issues with searching by ID [\#124](https://github.com/recipy/recipy/issues/124)
+- latest\_run throws an error if there are no runs in the database [\#118](https://github.com/recipy/recipy/issues/118)
+- tinydb error [\#92](https://github.com/recipy/recipy/issues/92)
+- Recipy not able to find a file  [\#89](https://github.com/recipy/recipy/issues/89)
+- Add blessings to setup.py [\#140](https://github.com/recipy/recipy/issues/140)
+- Diffs can't be applied as patches because no filename info is included [\#133](https://github.com/recipy/recipy/issues/133)
+- matplotlib isn't a dependency [\#115](https://github.com/recipy/recipy/issues/115)
+- TypeError: 'Query' object is not callable when searching for runs in GUI [\#112](https://github.com/recipy/recipy/issues/112)
+
+**Closed issues:**
+
+- Split the GUI into a separate PyPI package? [\#117](https://github.com/recipy/recipy/issues/117)
+- Use with R via doit? [\#114](https://github.com/recipy/recipy/issues/114)
+- Source code not PEP-8 [\#110](https://github.com/recipy/recipy/issues/110)
+- Python 3 compatibility: deprecated modules [\#109](https://github.com/recipy/recipy/issues/109)
+
+**Merged pull requests:**
+
+- adds check for $EDITOR for the annotate command [\#97](https://github.com/recipy/recipy/pull/97) ([cash](https://github.com/cash))
+- updated readme to be consistent about location of recipy console script [\#96](https://github.com/recipy/recipy/pull/96) ([cash](https://github.com/cash))
+- add test\_requirements.txt for installing unit test dependencies [\#94](https://github.com/recipy/recipy/pull/94) ([cash](https://github.com/cash))
+- adds tinydb-serialization to requirements.txt for manually installing deps [\#93](https://github.com/recipy/recipy/pull/93) ([cash](https://github.com/cash))
+
+
 ## [v0.2.3](https://github.com/recipy/recipy/tree/HEAD)
 [Full Changelog](https://github.com/recipy/recipy/compare/v0.2.3...HEAD)
 
