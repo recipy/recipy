@@ -31,6 +31,7 @@ from docopt import docopt
 from jinja2 import Template
 from tinydb import where, Query
 from json import dumps
+
 import six
 
 from . import __version__
@@ -262,19 +263,32 @@ def latest(args):
 
 def find_by_hash(x, val):
     for output in x:
-        if output[1] == val:
+        if isinstance(output, six.string_types):
+            test_val = output
+        else:
+            test_val = output[1]
+
+        if test_val == val:
             return True
 
 
 def find_by_filepath(x, val):
     for output in x:
-        if output[0] == val:
+        if isinstance(output, six.string_types):
+            test_val = output
+        else:
+            test_val = output[0]
+        if test_val == val:
             return True
 
 
 def find_by_regex(x, val):
     for output in x:
-        if re.match(val, output[0]):
+        if isinstance(output, six.string_types):
+            test_val = output
+        else:
+            test_val = output[0]
+        if re.match(val, test_val):
             return True
 
 
@@ -302,7 +316,8 @@ def search_hash(args):
         print(output)
     else:
         if len(results) == 0:
-            print("No results found")
+            # fall back to text search
+            search_text(args)
         else:
             if args['--all']:
                 for r in results[:-1]:
