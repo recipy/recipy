@@ -246,8 +246,12 @@ def latest(args):
     run = get_latest_run()
 
     if not run:
-        print("Database is empty")
-        return
+        if args['--json']:
+            print('[]')
+            return
+        else:
+            print("Database is empty")
+            return
 
     if args['--json']:
         output = dumps(run, indent=2, sort_keys=True, default=utils.json_serializer)
@@ -302,12 +306,16 @@ def search_hash(args):
     Run = Query()
     # Search both outputs AND inputs
     # TODO: Add a command-line argument to force searching of just one
+    # of inputs or outputs
     results = db.search(Run.outputs.test(find_by_hash, hash_value))
     results += db.search(Run.inputs.test(find_by_hash, hash_value))
 
     results = sorted(results, key=lambda x: x['date'])
 
     if args['--json']:
+        if len(results) == 0:
+            print('[]')
+            return
         if args['--all']:
             res_to_output = results
         else:
@@ -316,8 +324,7 @@ def search_hash(args):
         print(output)
     else:
         if len(results) == 0:
-            # fall back to text search
-            search_text(args)
+            print('No results found')
         else:
             if args['--all']:
                 for r in results[:-1]:
@@ -367,6 +374,9 @@ def search_text(args):
     results = sorted(results, key=lambda x: x['date'])
 
     if args['--json']:
+        if len(results) == 0:
+            print('[]')
+            return
         if args['--all']:
             res_to_output = results
         else:
