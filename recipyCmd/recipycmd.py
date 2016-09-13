@@ -361,8 +361,10 @@ def search_text(args):
 
     if args['--fuzzy']:
         results = db.search(Run.outputs.test(find_by_regex, ".+%s.+" % filename))
+        results += db.search(Run.inputs.test(find_by_regex, ".+%s.+" % filename))
     elif args['--regex']:
         results = db.search(Run.outputs.test(find_by_regex, filename))
+        results += db.search(Run.inputs.test(find_by_regex, filename))
     elif args['--id']:
         results = db.search(where('unique_id').matches('%s.*' % filename))
         # Automatically turn on display of all results so we don't misleadingly
