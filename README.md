@@ -124,14 +124,14 @@ This simply instructs recipy not to save `git diff` information when it records 
 	 * `quiet` - don't print any messages
 	 * `port` - specify port to use for the GUI
  *  `[data]`
-	 * `hash_inputs` - compute and store SHA-1 hashes of input files, via [`git-hash-object`](https://git-scm.com/docs/git-hash-object)
-	 * `hash_outputs` - compute and store SHA-1 hashes of output files, via [`git-hash-object`](https://git-scm.com/docs/git-hash-object)
 	 * `file_diff_outputs` - store diff between the old output and new output file, if the output file exists before the script is executed
  *  `[database]`
  	 * `path = /path/to/file.json` - set the path to the database file
  * `[ignored metadata]`
 	 * `diff` - don't store the output of `git diff` in the metadata for a recipy run
 	 * `git` - don't store anything relating to git (origin, commit, repo etc) in the metadata for a recipy run
+     * `input_hashes` - don't compute and store SHA-1 hashes of input files
+     * `output_hashes` - don't compute and store SHA-1 hashes of output files
  * `[ignored inputs]`
  	 * List any module here (eg. `numpy`) to instruct recipy *not* to record inputs from this module, or `all` to ignore inputs from all modules
  * `[ignored outputs]`

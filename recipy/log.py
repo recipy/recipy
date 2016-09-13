@@ -109,10 +109,10 @@ def log_input(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-    if option_set('data', 'hash_inputs'):
-        record = (filename, hash_file(filename))
-    else:
+    if option_set('ignored metadata', 'input_hashes'):
         record = filename
+    else:
+        record = (filename, hash_file(filename))
 
     if option_set('general', 'debug'):
         print("Input from %s using %s" % (record, source))
@@ -235,7 +235,7 @@ def log_exit():
 @atexit.register
 def hash_outputs():
     # Writing to output files is complete; we can now compute hashes.
-    if not option_set('data', 'hash_outputs'):
+    if option_set('ignored metadata', 'output_hashes'):
         return
 
     db = open_or_create_db()
