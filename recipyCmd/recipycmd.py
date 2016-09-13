@@ -36,12 +36,11 @@ import six
 from . import __version__
 from recipyCommon import config, utils
 from recipyCommon.version_control import hash_file
-import blessings
 
+from colorama import init
+init()
 
 db = utils.open_or_create_db()
-
-term = blessings.Terminal()
 
 template_str = """\aRun ID:\b {{ unique_id }}
 \aCreated by\b {{ author }} on {{ date }} UTC
@@ -90,7 +89,10 @@ Using command-line arguments: {{ command_args }}
 {% endif %}
 """
 
-template_str_withcolor = template_str.replace('\a', term.bold).replace('\b', term.normal)
+BOLD = '\033[1m'
+RESET = '\033[0m'
+
+template_str_withcolor = template_str.replace('\a', BOLD).replace('\b', RESET)
 template_str_nocolor = template_str.replace('\a', '').replace('\b', '')
 
 

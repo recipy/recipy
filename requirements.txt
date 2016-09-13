@@ -11,4 +11,4 @@ docopt
 flask-testing
 blinker
 six
-blessings
+colorama
