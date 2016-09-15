@@ -109,5 +109,3 @@ class FileContentError(Exception):
         :type value: Exception
         """
         return self._exception
-import sys
-print(load_file(sys.argv[1]))
