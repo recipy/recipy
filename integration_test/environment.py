@@ -77,29 +77,35 @@ def get_os():
     return platform.platform()
 
 
-def is_package_installed(package):
+def is_package_installed(packages, package):
     """
     Is a package installed?
 
+    :param packages: installed packages and versions, keyed by package
+    name
+    :type packages: dict of str or unicode => str or unicode
     :param package: Package name
     :type package: str or unicode
     :return: True if it is installed, False otherwise
     :rtype: bool
     """
-    return package in get_packages()
+    return package in packages
 
 
-def get_package_version(package):
+def get_package_version(packages, package):
     """
     Get version of installed package.
 
+    :param packages: installed packages and versions, keyed by package
+    name
+    :type packages: dict of str or unicode => str or unicode
     :param package: Package name
     :type package: str or unicode
     :return: Package version
     :rtype: str or unicode
     :raises KeyError: if the package is not installed
     """
-    return get_packages()[package]
+    return packages[package]
 
 
 def get_packages():
