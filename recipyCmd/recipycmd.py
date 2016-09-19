@@ -26,6 +26,7 @@ Options:
 """
 import os
 import re
+import sys
 import tempfile
 
 from docopt import docopt
@@ -139,11 +140,6 @@ def main():
 
 
 def annotate(args):
-    # check that $EDITOR is defined
-    if os.environ.get('EDITOR') is None:
-        print('No environment variable $EDITOR defined, exiting.')
-        return
-
     # Grab latest run from the DB
     run = get_latest_run()
 
@@ -163,7 +159,7 @@ def annotate(args):
     f.close()
 
     # Open your editor
-    os.system('$EDITOR %s' % f.name)
+    launch_text_editor(f.name)
 
     # Grab the text
     annotation = ""
@@ -182,6 +178,53 @@ def annotate(args):
     # Store in the DB
     db.update({'notes': notes}, where('unique_id') == run['unique_id'])
     db.close()
+
+
+def launch_text_editor(filename):
+    """
+    Launches a text editor on the file called 'filename'. Attempts to find the text editor first through the
+    recipy config file, then in the environment variables. Falls back to default text editor for the
+    corresponding operating system.
+    :param filename: name of file being edited
+    :return:
+    """
+    def _try_editors(fname, list_of_editors):
+        for editor in list_of_editors:
+            status = os.system("%s %s" % (editor, fname))
+            if status == 0:
+                break
+        return status
+
+    assert isinstance(filename, six.string_types), \
+        "%s must be a string type. type = %s" % (filename, type(filename))
+
+    # check that $EDITOR is defined
+    editor = os.environ.get('EDITOR')
+
+    if editor is not None:
+        os.system('$EDITOR %s' % filename)
+    else:
+        # create an empty file
+        touch(filename)
+
+        # open the empty file by trying different text editors according to the operating system
+        if "linux" in sys.platform:
+            status = _try_editors(filename, ["/usr/bin/editor", "nano", "vi", "emacs"])
+        elif "darwin" in sys.platform:
+            status = _try_editors(filename, ["nano", "vi", "emacs", "open -a TextEdit"])
+        elif "win" in sys.platform:
+            status = _try_editors(filename, ["edit", "notepad", "notepad.exe"])
+        else:
+            raise RuntimeError("Cannot launch text editor for operating system %s. "
+                               "Try setting the EDITOR environment variable" % sys.platform)
+        if status != 0:
+            raise RuntimeError("Cannot launch text editor. Try setting the EDITOR environment variable")
+
+
+def touch(fname):
+    """ Create an empty file """
+    with open(fname, 'a'):
+        os.utime(fname, times=None)
 
 
 def gui(args):
