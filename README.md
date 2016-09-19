@@ -121,7 +121,7 @@ This simply instructs recipy not to save `git diff` information when it records 
 
  * `[general]`
 	 * `debug` - print debug messages
- 	 * `editor` - Configure the default text editor that will be used when recipy needs you to type in a message
+ 	 * `editor = vi` - Configure the default text editor that will be used when recipy needs you to type in a message. Use notepad if on Windows, for example
 	 * `quiet` - don't print any messages
 	 * `port` - specify port to use for the GUI
  *  `[data]`

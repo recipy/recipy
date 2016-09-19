@@ -26,6 +26,7 @@ Options:
 """
 import os
 import re
+import sys
 import tempfile
 
 from docopt import docopt
@@ -140,12 +141,8 @@ def main():
 
 
 def annotate(args):
-    # check whether editor is set
-
-    if get_editor() is None:
-        print('No custom editor set in .recipyrc file.')
-        print('Could not find default $EDITOR - exiting.')
-        return
+    # get the text editor
+    editor = get_editor()
 
     if args['<idvalue>']:
         try:
@@ -172,7 +169,7 @@ def annotate(args):
     f.close()
 
     # Open your editor
-    os.system('%s %s' % (get_editor(), f.name))
+    os.system('%s %s' % (editor, f.name))
 
     # Grab the text
     annotation = ""
