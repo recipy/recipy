@@ -54,7 +54,8 @@ class SvnException(Exception):
 def svn_diff(path):
     """
     Run svn diff for the given path and return the result. Raise SvnException
-    if the command doesn't return 0."""
+    if the command doesn't return 0.
+    """
     cmd = ["svn", "diff", path]
     p = subprocess.Popen(cmd,
 	       	         stdout = subprocess.PIPE,
