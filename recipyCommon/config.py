@@ -8,6 +8,9 @@ except:
     from configparser import SafeConfigParser, Error
 
 import os
+import sys
+
+from distutils.spawn import find_executable
 
 
 def read_config_file():
@@ -40,6 +43,47 @@ def get_db_path():
         return conf.get('database', 'path')
     except Error:
         return os.path.expanduser('~/.recipy/recipyDB.json')
+
+
+def get_editor():
+    try:
+        editor = conf.get('general', 'editor')
+    except Error:
+        if os.environ.get('EDITOR'):
+            editor = '$EDITOR'
+        else:
+            editor = find_editor()
+    return editor
+
+
+def find_editor():
+    """ Attemps to find a valid text editor by trying different executables (according to the operating system) and
+    checking for existence. """
+    platform = sys.platform
+
+    # open the empty file by trying different text editors according to the operating system
+    if "linux" in platform:
+        editor = _try_editors(["/usr/bin/editor", "nano", "vi", "emacs"])
+    elif "darwin" in platform:  # macintosh
+        editor = _try_editors(["nano", "vi", "emacs", "open -t"])
+    elif "win" in platform:  # windows
+        editor = _try_editors(["edit", "notepad", "notepad.exe"])
+    else:
+        raise RuntimeError("Cannot launch text editor for operating system %s. "
+                           "Try setting the editor in the ~/.recipy/recipyrc file" % platform)
+    if editor is None:
+        raise RuntimeError("Try setting the editor in the ~/.recipy/recipyrc file")
+
+    return editor
+
+
+def _try_editors(list_of_commands):
+    for command in list_of_commands:
+        exe = command.split(' ')[0]  # strip the options
+        exe_path = find_executable(exe)
+        if exe_path is not None:
+            return command
+    return None  # returns None if no editor is found
 
 
 def get_gui_port():
