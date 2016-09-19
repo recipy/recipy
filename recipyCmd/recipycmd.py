@@ -53,6 +53,9 @@ Using command-line arguments: {{ command_args }}
 {% if gitcommit is defined %}
 \aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
 {% endif %}
+{% if svnrepo is defined %}
+\aSvn:\b commit {{ svncommit }}, in repo {{ svnrepo }}.
+{% endif %}
 \aEnvironment:\b {{ environment|join(", ") }}
 {% if libraries is defined %}
 \aLibraries:\b {{ libraries|join(", ") }}
