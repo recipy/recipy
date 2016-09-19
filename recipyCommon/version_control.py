@@ -46,7 +46,8 @@ def add_git_info(run, scriptpath):
         # We can't store git info for some reason, so just skip it
         pass
 
-# PySvn doesn't do local diffs yet, so we have to do it the hard way...
+# The released version of PySvn doesn't do local diffs yet, so we have to do
+# it the hard way...
 
 class SvnException(Exception):
     pass
