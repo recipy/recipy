@@ -12,7 +12,7 @@ class PatchImporter(object):
     This class is not designed to be used itself - instead,
     subclasses should be created that implement the `patch` method.
     """
-    modulename = ''
+    # modulename = ''
 
     def find_module(self, fullname, path=None):
         """Module finding method. It tells Python to use our hook

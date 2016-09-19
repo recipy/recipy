@@ -78,20 +78,42 @@ def recursive_setattr(obj, attr, value):
 
 
 def patch_function(mod, function, wrapper):
-        old_f_name = '_%s' % function.replace(".", "_")
-        setattr(mod, old_f_name, recursive_getattr(mod, function))
+    print("Patching function %s" % (function))
+    print("Wrapper is %s" % wrapper)
+    old_f_name = '_%s' % function.replace(".", "_")
+    setattr(mod, old_f_name, recursive_getattr(mod, function))
 
-        recursive_setattr(mod, function, wrapper(getattr(mod, old_f_name)))
+    recursive_setattr(mod, function, wrapper(getattr(mod, old_f_name)))
 
 
-def create_wrapper(function, arg_loc, source):
+def create_wrapper_simple(function, arg_loc, source):
+    print("Creating wrapper: %s, %s, %s" % (function, arg_loc, source))
     @wrapt.decorator
-    def f(self, wrapped, instance, args, kwargs):
+    def f(wrapped, instance, args, kwargs):
+        print("In f:")
+        print(wrapped)
+        print(instance)
+        print(args)
+        print(kwargs)
         function(args[arg_loc], source)
         return wrapped(*args, **kwargs)
 
     return f
 
+
+def create_wrapper(function, arg_loc, source):
+    print("Creating wrapper: %s, %s, %s" % (function, arg_loc, source))
+    @wrapt.decorator
+    def f(self, wrapped, instance, args, kwargs):
+        print("In f:")
+        print(wrapped)
+        print(instance)
+        print(args)
+        print(kwargs)
+        function(args[arg_loc], source)
+        return wrapped(*args, **kwargs)
+
+    return f
 
 def recursive_find_module(name, path):
     subnames = name.split(".")
