@@ -89,7 +89,7 @@ There are other features in the command-line interface too: `recipy --help` to s
 	  recipy search [options] <outputfile>
 	  recipy latest [options]
 	  recipy gui [options]
-	  recipy annotate [options]
+	  recipy annotate [<idvalue>]
 	  recipy (-h | --help)
 	  recipy --version
 
