@@ -1,14 +1,15 @@
 from flask import Blueprint, request, render_template, redirect, url_for, \
     escape, make_response, flash
-from tinydb import Query, where
+from tinydb import Query
 import os
+import re
 from ast import literal_eval
 from json import dumps
 
 from recipyGui import recipyGui
 from .forms import SearchForm, AnnotateRunForm
+from .controller import search_database
 
-from recipyCommon.tinydb_utils import listsearch
 from recipyCommon import utils
 from recipyCmd.recipycmd import get_latest_run, _change_date
 
@@ -25,19 +26,13 @@ def index():
 
     query = request.args.get('query', '').strip()
 
+    # make sure chars like ':' and '\' are escaped properly before doing the search
+    if query:
+        query = re.escape(query)
+
     db = utils.open_or_create_db()
 
-    if not query:
-        runs = db.all()
-    else:
-        # Search run outputs using the query string
-        runs = db.search(
-            where('outputs').any(lambda x: listsearch(query, x)) |
-            where('inputs').any(lambda x: listsearch(query, x)) |
-            where('script').search(query) |
-            where('notes').search(query) |
-            where('unique_id').search(query))
-
+    runs = search_database(db, query=query)
     runs = [_change_date(r) for r in runs]
 
     runs = sorted(runs, key=lambda x: x['date'], reverse=True)
