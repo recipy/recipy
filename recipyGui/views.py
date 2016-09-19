@@ -27,12 +27,11 @@ def index():
     query = request.args.get('query', '').strip()
 
     # make sure chars like ':' and '\' are escaped properly before doing the search
-    if query:
-        query = re.escape(query)
+    escaped_query = re.escape(query) if query else query
 
     db = utils.open_or_create_db()
 
-    runs = search_database(db, query=query)
+    runs = search_database(db, query=escaped_query)
     runs = [_change_date(r) for r in runs]
 
     runs = sorted(runs, key=lambda x: x['date'], reverse=True)
@@ -45,7 +44,7 @@ def index():
 
     db.close()
 
-    return render_template('list.html', runs=runs, query=query, form=form,
+    return render_template('list.html', runs=runs, query=escaped_query, search_bar_query=query, form=form,
                            run_ids=str(run_ids),
                            dbfile=recipyGui.config.get('tinydb'))
 
