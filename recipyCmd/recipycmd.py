@@ -37,6 +37,7 @@ import six
 
 from . import __version__
 from recipyCommon import config, utils
+from recipyCommon.config import get_editor
 from recipyCommon.version_control import hash_file
 
 from colorama import init
@@ -139,9 +140,11 @@ def main():
 
 
 def annotate(args):
-    # check that $EDITOR is defined
-    if os.environ.get('EDITOR') is None:
-        print('No environment variable $EDITOR defined, exiting.')
+    # check whether editor is set
+
+    if get_editor() is None:
+        print('No custom editor set in .recipyrc file.')
+        print('Could not find default $EDITOR - exiting.')
         return
 
     # Grab latest run from the DB
@@ -163,7 +166,7 @@ def annotate(args):
     f.close()
 
     # Open your editor
-    os.system('$EDITOR %s' % f.name)
+    os.system('%s %s' % (get_editor(), f.name))
 
     # Grab the text
     annotation = ""

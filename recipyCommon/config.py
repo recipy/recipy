@@ -42,6 +42,17 @@ def get_db_path():
         return os.path.expanduser('~/.recipy/recipyDB.json')
 
 
+def get_editor():
+    try:
+        editor = conf.get('general', 'editor')
+    except Error:
+        if os.environ.get('EDITOR'):
+            editor = '$EDITOR'
+        else:
+            editor = None
+    return editor
+
+
 def get_gui_port():
     try:
         return int(conf.get('general', 'port'))
