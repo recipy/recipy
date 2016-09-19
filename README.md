@@ -232,4 +232,6 @@ This table lists the modules recipy has patches for, and the input and output fu
 </tbody>
 </table>
 
+
+
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
