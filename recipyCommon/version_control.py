@@ -52,6 +52,9 @@ class SvnException(Exception):
     pass
 
 def svn_diff(path):
+    """
+    Run svn diff for the given path and return the result. Raise SvnException
+    if the command doesn't return 0."""
     cmd = ["svn", "diff", path]
     p = subprocess.Popen(cmd,
 	       	         stdout = subprocess.PIPE,
@@ -64,15 +67,18 @@ def svn_diff(path):
     return stdout.decode()
 
 def add_svn_info(run, scriptpath):
-    """Add information about the svn repository holding the source file to the database"""
+    """
+    Add information about the svn repository holding the source file to the
+    database.
+    """
     try:
-        client = svn.local.LocalClient(scriptpath)
-        svn_info = client.info()
+        svn_client = svn.local.LocalClient(scriptpath)
+        svn_info = svn_client.info()
         run["svnrepo"] = svn_info["repository_root"]
         run["svncommit"] = svn_info["commit_revision"]
-
         if not option_set('ignored metadata', 'diff'):
             run['diff'] = svn_diff(svn_info["wc-info/wcroot-abspath"])
     except (SvnException, ValueError):
-        # We can't store git info for some reason, so just skip it
+        # We can't access svn info for some reason, so just skip it
         pass
+
