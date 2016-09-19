@@ -13,22 +13,22 @@ def get_version(modulename):
     if modulename in sys.modules:
         try:
             version = sys.modules[modulename].__version__
-        except:
+        except (KeyError, AttributeError):
             pass
 
         try:
             version = sys.modules[modulename].version
-        except:
+        except (KeyError, AttributeError):
             pass
 
         try:
             version = sys.modules[modulename].version.version
-        except:
+        except (KeyError, AttributeError):
             pass
 
         try:
             version = sys.modules[modulename].VERSION
-        except:
+        except (KeyError, AttributeError):
             pass
     else:
         warnings.warn('requesting version of a module that has not been '
