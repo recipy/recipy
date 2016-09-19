@@ -5,7 +5,7 @@ Usage:
   recipy search [options] <outputfile>
   recipy latest [options]
   recipy gui [options]
-  recipy annotate [options]
+  recipy annotate [<idvalue>]
   recipy (-h | --help)
   recipy --version
 
@@ -147,8 +147,14 @@ def annotate(args):
         print('Could not find default $EDITOR - exiting.')
         return
 
-    # Grab latest run from the DB
-    run = get_latest_run()
+    if args['<idvalue>']:
+        try:
+            run = db.search(where('unique_id') == args['<idvalue>'])[0]
+        except IndexError:
+            print('Could not find id %s' % args['<idvalue>'])
+            return
+    else:
+        run = get_latest_run()
 
     # Get temp filename
     f = tempfile.NamedTemporaryFile(delete=False, mode='w')
