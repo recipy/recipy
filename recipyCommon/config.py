@@ -53,6 +53,10 @@ def get_editor():
             editor = '$EDITOR'
         else:
             editor = find_editor()
+    if editor is None or editor is '':
+        raise RuntimeError("Cannot launch text editor. "
+                           "Try setting the editor in the ~/.recipy/recipyrc file")
+
     return editor
 
 
@@ -69,11 +73,7 @@ def find_editor():
     elif "win" in platform:  # windows
         editor = _try_editors(["edit", "notepad", "notepad.exe"])
     else:
-        raise RuntimeError("Cannot launch text editor for operating system %s. "
-                           "Try setting the editor in the ~/.recipy/recipyrc file" % platform)
-    if editor is None:
-        raise RuntimeError("Try setting the editor in the ~/.recipy/recipyrc file")
-
+        editor = None
     return editor
 
 

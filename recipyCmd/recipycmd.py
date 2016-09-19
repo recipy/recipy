@@ -141,10 +141,8 @@ def main():
 
 
 def annotate(args):
-    # check whether editor is set
+    # get the text editor
     editor = get_editor()
-    if editor is None:
-        raise RuntimeError('No custom editor set in ~/.recipy/recipyrc file and could not find default $EDITOR.')
 
     # Grab latest run from the DB
     run = get_latest_run()
