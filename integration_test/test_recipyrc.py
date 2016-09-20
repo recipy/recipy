@@ -27,6 +27,12 @@ def run_script():
 # return os.path.expanduser('~/.recipy/recipyDB.json')
 
 
+def create_database_config(recipyrc, recipydb):
+    with open(recipyrc, 'w') as f:
+        f.write('[database]\n')
+        f.write('path=' + recipydb + '\n')
+
+
 def setup_function(function):
     """
     py.test-compliant setup function, run before each test function,
@@ -82,9 +88,7 @@ def test_local_recipydb():
     recipydb =  os.path.join(os.getcwd(), "recipyDB.json")
     test_files.append(recipydb)
     recipyrc = get_recipyrc()
-    with open(recipyrc, 'w') as f:
-        f.write('[database]\n')
-        f.write('path=' + recipydb + '\n')
+    create_database_config(recipyrc, recipydb)
     run_script()
     assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
@@ -103,9 +107,7 @@ def test_local_recipyrc(config_file):
     test_files.append(recipyrc)
     recipydb = os.path.join(os.getcwd(), "recipyDB.json")
     test_files.append(recipydb)
-    with open(recipyrc, 'w') as f:
-        f.write('[database]\n')
-        f.write('path=' + recipydb + '\n')
+    create_database_config(recipyrc, recipydb)
     run_script()
     assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
     assert len(os.listdir(get_recipy_dir())) == 0, "Expected .recipy to be empty"
@@ -133,20 +135,17 @@ def test_local_recipyrc_precedence(useit):
     test_files.append(recipyrc)
     recipydb = os.path.join(os.getcwd(), "recipyDB.json")
     test_files.append(recipydb)
-    with open(recipyrc, 'w') as f:
-        f.write('[database]\n')
-        f.write('path=' + recipydb + '\n')
+    create_database_config(recipyrc, recipydb)
 
     test_files.append(ignore_recipyrc)
     ignore_recipydb = os.path.join(os.getcwd(), "ignoreDB.json")
     test_files.append(ignore_recipydb)
-    with open(ignore_recipyrc, 'w') as f:
-        f.write('[database]\n')
-        f.write('path=' + ignore_recipydb + '\n')
+    create_database_config(ignore_recipyrc, ignore_recipydb)
 
     run_script()
     assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
     assert not os.path.isfile(ignore_recipydb), ("Did not expect to find " + ignore_recipydb)
+
 
 
 # import recipy
