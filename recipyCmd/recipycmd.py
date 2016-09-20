@@ -21,7 +21,7 @@ Options:
   -d --diff        Show diff
   -j --json        Show output as JSON
   --no-browser     Do not open browser window
-  --debug          Turn on debugging mode
+  --debug          Prints debuging information
 
 """
 import os
@@ -89,7 +89,6 @@ Using command-line arguments: {{ command_args }}
 {% endif %}
 {% endfor %}
 {% endif %}
-
 {% if notes is defined %}
 \aNotes:\b
 {{ notes }}
@@ -116,31 +115,32 @@ def template_result(r, nocolor=False):
 
 def main():
     """
-    Main function for recipy command-line script
+    Entry point for recipy CLI. It parses the arguments passed
+    and calls relevant functions.
     """
-    args = docopt(__doc__, version='recipy v%s' % __version__)
+    arguments = docopt(__doc__, version='recipy v%s' % __version__)
 
-    if args['--debug']:
-        print('Command-line arguments: ')
-        print(args)
-        print('DB path: ', config.get_db_path())
-        print('')
-        print('Full config file (as interpreted):')
-        print('----------------------------------')
-        conf = config.read_config_file()
-        s = six.StringIO()
-        conf.write(s)
-        print(s.getvalue())
-        print('----------------------------------')
+    functions = {'--debug': debug, 'search': search, 'gui': gui,
+                 'latest': latest, 'annotate': annotate}
 
-    if args['search']:
-        search(args)
-    elif args['latest']:
-        latest(args)
-    elif args['gui']:
-        gui(args)
-    elif args['annotate']:
-        annotate(args)
+    for arg, is_passed in arguments.items():
+        if is_passed and arg in functions:
+            functions[arg](arguments)
+
+
+def debug(args):
+    print('Command-line arguments: ')
+    print(args)
+    print('DB path: ', config.get_db_path())
+    print('')
+    print('Full config file (as interpreted):')
+    print('----------------------------------')
+    conf = config.read_config_file()
+    s = six.StringIO()
+    conf.write(s)
+    print(s.getvalue())
+    print('----------------------------------')
+    return
 
 
 def annotate(args):
