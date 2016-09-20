@@ -10,10 +10,15 @@ from __future__ import (nested_scopes, generators, division,
                         print_function, unicode_literals)
 
 import getpass
+import os.path
 import platform
 import sys
 import pip
 from dateutil.parser import parse
+
+RECIPYDIR = ".recipy"
+RECIPYRC = "recipyrc"
+RECIPYDB = "recipyDB.json"
 
 
 def get_str_as_date(date_str):
@@ -123,3 +128,43 @@ def get_packages():
     for package in packages:
         packages_dict[package.key] = package.version
     return packages_dict
+
+
+def get_home_dir():
+    """
+    Get home directory.
+
+    :return: home directory
+    :rtype: str or unicode
+    """
+    return os.path.expanduser("~")
+
+
+def get_recipy_dir():
+    """
+    Get default recipy directory.
+
+    :return: default recipy directory.
+    :rtype: str or unicode
+    """
+    return os.path.expanduser(os.path.join(get_home_dir(), RECIPYDIR))
+
+
+def get_recipydb():
+    """
+    Get default recipy database file.
+
+    :return: default recipy database file.
+    :rtype: str or unicode
+    """
+    return os.path.join(get_recipy_dir(), RECIPYDB)
+
+
+def get_recipyrc():
+    """
+    Get default recipy configuration file.
+
+    :return: default recipy database file
+    :rtype: str or unicode
+    """
+    return os.path.join(get_recipy_dir(), RECIPYRC)
