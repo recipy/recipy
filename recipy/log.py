@@ -12,7 +12,7 @@ from tinydb import Query
 import difflib
 import warnings
 
-from recipyCommon.version_control import add_git_info, hash_file
+from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
 from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
@@ -72,6 +72,10 @@ def log_init():
 
     if not option_set('ignored metadata', 'git'):
         add_git_info(run, scriptpath)
+
+    if not option_set('ignored metadata', 'svn'):
+        add_svn_info(run, scriptpath)
+
 
     # Put basics into DB
     RUN_ID = db.insert(run)
