@@ -9,11 +9,13 @@ from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
                         print_function, unicode_literals)
 
-import json
-from tinydb import TinyDB, where, Query
+from tinydb import TinyDB, where
 
 
-def open(connection):
+TINYDB_PATH = "tinydb_path"
+
+
+def open_db(connection):
     """
     Open a connection to a database. The connection is a dictionary of
     information which is database-specific.
@@ -22,88 +24,129 @@ def open(connection):
     :param connection: Database file path
     :type connection: dict
     :return: Database connection
-    :rtype: TODO
-    :raises: KeyError if tinydb_path is not in connection
-    :raises: TODO if the path does not exist
+    :rtype: tinydb.database.TinyDB
+    :raises DatabaseError if tinydb_path is not in connection
+    or if there are other problems in connecting to the database
     """
-    ## TODO Is use of serializer needed? We're only reading the database.
-    # db = TinyDB(connection, storage=tinydb_utils.serializer)
-    db = TinyDB(connection["tinydb_path"])
-    return db
+    try:
+        path = connection[TINYDB_PATH]
+    except Exception as exception:
+        raise DatabaseError("Missing configuration error", exception)
+    try:
+        database = TinyDB(path)
+    except Exception as exception:
+        raise DatabaseError("Open connection error", exception)
+    return database
 
 
-def get_latest_id(db):
+def get_latest_id(database):
     """
     Get the ID of the most recent log.
 
-    :param db: Database connection
-    :type db: TODO
+    :param database: Database connection
+    :type database: tinydb.database.TinyDB
     :return: log ID or None if none
     :rtype: str or unicode
+    :raises DatabaseError if there are problems in connecting to the
+    database
     """
-    results = db.all()
+    try:
+        results = database.all()
+    except Exception as exception:
+        raise DatabaseError("Query error", exception)
     if len(results) == 0:
         return None
-    # TODO recipyCmd/recipycmd.py does:
-    # results = [get_tinydatestr_as_date(result) for result in results]
-    # stripping out '{TinyDate}:' which seems redundant since the sort is
-    # still done by string.
     results = sorted(results, key=lambda x: x['date'])
     run = results[-1]
     return run["unique_id"]
 
 
-def get_log(db, id):
+def get_log(database, log_id):
     """
     Get the log with the given ID as a dictionary.
 
-    :param db: Database connection
-    :type db: TODO
-    :param id: log ID
-    :type id: str or unicode
+    :param database: Database connection
+    :type database: tinydb.database.TinyDB
+    :param log_id: log ID
+    :type log_id: str or unicode
     :return: log or None if no log exists with the given ID.
     :rtype: dict
+    :raises DatabaseError if there are problems in connecting to the
+    database
     """
-    results = db.search(where('unique_id').matches(id))
+    try:
+        results = database.search(where('unique_id').matches(log_id))
+    except Exception as exception:
+        raise DatabaseError("Query error", exception)
     if len(results) > 0:
         return results[0]
     else:
         return None
 
 
-def number_of_logs(db):
+def number_of_logs(database):
     """
     Get the number of logs in the database.
 
-    :param db: Database connection
-    :type db: TODO
+    :param database: Database connection
+    :type database: tinydb.database.TinyDB
     :return: Number of logs
     :rtype: int
+    :raises DatabaseError if there are problems in connecting to the
+    database
     """
-    return len(db.all())
+    try:
+        return len(database.all())
+    except Exception as exception:
+        raise DatabaseError("Query error", exception)
 
 
-def close(db):
+def close_db(database):
     """
     Close the connection to the database.
 
-    :param db: Database connection
-    :type db: TODO
-    :raises: TODO if any problems arise
+    :param database: Database connection
+    :type database: tinydb.database.TinyDB
+    :raises DatabaseError if there are problems in connecting to the
+    database
     """
-    db.close()
+    try:
+        database.close()
+    except Exception as exception:
+        raise DatabaseError("Close connection error", exception)
+
 
 class DatabaseError(Exception):
-    # TODO
-    def __init__(self):
-        pass
+    """Problem with using a database."""
 
-conx = {}
-conx["tinydb_path"] = "C:/Users/mjj/.recipy/recipyDB.json"
-db = open(conx)
-print(number_of_logs(db))
-id = get_latest_id(db)
-print(id)
-log = get_log(db, id)
-print(log)
-close(db)
+    def __init__(self, message, exception=None):
+        """Create error.
+
+        :param message: Message
+        :type message: str or unicode
+        :param exception: Exception
+        :type value: Exception
+        """
+        super(DatabaseError, self).__init__()
+        self._message = message
+        self._exception = exception
+
+    def __str__(self):
+        """Get error as a formatted string.
+
+        :return: formatted string
+        :rtype: str or unicode
+        """
+        message = self._message
+        if self._exception is not None:
+            message += " : " + str(self._exception)
+        return repr(message)
+
+    @property
+    def exception(self):
+        """Get exception.
+
+        :param exception: Exception
+        :type value: Exception
+        """
+        return self._exception
