@@ -67,7 +67,8 @@ def log_init():
         "date": datetime.datetime.utcnow(),
         "command_args": " ".join(cmd_args),
         "warnings": [],
-        "libraries": [get_version('recipy')]
+        "libraries": [get_version('recipy')],
+        "custom-values": []
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -93,6 +94,20 @@ def log_init():
 
     # Register exception hook so exceptions can be logged
     sys.excepthook = log_exception
+
+
+def log_values(custom_values_dict):
+    """ Log a dictionary of custom value-key pairs into the database """
+    # validation and debugging
+    assert isinstance(custom_values_dict, dict), \
+        "custom_values_dict must be a dict. type(custom_values_dict) = %s" % custom_values_dict
+    if option_set('general', 'debug'):
+        print('Logging custom values: %s' % str(custom_values_dict))
+
+    # Update object in DB
+    db = open_or_create_db()
+    db.update(append("custom-values", custom_values_dict, no_duplicates=True), eids=[RUN_ID])
+    db.close()
 
 
 def log_input(filename, source):
