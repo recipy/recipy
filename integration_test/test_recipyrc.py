@@ -27,8 +27,11 @@ class TestRecipyrc:
     def run_script(cls):
         """
         Run test_script using Python.
+
+        :return: exit code
+        :rtype: int
         """
-        execute("python", [TestRecipyrc.test_script])
+        return execute("python", [TestRecipyrc.test_script])
 
     @classmethod
     def append_recipyrc_database(cls, recipyrc, recipydb):
@@ -109,12 +112,17 @@ class TestRecipyrc:
 
     def test_default(self):
         """
-        If neither .recipyrc, recipyrc nor ~/recipyrc exist then test that
-        recipy uses its default configuration.
+        Test that if neither .recipyrc, recipyrc nor ~/recipyrc exist then
+        recipy uses its default configuration. As part of this test, a
+        test is also done that a database is created at in
+        ~/recipy/recipyDB.json.
         """
         recipydb = get_recipydb()
         self.test_files.append(recipydb)
-        TestRecipyrc.run_script()
+
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 0, ("Unexpected exit code " + exit_code)
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     @pytest.mark.parametrize("recipyrc", [
@@ -123,8 +131,10 @@ class TestRecipyrc:
         os.path.join(os.getcwd(), "recipyrc")])
     def test_local_recipyrc(self, recipyrc):
         """
-        If ~/recipy/recipyrc, .recipy or recipyrc are present. then test
-        that their configuration is used.
+        Test that if ~/recipy/recipyrc, .recipy or recipyrc are present
+        then their configuration is used. As part of this test, this
+        also tests that that if [database] path is valid then a
+        database is created at that path.
 
         :param recipyrc: recipyrc file
         :type recipyrc: str or unicode
@@ -133,7 +143,10 @@ class TestRecipyrc:
         recipydb = os.path.join(os.getcwd(), "recipyDB.json")
         self.test_files.append(recipydb)
         TestRecipyrc.append_recipyrc_database(recipyrc, recipydb)
-        TestRecipyrc.run_script()
+
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 0, ("Unexpected exit code " + exit_code)
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     @pytest.mark.parametrize("recipyrc_files", [
@@ -169,7 +182,61 @@ class TestRecipyrc:
         self.test_files.append(ignore_recipydb)
         TestRecipyrc.append_recipyrc_database(ignore_recipyrc, ignore_recipydb)
 
-        TestRecipyrc.run_script()
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 0, ("Unexpected exit code " + exit_code)
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
         assert not os.path.isfile(ignore_recipydb),\
             ("Did not expect to find " + ignore_recipydb)
+
+    def test_unknown_section(self):
+        """
+        Test that if ~/recipy/recipyrc has an unknown section then the
+        section is ignored and the rest of the configuration is used
+        successfully.
+        """
+        recipyrc = get_recipyrc()
+        self.test_files.append(recipyrc)
+        recipydb = get_recipydb()
+        self.test_files.append(recipydb)
+        TestRecipyrc.append_recipyrc_database(recipyrc, recipydb)
+        with open(recipyrc, 'a') as f:
+            f.write('[unknown]\n')
+            f.write('unknown=unknown\n')
+
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 0, ("Unexpected exit code " + exit_code)
+        assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
+
+    def test_unknown_parameter(self):
+        """
+        Test that if ~/recipy/recipyrc has an unknown parameter then
+        the parameter is ignored and the rest of the configuration is
+        used successfully.
+        """
+        recipyrc = get_recipyrc()
+        self.test_files.append(recipyrc)
+        recipydb = get_recipydb()
+        self.test_files.append(recipydb)
+        TestRecipyrc.append_recipyrc_database(recipyrc, recipydb)
+        with open(recipyrc, 'a') as f:
+            f.write('unknown=unknown\n')
+
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 0, ("Unexpected exit code " + exit_code)
+        assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
+
+    def test_unknown_database_path(self):
+        """
+        Test that if ~/recipy/recipyrc has a [database] path that does
+        not exist then recipy fails with exit code 1.
+        """
+        recipyrc = get_recipyrc()
+        self.test_files.append(recipyrc)
+        TestRecipyrc.append_recipyrc_database(recipyrc, "unknown")
+
+        exit_code = TestRecipyrc.run_script()
+
+        assert exit_code == 1, ("Unexpected exit code " + exit_code)
