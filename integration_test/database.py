@@ -63,14 +63,17 @@ def get_latest_id(database):
 
 def get_log(database, log_id):
     """
-    Get the log with the given ID as a dictionary.
+    Get the log with the given ID as a dictionary. The log and the
+    log number (the identity of this log in the database) are
+    both returned.
 
     :param database: Database connection
     :type database: tinydb.database.TinyDB
     :param log_id: log ID
     :type log_id: str or unicode
-    :return: log or None if no log exists with the given ID.
-    :rtype: dict
+    :return: log number and log, or None if no log exists with
+    the given ID.
+    :rtype: (int, dict)
     :raises DatabaseError if there are problems in connecting to the
     database
     """
@@ -79,7 +82,32 @@ def get_log(database, log_id):
     except Exception as exception:
         raise DatabaseError("Query error", exception)
     if len(results) > 0:
-        return results[0]
+        return (results[0].eid, dict(results[0]))
+    else:
+        return None
+
+
+def get_filediffs(database, log_number):
+    """
+    Get the 'filediffs' entry for the log with the given log number.
+    The log_number is returned via get_log.
+
+    :param database: Database connection
+    :type database: tinydb.database.TinyDB
+    :param log_number: log number
+    :type log_id: str or unicode
+    :return: 'filediffs' entry or None if none
+    :rtype: dict
+    :raises DatabaseError if there are problems in connecting to the
+    database
+    """
+    try:
+        diffs = database.table("filediffs")
+        results = diffs.search(where("run_id") == log_number)
+    except Exception as exception:
+        raise DatabaseError("Query error", exception)
+    if len(results) > 0:
+        return dict(results[0])
     else:
         return None
 
