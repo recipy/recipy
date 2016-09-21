@@ -68,7 +68,7 @@ def log_init():
         "command_args": " ".join(cmd_args),
         "warnings": [],
         "libraries": [get_version('recipy')],
-        "custom-values": []
+        "custom-values": {}
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -96,17 +96,27 @@ def log_init():
     sys.excepthook = log_exception
 
 
-def log_values(custom_values_dict):
-    """ Log a dictionary of custom value-key pairs into the database """
-    # validation and debugging
-    assert isinstance(custom_values_dict, dict), \
-        "custom_values_dict must be a dict. type(custom_values_dict) = %s" % custom_values_dict
+def log_values(custom_values=None, **kwargs):
+    """ Log a dictionary of custom value-key pairs into the database
+    e.g,
+    >>> log_values(a=1, b=2)
+    >>> log_values({'c': 3, 'd': 4})
+    >>> log_values({'e': 5, 'f': 6}, g=7, h=8)
+    """
+
+    # create dictionary of custom values from arguments
+    custom_values = {} if custom_values is None else custom_values
+    assert isinstance(custom_values, dict), \
+        "custom_values must be a dict. type(custom_values) = %s" % custom_values
+    custom_values.update(kwargs)
+
+    # debugging
     if option_set('general', 'debug'):
-        print('Logging custom values: %s' % str(custom_values_dict))
+        print('Logging custom values: %s' % str(custom_values))
 
     # Update object in DB
     db = open_or_create_db()
-    db.update(append("custom-values", custom_values_dict, no_duplicates=True), eids=[RUN_ID])
+    db.update(add_dict("custom-values", custom_values), eids=[RUN_ID])
     db.close()
 
 
@@ -230,6 +240,18 @@ def append(field, value, no_duplicates=False):
             pass
         else:
             element[field].append(value)
+
+    return transform
+
+
+def add_dict(field, dict_of_values, no_duplicates=False):
+    """
+    Add a given dict of values to a given array field.
+    """
+    def transform(element):
+        assert isinstance(element[field], dict), \
+            "add_dict called on a non-dict object. type(element[%s]) = %s" % (field, type(element[field]))
+        element[field].update(dict_of_values)
 
     return transform
 
