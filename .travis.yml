@@ -32,7 +32,8 @@ install:
 # Install test framework packages.
 # Install py.test explicitly else travis virtualenv one is used 
 # which can't use the miniconda environment.
-  - conda install pytest python-dateutil pyyaml gitpython numpy
+  - conda install pytest python-dateutil pyyaml numpy
+  - pip install gitpython
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
   - python setup.py install
