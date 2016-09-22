@@ -68,7 +68,7 @@ def log_init():
         "command_args": " ".join(cmd_args),
         "warnings": [],
         "libraries": [get_version('recipy')],
-        "custom-values": {}
+        "custom_values": {}
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -97,7 +97,7 @@ def log_init():
 
 
 def log_values(custom_values=None, **kwargs):
-    """ Log a dictionary of custom value-key pairs into the database
+    """ Log a custom value-key pairs into the database
     e.g,
     >>> log_values(a=1, b=2)
     >>> log_values({'c': 3, 'd': 4})
@@ -107,7 +107,7 @@ def log_values(custom_values=None, **kwargs):
     # create dictionary of custom values from arguments
     custom_values = {} if custom_values is None else custom_values
     assert isinstance(custom_values, dict), \
-        "custom_values must be a dict. type(custom_values) = %s" % custom_values
+        "custom_values must be a dict. type(custom_values) = %s" % type(custom_values)
     custom_values.update(kwargs)
 
     # debugging
@@ -116,7 +116,7 @@ def log_values(custom_values=None, **kwargs):
 
     # Update object in DB
     db = open_or_create_db()
-    db.update(add_dict("custom-values", custom_values), eids=[RUN_ID])
+    db.update(add_dict("custom_values", custom_values), eids=[RUN_ID])
     db.close()
 
 
@@ -244,7 +244,7 @@ def append(field, value, no_duplicates=False):
     return transform
 
 
-def add_dict(field, dict_of_values, no_duplicates=False):
+def add_dict(field, dict_of_values):
     """
     Add a given dict of values to a given array field.
     """
