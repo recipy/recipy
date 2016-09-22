@@ -8,7 +8,8 @@ from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
                         print_function, unicode_literals)
 
-from subprocess import call, check_output, CalledProcessError, STDOUT
+from subprocess import call
+from tempfile import TemporaryFile
 
 
 def execute(command, arguments, stdout=None, stderr=None):
@@ -47,11 +48,9 @@ def execute_and_capture(command, arguments):
     :rtype: (int, str or unicode)
     :raises OSError: if there are problems running the command
     """
-    command_line = [command]
-    command_line.extend(arguments)
-    print((" ".join(command_line)))
-    try:
-        result = check_output(command_line, stderr=STDOUT)
-        return (0, str(result))
-    except CalledProcessError as error:
-        return (error.returncode, str(error.output))
+    with TemporaryFile(mode='w+', suffix="log") as stdouterr:
+        result = execute(command, arguments,
+                         stdout=stdouterr, stderr=stdouterr)
+        stdouterr.seek(0)
+        log = stdouterr.readlines()
+    return (result, log)
