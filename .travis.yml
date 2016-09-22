@@ -29,9 +29,10 @@ before_install:
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
+# Install test framework packages.
 # Install py.test explicitly else travis virtualenv one is used 
 # which can't use the miniconda environment.
-  - conda install numpy dateutil py.test
+  - conda install pytest python-dateutil pyyaml gitpython numpy
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
   - python setup.py install
