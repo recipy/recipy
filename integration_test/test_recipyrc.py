@@ -1,5 +1,6 @@
 """
-Tests of recipy configuration, provided via 'recipyrc' configuration files.
+Tests of recipy configuration, provided via recipyrc configuration
+files.
 """
 
 import os
@@ -9,43 +10,56 @@ import tempfile
 import pytest
 
 try:
-    from ConfigParser import SafeConfigParser, Error
+    from ConfigParser import SafeConfigParser
 except:
-    from configparser import SafeConfigParser, Error
+    from configparser import SafeConfigParser
 
-from .process import execute_and_capture
-from .recipy_environment import get_recipy_dir, get_recipydb, get_recipyrc, get_local_recipyrc, get_local_dotrecipyrc
-from .database import TINYDB_PATH, open_db, get_latest_id, get_log, close_db, get_filediffs
+from integration_test import database
+from integration_test import environment
+from integration_test import process
+from integration_test import recipy_environment as recipyenv
+
 
 class TestRecipyrc:
     """
-    Tests of recipy configuration, provided via 'recipyrc'
-    configuration files.
+    Tests of recipy configuration, provided via recipyr configuration
+    files.
     """
 
-    test_script = "run_numpy.py"
-    test_input_data = "input.csv"
-    test_output_data = "output.csv"
-    test_directory = ""
-    
+    SCRIPT_NAME = "run_numpy.py"
+    """ Test script assumed to be in same directory as this class. """
+    script = ""
+    """ Absolute path to above test script. """
+    directory = ""
+    """ Absolute path to temporary directory for these tests. """
+    input_file = ""
+    """ Absolute path to sample input data file for above script. """
+    output_file = ""
+    """ Absolute path to sample output data file for above script. """
+
     @classmethod
     def run_script(cls):
         """
-        Run test_script using Python.
+        Run test_script using current Python executable.
 
         :return: (exit code, standard output and error)
         :rtype: (int, str or unicode)
         """
-        return execute_and_capture("python", [TestRecipyrc.test_script])
+        return process.execute_and_capture(
+            environment.get_python_exe(),
+            [TestRecipyrc.script,
+             TestRecipyrc.input_file,
+             TestRecipyrc.output_file])
 
     @classmethod
     def update_recipyrc(cls, recipyrc, section, key, value=None):
         """
-        Update recipyrc configuration.
+        Update recipyrc configuration file.
 
         :param recipyrc: recipyrc configuration file
         :type recipyrc: str or unicode
-        :param section: configuration section, created if it does not exist
+        :param section: configuration section, created if it does not
+        exist
         :type section: str or unicode
         :param key: key
         :type key: str or unicode
@@ -65,7 +79,7 @@ class TestRecipyrc:
         """
         Get the latest log from the database along with its
         'filediffs', if any.
-        
+
         :param recipydb: recipydb path
         :type recipydb: str or unicode
         :return: log
@@ -74,298 +88,362 @@ class TestRecipyrc:
         is None. If no log exists then None is returned.
         :rtype: (dict, dict)
         """
-        connection = {TINYDB_PATH: recipydb}
-        db = open_db(connection)
-        latest = get_latest_id(db)
-        (log_number, log) = get_log(db, latest)
-        diffs = get_filediffs(db, log_number)
-        close_db(db)
+        connection_data = {database.TINYDB_PATH: recipydb}
+        connection = database.open_db(connection_data)
+        latest = database.get_latest_id(connection)
+        (log_number, log) = database.get_log(connection, latest)
+        diffs = database.get_filediffs(connection, log_number)
+        database.close_db(connection)
         return (log, diffs)
 
     @classmethod
     def setup_class(cls):
         """
-        py.test-compliant setup function, run when module is loaded,
-        creates Temp/TMP/run_numpy.py and Temp/TMP/input.csv.
+        py.test setup function, creates test directory in $TEMP,
+        test_input_file path, test_input_file with CSV,
+        test_output_file path.
         """
-        TestRecipyrc.test_directory = tempfile.mkdtemp(TestRecipyrc.__name__)
-        TestRecipyrc.test_script =\
-             os.path.join(TestRecipyrc.test_directory,
-                          TestRecipyrc.test_script)
-        TestRecipyrc.test_output_data =\
-             os.path.join(TestRecipyrc.test_directory,
-                          TestRecipyrc.test_output_data)
-        TestRecipyrc.test_input_data =\
-             os.path.join(TestRecipyrc.test_directory,
-                          TestRecipyrc.test_input_data)
-        with open(TestRecipyrc.test_input_data, "w") as f:
-            f.write("1,4,9,16")
-            f.write("\n")
-        with open(TestRecipyrc.test_script, "w") as f:
-            f.write("import recipy")
-            f.write("\n")
-            f.write("import numpy as np")
-            f.write("\n")
-            f.write("data = np.array([list(range(4,8))])")
-            f.write("\n")
-            f.write("np.savetxt(" +
-                    str(TestRecipyrc.test_output_data).__repr__() +
-                    ", data, delimiter=',')")
-            f.write("\n")
-            f.write("data = np.loadtxt(" +
-                    str(TestRecipyrc.test_input_data).__repr__() +
-                    ", delimiter=',')")
-            f.write("\n")
+        TestRecipyrc.script =\
+            os.path.join(os.path.dirname(__file__),
+                         TestRecipyrc.SCRIPT_NAME)
+        TestRecipyrc.directory =\
+            tempfile.mkdtemp(TestRecipyrc.__name__)
+        TestRecipyrc.input_file =\
+            os.path.join(TestRecipyrc.directory, "input.csv")
+        with open(TestRecipyrc.input_file, "w") as csv_file:
+            csv_file.write("1,4,9,16\n")
+            csv_file.write("1,8,27,64\n")
+            csv_file.write("\n")
+        TestRecipyrc.output_file =\
+            os.path.join(TestRecipyrc.directory, "output.csv")
 
     @classmethod
     def teardown_class(cls):
         """
-        py.test-compliant setup function, run when module is completed,
-        deletes Temp/TMP/.
+        py.test teardown function, deletes test directory in $TEMP.
         """
-        if os.path.isdir(TestRecipyrc.test_directory):
-            shutil.rmtree(TestRecipyrc.test_directory)
+        if os.path.isdir(TestRecipyrc.directory):
+            shutil.rmtree(TestRecipyrc.directory)
 
     def setup_method(self, method):
         """
-        py.test-compliant setup function, run before each test method,
-        deletes ~/.recipy.
-        As py.test ignores test classes that have __init__ methods,
-        an attribute, self.test_files, is defined in this method.
+        py.test setup function, empties ~/.recipy, deletes recipyrc and
+        .recipyrc.
 
         :param method: Test method
         :type method: function
         """
-        recipy_dir = get_recipy_dir()
+        recipy_dir = recipyenv.get_recipy_dir()
         if os.path.isdir(recipy_dir):
             shutil.rmtree(recipy_dir)
         os.mkdir(recipy_dir)
-        for path in [get_local_recipyrc(), get_local_dotrecipyrc()]:
+        for path in [recipyenv.get_local_recipyrc(),
+                     recipyenv.get_local_dotrecipyrc()]:
             if os.path.isfile(path):
                 os.remove(path)
 
     def teardown_method(self, method):
         """
-        py.test-compliant teardown function, run after each test method,
-        deletes files in test_files.
+        py.test teardown function, deletes output_file.
 
         :param method: Test method
         :type method: function
         """
-        if os.path.isfile(TestRecipyrc.test_output_data):
-            os.remove(TestRecipyrc.test_output_data)
+        if os.path.isfile(TestRecipyrc.output_file):
+            os.remove(TestRecipyrc.output_file)
 
     def test_recipyrc(self):
         """
-        Test that if neither .recipyrc, recipyrc nor ~/recipyrc exist then
-        recipy uses its default configuration. As part of this test, a
-        test is also done that a database is created at in
+        If neither .recipyrc, recipyrc nor ~/recipyrc exist then
+        recipy should use its default configuration. A check is also
+        done to see that the database is created in
         ~/recipy/recipyDB.json.
         """
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        recipydb = get_recipydb()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     @pytest.mark.parametrize("recipyrc", [
-        get_recipyrc(),
-        get_local_recipyrc(),
-        get_local_dotrecipyrc()])
+        recipyenv.get_recipyrc(),
+        recipyenv.get_local_recipyrc(),
+        recipyenv.get_local_dotrecipyrc()])
     def test_user_recipyrc(self, recipyrc):
         """
-        Test that if ~/recipy/recipyrc, .recipy or recipyrc are present
-        then their configuration is used. As part of this test, this
-        also tests that that if [database] 'path' is valid then a
-        database is created at that path.
+        If one of ~/recipy/recipyrc, .recipy or recipyrc are present
+        then their configuration is used. A check is also done to see
+        that if [database].path is valid then the database is created
+        at that path.
 
         :param recipyrc: recipyrc file
         :type recipyrc: str or unicode
         """
-        recipydb = os.path.join(TestRecipyrc.test_directory,
+        recipydb = os.path.join(TestRecipyrc.directory,
                                 str(id(self)) + "DB.json")
         TestRecipyrc.update_recipyrc(recipyrc, "database", "path", recipydb)
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     @pytest.mark.parametrize("recipyrc_files", [
-        (get_local_dotrecipyrc(), get_recipyrc()),
-        (get_local_recipyrc(), get_recipyrc()),
-        (get_local_recipyrc(), get_local_dotrecipyrc())])
+        (recipyenv.get_local_dotrecipyrc(), recipyenv.get_recipyrc()),
+        (recipyenv.get_local_recipyrc(), recipyenv.get_recipyrc()),
+        (recipyenv.get_local_recipyrc(), recipyenv.get_local_dotrecipyrc())])
     def test_recipyrc_precedence(self, recipyrc_files):
         """
-        Test the following scenarios:
+        Check recipyrc precedence if multiple recipyrc files exist.
 
-        * If both .recipyrc and ~/recipy/recipyrc are present then the
-          former's configuration is used.
-        * If both recipyrc and ~/recipy/recipyrc are present then the
-          former's configuration is used.
-        * If both recipyrc and .recipyrc are present then the former's
-          configuration is used.
+        * .recipyrc is used in preference to ~/recipy/recipyrc.
+        * recipyrc is used in preference to ~/recipy/recipyrc.
+        * recipyrc is used in preference to .recipyrc.
 
-        :param recipyrc_files: two recipyrc files, the former of which is
-         expected to take precedence
-        :type recipyrc_files: tuple of (str or unicode, str or unicode)
+        :param recipyrc_files: (recipyrc file, recipyrc file), the
+        former is expected to take precedence
+        :type recipyrc_files: (str or unicode, str or unicode)
         """
         (recipyrc, ignore_recipyrc) = recipyrc_files
-        recipydb = os.path.join(TestRecipyrc.test_directory,
+        recipydb = os.path.join(TestRecipyrc.directory,
                                 str(id(self)) + "DB.json")
         TestRecipyrc.update_recipyrc(recipyrc,
                                      "database", "path", recipydb)
-        ignore_recipydb = os.path.join(TestRecipyrc.test_directory,
-                                str(id(self)) + "ignoreDB.json")
+        ignore_recipydb = os.path.join(TestRecipyrc.directory,
+                                       str(id(self)) + "ignoreDB.json")
         TestRecipyrc.update_recipyrc(ignore_recipyrc,
                                      "database", "path", ignore_recipydb)
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
         assert not os.path.isfile(ignore_recipydb),\
             ("Did not expect to find " + ignore_recipydb)
 
     def test_unknown_section(self):
         """
-        Test that if ~/recipy/recipyrc has an unknown section then the
-        section is ignored and the rest of the configuration is used
-        successfully.
+        If recipyrc has an unknown section then the section is ignored
+        and does not prevent recipy from running.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc,
                                      "unknown", "unknown", "unknown")
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        recipydb = get_recipydb()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     def test_unknown_parameter(self):
         """
-        Test that if ~/recipy/recipyrc has an unknown parameter then
-        the parameter is ignored and the rest of the configuration is
-        used successfully.
+        If recipyrc has a section with an unknown key then the key is
+        ignored and does not prevent recipy from running.
         """
-        recipyrc = get_recipyrc()
-        recipydb = get_recipydb()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc,
                                      "database", "unknown", "unknown")
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     def test_unknown_database_path(self):
         """
-        Test that if ~/recipy/recipyrc has a [database] 'path' that does
-        not exist then recipy fails with exit code 1.
+        If [database].path has an invalid directory then recipy fails
+        with exit code 1.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc, "database", "path", "unknown")
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 1, ("Unexpected exit code " + exit_code)
+        assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
 
     def test_general_debug(self):
         """
-        Test that if ~/recipy/recipyrc has a [general] 'debug' entry 
-        then debugging information is printed.
+        If [general].debug is present then debugging information is
+        printed.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc, "general", "debug")
         exit_code, stdout = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        # Order of log statements is tightly-coupled to script.
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        # Important: order of log statements is tightly-coupled to
+        # script.
         debugs = ["recipy run inserted",
                   "Patching",
                   "Patching input function",
                   "Patching output function",
-                  "Output to",
                   "Input from",
+                  "Output to",
                   "recipy run complete"]
         for line in stdout:
             debug = debugs[0]
             if debug in line:
                 debugs.remove(debug)
-        assert len(debugs) == 0, ("Expected to find debug statements " +
+        assert len(debugs) == 0, ("Expected debug statements " +
                                   str(debugs))
-
 
     def test_general_quiet(self):
         """
-        Test that if ~/recipy/recipyrc has a [general] 'quiet' entry 
-        then no information is printed.
+        If [general].quiet is present then no recipy information is
+        printed.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc, "general", "quiet")
         exit_code, stdout = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        # Assumes that script has no output of its own.
-        assert len(stdout) == 0, ("Unexpected output ", str(stdout))
-
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        # Important: assumes script does no output of its own.
+        assert len(stdout) == 0, ("Unexpected output " + str(stdout))
 
     @pytest.mark.parametrize("ignores", [
         ("input_hashes", "inputs"),
         ("output_hashes", "outputs")])
     def test_ignored_metadata_hashes(self, ignores):
         """
-        Test that if ~/recipy/recipyrc has a [ignored metadata]
-        'input_hashes' or 'output_hashes' entries then no hashes
-        are recorded for input/output files.
+        If [ignored metadata].input_hases or output_hashes are present
+        then no hashes are recorded for input/output files.
+
+        :param ignores: (recipyrc configuration key, recipy log key),
+        if the former is in [ignored metadata] the latter should not
+        be in the log
+        :type ignores: (str or unicode, str or unicode)
         """
-        (config_key, log_key) = ignores
-        recipyrc = get_recipyrc()
-        TestRecipyrc.update_recipyrc(recipyrc, "ignored metadata", config_key)
+        (recipyrc_key, log_key) = ignores
+        recipyrc = recipyenv.get_recipyrc()
+        TestRecipyrc.update_recipyrc(recipyrc,
+                                     "ignored metadata",
+                                     recipyrc_key)
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        (log, _) = TestRecipyrc.get_log(get_recipydb())
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        # Important: assumes script inputs and outputs one or more files.
+        (log, _) = TestRecipyrc.get_log(recipyenv.get_recipydb())
         files = log[log_key]
-        assert len(files) == 1, ("Unexpected number of files")
-        assert type(files[0]) is not list, ("Unexpected list")
+        assert len(files) >= 1, "Unexpected number of files"
+        assert not isinstance(files[0], list), "Unexpected list"
 
     def test_data_file_diff_outputs(self):
         """
-        Test that if ~/recipy/recipyrc has a [data]
-        'file_diff_outputs' entry then:
+        If [data].file_diff_outputs is present then:
 
-        * If a script is run that creates output files, then 
-          no corresponding entry for that run in the 'filediffs' in
-          the database.
-        * If the script is rerun, then there will be a corresponding
-          entry for that run in the 'filediffs' in the database, with
-          an empty 'diffs' value.
+        * If output files are created, then there are no 'filediffs'
+              for the run.
+        * If output files with the same content are created, then
+             there are 'filediffs' for the run, with an empty 'diffs'
+          value.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc, "data", "file_diff_outputs")
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        _, filediffs = TestRecipyrc.get_log(get_recipydb())
-        assert filediffs is None, "Expected filediffs to be null"
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, filediffs = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert filediffs is None, "Expected filediffs to be None"
 
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        _, filediffs = TestRecipyrc.get_log(get_recipydb())
-        assert filediffs is not None, ("Expected filediffs not to be null")
-        assert filediffs["filename"] == TestRecipyrc.test_output_data,\
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, filediffs = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert filediffs is not None, "Expected filediffs not to be None"
+        assert filediffs["filename"] == TestRecipyrc.output_file,\
             ("Expected filediffs['filename'] to be " +
-            TestRecipyrc.test_output_data)
+             TestRecipyrc.output_file)
         assert filediffs["diff"] == ""
 
-    def test_data_file_diff_outputs_records_diff(self):
+    def test_data_file_diff_outputs_diff(self):
         """
-        Test that if ~/recipy/recipyrc has a [data]
-        'file_diff_outputs' entry then if a script is run that creates
-        output files, and the output files already exist, and are
-        changed, then there will be a corresponding entry for that run
-        in the 'filediffs' in the database, with a 'diffs' value
-        holding information on the difference.
+        If [data].file_diff_outputs is present, if output files
+        are changed, then there will be 'filediffs' for that run, with
+        a 'diffs' value describing changes to the output files.
         """
-        recipyrc = get_recipyrc()
+        recipyrc = recipyenv.get_recipyrc()
         TestRecipyrc.update_recipyrc(recipyrc, "data", "file_diff_outputs")
         # Create an empty output file.
-        open(TestRecipyrc.test_output_data, 'w').close()
+        open(TestRecipyrc.output_file, 'w').close()
         exit_code, _ = TestRecipyrc.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + exit_code)
-        _, filediffs = TestRecipyrc.get_log(get_recipydb())
-        assert filediffs is not None, ("Expected filediffs not to be null")
-        assert filediffs["filename"] == TestRecipyrc.test_output_data,\
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, filediffs = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert filediffs is not None, "Expected filediffs not to be None"
+        assert filediffs["filename"] == TestRecipyrc.output_file,\
             ("Expected filediffs['filename'] to be " +
-            TestRecipyrc.test_output_data)
+             TestRecipyrc.output_file)
         assert "before this run" in filediffs["diff"],\
-               "Expected filediffs['diffs'] to record 'before this run'"
+               "Expected 'before this run' in filediffs['diffs']"
         assert "after this run" in filediffs["diff"],\
-               "Expected filediffs['diffs'] to record 'after this run'"
+               "Expected 'after this run' in filediffs['diffs']"
+
+    @pytest.mark.parametrize("ignores", [
+        ("ignored inputs", "inputs"),
+        ("ignored outputs", "outputs")])
+    def test_ignored_inputs_outputs(self, ignores):
+        """
+        If [ignored inputs] or [ignored outputs] entries are present,
+        with a package name, then no 'inputs' or 'outputs' are present
+        in logs when the package is used.
+
+        :param ignores: (recipyrc configuration key, recipy log key),
+        if a package is in the former, then the latter should not
+        record files input/output by that package.
+        :type ignores: (str or unicode, str or unicode)
+        """
+        (recipyrc_key, log_key) = ignores
+        recipyrc = recipyenv.get_recipyrc()
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert len(log[log_key]) > 0, "Expected functions to be logged"
+
+        # Important: assumes script uses "numpy".
+        TestRecipyrc.update_recipyrc(recipyrc, recipyrc_key, "numpy")
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert len(log[log_key]) == 0, "Expected no functions to be logged"
+
+    @pytest.mark.parametrize("ignores", [
+        ("ignored inputs", "inputs"),
+        ("ignored outputs", "outputs")])
+    def test_ignored_inputs_outputs_all(self, ignores):
+        """
+        If [ignored inputs] or [ignored outputs] entries are present,
+        with "all", then no 'inputs' or 'outputs' are present
+        in logs.
+
+        :param ignores: (recipyrc configuration key, recipy log key),
+        if "all" is in the former, then the latter should not
+        record files input/output.
+        :type ignores: (str or unicode, str or unicode)
+        """
+        (recipyrc_key, log_key) = ignores
+        recipyrc = recipyenv.get_recipyrc()
+        TestRecipyrc.update_recipyrc(recipyrc, recipyrc_key, "all")
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert len(log[log_key]) == 0, "Expected no functions to be logged"
+
+    def test_ignored_metadata_diff(self):
+        """
+        If [ignored metadata].diff is present then no 'diff'
+        information is in the log.
+        """
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert "diff" in log, "Expected 'diff' in log"
+        recipyrc = recipyenv.get_recipyrc()
+        TestRecipyrc.update_recipyrc(recipyrc, "ignored metadata", "diff")
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        assert "diff" not in log, "Unexpected 'diff' in log"
+
+    def test_ignored_metadata_git(self):
+        """
+        If [ignored metadata].git is present then no 'gitrepo',
+        'gitorigin', 'gitcommit' information is in the log.
+        """
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        keys = ["gitrepo", "gitorigin", "gitcommit"]
+        for key in keys:
+            assert key in log, ("Expected " + key + " in log")
+        recipyrc = recipyenv.get_recipyrc()
+        TestRecipyrc.update_recipyrc(recipyrc, "ignored metadata", "git")
+        exit_code, _ = TestRecipyrc.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        log, _ = TestRecipyrc.get_log(recipyenv.get_recipydb())
+        for key in keys:
+            assert key not in log, ("Unexpected " + key + " in log")
