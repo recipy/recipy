@@ -26,105 +26,36 @@ Options:
 """
 import os
 import re
-import sys
-import tempfile
-
-from docopt import docopt
-from jinja2 import Template
-from tinydb import where, Query
-from json import dumps
-
 import six
+import tempfile
+from colorama import init as colorama_init
+from docopt import docopt
+from json import dumps
+from tinydb import where, Query
 
 from . import __version__
 from recipyCommon import config, utils
 from recipyCommon.config import get_editor
 from recipyCommon.version_control import hash_file
-
-from colorama import init
-init()
+from recipyCmd.templating import template_result
 
 db = utils.open_or_create_db()
 
-template_str = """\aRun ID:\b {{ unique_id }}
-\aCreated by\b {{ author }} on {{ date }} UTC
-\aRan\b {{ script }} using {{ command }}
-{% if command_args|length > 0 %}
-Using command-line arguments: {{ command_args }}
-{% endif %}
-{% if gitcommit is defined %}
-\aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
-{% endif %}
-{% if svnrepo is defined %}
-\aSvn:\b commit {{ svncommit }}, in repo {{ svnrepo }}.
-{% endif %}
-\aEnvironment:\b {{ environment|join(", ") }}
-{% if libraries is defined %}
-\aLibraries:\b {{ libraries|join(", ") }}
-{% endif %}
-{% if exception is defined %}
-\aException:\b ({{ exception.type }}) {{ exception.message }}
-{% endif %}
-{% if inputs|length == 0 %}
-\aInputs:\b none
-{% else %}
-\aInputs:\b
-{% for input in inputs %}
-{% if input is string %}
-{{ input }}
-{% else %}
-{{ input[0] }} ({{ input[1] }})
-{% endif %}
-{% endfor %}
-{% endif %}
-{% if outputs | length == 0 %}
-\aOutputs:\b none
-{% else %}
-\aOutputs:\b
-{% for output in outputs %}
-{% if output is string %}
-{{ output }}
-{% else %}
-{{ output[0] }} ({{ output[1] }})
-{% endif %}
-{% endfor %}
-{% endif %}
-{% if notes is defined %}
-\aNotes:\b
-{{ notes }}
-{% endif %}
-"""
-
-BOLD = '\033[1m'
-RESET = '\033[0m'
-
-template_str_withcolor = template_str.replace('\a', BOLD).replace('\b', RESET)
-template_str_nocolor = template_str.replace('\a', '').replace('\b', '')
-
-
-def template_result(r, nocolor=False):
-    # Print a single result from the search
-    if nocolor:
-        template_str = template_str_nocolor
-    else:
-        template_str = template_str_withcolor
-
-    template = Template(template_str, trim_blocks=True)
-    return template.render(**r)
-
 
 def main():
-    """
-    Entry point for recipy CLI. It parses the arguments passed
-    and calls relevant functions.
+    """Entry point for recipy CLI. It parses the arguments passed
+    via command line and calls relevant functions.
     """
     arguments = docopt(__doc__, version='recipy v%s' % __version__)
 
-    functions = {'--debug': debug, 'search': search, 'gui': gui,
+    if arguments['--debug']:
+        debug(arguments)
+
+    functions = {'search': search, 'gui': gui,
                  'latest': latest, 'annotate': annotate}
 
     for arg, is_passed in arguments.items():
-        if is_passed and arg in functions:
+        if arg in functions and is_passed:
             functions[arg](arguments)
 
 
@@ -429,4 +360,5 @@ def _change_date(result):
     return result
 
 if __name__ == '__main__':
+    colorama_init()
     main()
