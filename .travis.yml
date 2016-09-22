@@ -14,18 +14,18 @@ branches:
   - recipy_test
 
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+#  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+# - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p $HOME/miniconda
-  - ls /home/travis
-  - ls /home/travis/miniconda
-  - ls /home/travis/miniconda/bin
   - export PATH=/home/travis/miniconda/bin:$PATH
-  - echo $PATH
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy dateutil
+  - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+  - source activate test
+#  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy dateutil
   - python setup.py install
 
 script:
