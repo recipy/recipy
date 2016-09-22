@@ -67,7 +67,8 @@ class TestModuleFlag:
 
         exit_code, _ = process.execute_and_capture(
             environment.get_python_exe(),
-            [TestModuleFlag.script, input_file, output_file])
+            ["-m", "recipy", TestModuleFlag.script,
+             input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         module_log, _ = helpers.get_log(recipyenv.get_recipydb())
 
@@ -79,7 +80,6 @@ class TestModuleFlag:
             [TestModuleFlag.script, input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         import_log, _ = helpers.get_log(recipyenv.get_recipydb())
-
         # Important: assumes script inputs and outputs one or more files.
         # Check that input and output files recorded have the same
         # local names.
