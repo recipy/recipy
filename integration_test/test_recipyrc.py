@@ -3,6 +3,8 @@ Tests of recipy configuration, provided via recipyrc configuration
 files.
 """
 
+# Copyright (c) 2016 University of Edinburgh.
+
 import os
 import os.path
 import shutil

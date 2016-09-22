@@ -2,6 +2,8 @@
 Script to load and save data using numpy.
 """
 
+# Copyright (c) 2016 University of Edinburgh.
+
 import recipy
 import sys
 import numpy as np
