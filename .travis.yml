@@ -32,6 +32,9 @@ install:
   - conda install numpy dateutil
   - conda install flask
   - python setup.py install
+  - pip freeze
 
 script:
+  - echo "Running..."
+  - pip freeze
   - py.test -s -v integration_test/test_recipyrc.py
