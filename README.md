@@ -1,5 +1,7 @@
 # recipy
 
+Integration test status: [![Integration test status image](https://travis-ci.org/mikej888/recipy.svg)](https://travis-ci.org/mikej888/recipy)
+
 ## What is it and who cares?
 Imagine the situation: You’ve written some wonderful Python code which produces a beautiful graph as an output. You save that graph, naturally enough, as `graph.png`. You run the code a couple of times, each time making minor modifications. You come back to it the next week/month/year. Do you know how you created that graph? What input data? What version of your code? If you’re anything like me then the answer will often, frustratingly, be “no”. Of course, you then waste lots of time trying to work out how you created it, or even give up and never use it in that journal paper that will win you a Nobel Prize…
 
