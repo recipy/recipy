@@ -22,5 +22,6 @@ def run_numpy(in_file, out_file):
     data = np.array([[1, 2, 3], [1, 4, 9]])
     np.savetxt(out_file, data, delimiter=',')
 
-if __name__ == "__main__":
+
+if __name__ == "__main__" or __name__ == "<run_path>":
     run_numpy(sys.argv[1], sys.argv[2])
