@@ -26,7 +26,7 @@ class TestRecipyrc:
     SCRIPT_NAME = "run_numpy.py"
     """ Test script assumed to be in same directory as this class. """
     script = ""
-    """ Absolute path to test script in temporary directory . """
+    """ Absolute path to test script. """
     directory = ""
     """ Absolute path to temporary directory for these tests. """
     input_file = ""
