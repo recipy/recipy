@@ -29,17 +29,19 @@ before_install:
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - conda install numpy dateutil
-# setup.py fails to install this for as-yet-unknown reason.
+# Install py.test explicitly else travis virtualenv one is used 
+# which can't use the miniconda environment.
+  - conda install numpy dateutil py.test
+# setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
   - python setup.py install
-
-script:
-  - echo "Running..."
-  - pip freeze
   - which python
   - which pip
   - which py.test
-  - py.test -version
+  - py.test --version
+  - pip freeze
+
+script:
+  - echo "Running..."
   - echo "import tinydb;print(dir(tinydb))" | python
   - py.test -s -v integration_test/test_recipyrc.py
