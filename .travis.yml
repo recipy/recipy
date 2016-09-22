@@ -45,4 +45,4 @@ install:
   - pip freeze
 
 script:
-  - py.test -v integration_test/test_recipyrc.py
+  - py.test -v integration_test
