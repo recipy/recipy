@@ -35,10 +35,11 @@ from tinydb import where, Query
 
 from . import __version__
 from recipyCommon import config, utils
-from recipyCommon.config import get_editor
+from recipyCommon.config import get_editor, read_config_file
 from recipyCommon.version_control import hash_file
-from recipyCmd.templating import template_result
+from recipyCmd.templating import render_run_template, render_debug_template
 
+colorama_init()
 db = utils.open_or_create_db()
 
 
@@ -60,17 +61,10 @@ def main():
 
 
 def debug(args):
-    print('Command-line arguments: ')
-    print(args)
-    print('DB path: ', config.get_db_path())
-    print('')
-    print('Full config file (as interpreted):')
-    print('----------------------------------')
-    conf = config.read_config_file()
+    cnf = read_config_file()
     s = six.StringIO()
-    conf.write(s)
-    print(s.getvalue())
-    print('----------------------------------')
+    cnf.write(s)
+    print(render_debug_template(args, config.get_db_path(), s.getvalue()))
     return
 
 
@@ -98,7 +92,7 @@ def annotate(args):
     f.write('\n')
     f.write('Enter your notes on this run above this line')
     f.write('\n' * 3)
-    f.write(template_result(run, nocolor=True))
+    f.write(render_run_template(run, nocolor=True))
 
     f.close()
 
@@ -198,7 +192,7 @@ def latest(args):
         output = dumps(run, indent=2, sort_keys=True, default=utils.json_serializer)
         print(output)
     else:
-        print(template_result(run))
+        print(render_run_template(run))
 
         if args['--diff']:
             if 'diff' in run:
@@ -271,11 +265,11 @@ def search_hash(args):
         else:
             if args['--all']:
                 for r in results[:-1]:
-                    print(template_result(r))
+                    print(render_run_template(r))
                     print("-" * 40)
-                print(template_result(results[-1]))
+                print(render_run_template(results[-1]))
             else:
-                print(template_result(results[-1]))
+                print(render_run_template(results[-1]))
                 if len(results) > 1:
                     print("** Previous runs have been "
                           "found. Run with --all to show. **")
@@ -338,11 +332,11 @@ def search_text(args):
         else:
             if args['--all']:
                 for r in results[:-1]:
-                    print(template_result(r))
+                    print(render_run_template(r))
                     print("-" * 40)
-                print(template_result(results[-1]))
+                print(render_run_template(results[-1]))
             else:
-                print(template_result(results[-1]))
+                print(render_run_template(results[-1]))
                 if len(results) > 1:
                     print("** Previous runs have been "
                           "found. Run with --all to show. **")
@@ -360,5 +354,4 @@ def _change_date(result):
     return result
 
 if __name__ == '__main__':
-    colorama_init()
     main()
