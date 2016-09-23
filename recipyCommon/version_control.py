@@ -46,11 +46,12 @@ def add_git_info(run, scriptpath):
         # We can't store git info for some reason, so just skip it
         pass
 
+
 # The released version of PySvn doesn't do local diffs yet, so we have to do
 # it the hard way...
-
 class SvnException(Exception):
     pass
+
 
 def svn_diff(path):
     """
@@ -58,15 +59,14 @@ def svn_diff(path):
     if the command doesn't return 0.
     """
     cmd = ["svn", "diff", path]
-    p = subprocess.Popen(cmd,
-	       	         stdout = subprocess.PIPE,
-                         stderr = subprocess.STDOUT,
-                         env={"LANG" : "en_US.UTF-8"})
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         env={"LANG": "en_US.UTF-8"})
     stdout = p.stdout.read()
     r = p.wait()
     if r != 0:
         raise SvnException("SVN Command exited with status code {0}".format(r))
     return stdout.decode()
+
 
 def add_svn_info(run, scriptpath):
     """
@@ -80,7 +80,6 @@ def add_svn_info(run, scriptpath):
         run["svncommit"] = svn_info["commit_revision"]
         if not option_set('ignored metadata', 'diff'):
             run['diff'] = svn_diff(svn_info["wc-info/wcroot-abspath"])
-    except (SvnException, ValueError):
+    except (SvnException, ValueError, OSError):
         # We can't access svn info for some reason, so just skip it
         pass
-
