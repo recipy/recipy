@@ -15,7 +15,7 @@ from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
-class TestModuleFlag:
+class TestMflag:
     """
     Tests of 'python -m recipy' usage.
     """
@@ -38,21 +38,21 @@ class TestModuleFlag:
         :param method: Test method
         :type method: function
         """
-        TestModuleFlag.directory = tempfile.mkdtemp(TestModuleFlag.__name__)
-        TestModuleFlag.script = os.path.join(os.path.dirname(__file__),
-                                             TestModuleFlag.SCRIPT_NAME)
-        TestModuleFlag.original_script = TestModuleFlag.script + ".orig"
-        shutil.copy(TestModuleFlag.script, TestModuleFlag.original_script)
+        TestMflag.directory = tempfile.mkdtemp(TestMflag.__name__)
+        TestMflag.script = os.path.join(os.path.dirname(__file__),
+                                        TestMflag.SCRIPT_NAME)
+        TestMflag.original_script = TestMflag.script + ".orig"
+        shutil.copy(TestMflag.script, TestMflag.original_script)
 
     def teardown_method(self, method):
         """
         py.test teardown function, deletes test directory in $TEMP,
         and moves 'original_script' to 'script'.
         """
-        if os.path.isdir(TestModuleFlag.directory):
-            shutil.rmtree(TestModuleFlag.directory)
-        os.remove(TestModuleFlag.script)
-        os.rename(TestModuleFlag.original_script, TestModuleFlag.script)
+        if os.path.isdir(TestMflag.directory):
+            shutil.rmtree(TestMflag.directory)
+        os.remove(TestMflag.script)
+        os.rename(TestMflag.original_script, TestMflag.script)
 
     def test_m_recipy(self):
         """
@@ -61,24 +61,23 @@ class TestModuleFlag:
         log (aside from their 'unique_id', 'diff', 'date',
         'exit_date', 'command_args', 'inputs' and 'outputs').
         """
-        input_file = os.path.join(TestModuleFlag.directory, "input.csv")
+        input_file = os.path.join(TestMflag.directory, "input.csv")
         with open(input_file, "w") as csv_file:
             csv_file.write("1,4,9,16\n")
-        output_file = os.path.join(TestModuleFlag.directory, "output.csv")
+        output_file = os.path.join(TestMflag.directory, "output.csv")
 
         exit_code, _ = process.execute_and_capture(
             environment.get_python_exe(),
-            ["-m", "recipy", TestModuleFlag.script,
+            ["-m", "recipy", TestMflag.script,
              input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         module_log, _ = helpers.get_log(recipyenv.get_recipydb())
 
-        helpers.enable_recipy(TestModuleFlag.original_script,
-                              TestModuleFlag.script)
+        helpers.enable_recipy(TestMflag.original_script, TestMflag.script)
 
         exit_code, _ = process.execute_and_capture(
             environment.get_python_exe(),
-            [TestModuleFlag.script, input_file, output_file])
+            [TestMflag.script, input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         import_log, _ = helpers.get_log(recipyenv.get_recipydb())
         # Important: assumes script inputs and outputs one or more files.
