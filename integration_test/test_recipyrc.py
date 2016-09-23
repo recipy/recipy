@@ -208,19 +208,14 @@ class TestRecipyrc:
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         # Important: order of log statements is tightly-coupled to
         # script.
-        debugs = ["recipy run inserted",
-                  "Patching",
-                  "Patching input function",
-                  "Patching output function",
-                  "Input from",
-                  "Output to",
-                  "recipy run complete"]
-        for line in stdout:
-            debug = debugs[0]
-            if debug in line:
-                debugs.remove(debug)
-        assert len(debugs) == 0, ("Expected debug statements " +
-                                  str(debugs))
+        regexps = ["recipy run inserted",
+                   "Patching",
+                   "Patching input function",
+                   "Patching output function",
+                   "Input from",
+                   "Output to",
+                   "recipy run complete"]
+        helpers.search_regexps(" ".join(stdout), regexps)
 
     def test_general_quiet(self):
         """
@@ -283,13 +278,14 @@ class TestRecipyrc:
         assert filediffs["filename"] == TestRecipyrc.output_file,\
             ("Expected filediffs['filename'] to be " +
              TestRecipyrc.output_file)
-        assert filediffs["diff"] == ""
+        assert filediffs["diff"] == "",\
+            "Expected filediffs['diff'] to be empty"
 
     def test_data_file_diff_outputs_diff(self):
         """
         If [data].file_diff_outputs is present, if output files
         are changed, then there will be 'filediffs' for that run, with
-        a 'diffs' value describing changes to the output files.
+        a 'diff' value describing changes to the output files.
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "data", "file_diff_outputs")
@@ -302,10 +298,8 @@ class TestRecipyrc:
         assert filediffs["filename"] == TestRecipyrc.output_file,\
             ("Expected filediffs['filename'] to be " +
              TestRecipyrc.output_file)
-        assert "before this run" in filediffs["diff"],\
-               "Expected 'before this run' in filediffs['diffs']"
-        assert "after this run" in filediffs["diff"],\
-               "Expected 'after this run' in filediffs['diffs']"
+        regexps = ["before this run", "after this run"]
+        helpers.search_regexps(filediffs['diff'], regexps)
 
     @pytest.mark.parametrize("ignores", [
         ("ignored inputs", "inputs"),
