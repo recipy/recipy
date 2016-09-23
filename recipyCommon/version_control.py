@@ -80,6 +80,6 @@ def add_svn_info(run, scriptpath):
         run["svncommit"] = svn_info["commit_revision"]
         if not option_set('ignored metadata', 'diff'):
             run['diff'] = svn_diff(svn_info["wc-info/wcroot-abspath"])
-    except:
+    except (SvnException, ValueError, OSError):
         # We can't access svn info for some reason, so just skip it
         pass
