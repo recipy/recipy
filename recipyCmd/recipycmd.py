@@ -3,8 +3,8 @@
 
 Usage:
   recipy search [options] <outputfile>
-  recipy latest [options]
-  recipy gui [options]
+  recipy latest [--diff --json]
+  recipy gui [--no-browser --debug]
   recipy annotate [<idvalue>]
   recipy (-h | --help)
   recipy --version
@@ -17,11 +17,10 @@ Options:
   -r --regex       Use regex searching on filename
   -i --id          Search based on (a fragment of) the run ID
   -a --all         Show all results (otherwise just latest result given)
-  -v --verbose     Be verbose
   -d --diff        Show diff
   -j --json        Show output as JSON
   --no-browser     Do not open browser window
-  --debug          Prints debuging information
+  --debug          Turn on debugging mode
 
 """
 import os
