@@ -6,6 +6,7 @@ Helper functions for recipy tests.
 
 import os
 import os.path
+import re
 import shutil
 
 try:
@@ -91,3 +92,18 @@ def enable_recipy(source, destination):
     with open(destination, "w") as destination_file:
         destination_file.write("import recipy\n")
         destination_file.writelines(lines)
+
+
+def search_regexps(string, regexps):
+    """
+    Look for each regular expression pattern in a string.
+
+    :param string: String
+    :type string: str or unicode
+    :param destination: Regular expressions
+    :type destination: list of str or unicode
+    :raises AssertionError: if any regular expression cannot be found
+    """
+    for regexp in regexps:
+        match = re.search(regexp, string)
+        assert match is not None, ("Expected " + regexp)
