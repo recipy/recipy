@@ -58,7 +58,8 @@ class TestModuleFlag:
         """
         Running 'python -m recipy script' and the same script that
         inclues 'import recipy' should give the same results in the
-        log (aside from their 'unique_id', 'date', and 'exit_date').
+        log (aside from their 'unique_id', 'diff', 'date',
+        'exit_date', 'command_args', 'inputs' and 'outputs').
         """
         input_file = os.path.join(TestModuleFlag.directory, "input.csv")
         with open(input_file, "w") as csv_file:
@@ -92,8 +93,8 @@ class TestModuleFlag:
                 os.path.basename(module_file),\
                 "Expected local file names to be equal"
         # Remove fields that are specific to a run.
-        for key in ["unique_id", "date", "exit_date", "command_args",
-                    "inputs", "outputs"]:
+        for key in ["unique_id", "diff", "date", "exit_date",
+                    "command_args", "inputs", "outputs"]:
             del module_log[key]
             del import_log[key]
         assert module_log == import_log,\
