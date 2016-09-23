@@ -6,7 +6,6 @@ Tests of 'diff' logging when recipy is used within Git.
 
 import os
 import os.path
-import re
 import shutil
 import tempfile
 
@@ -98,9 +97,7 @@ class TestGit:
             r"\+\+\+.*" + TestGit.SCRIPT_NAME + "\n",
             r"@@.*\n",
             r"\+pass.*\n"]
-        for regexp in regexps:
-            match = re.search(regexp, git_log["diff"])
-            assert match is not None, ("Expected to find " + regexp)
+        helpers.search_regexps(git_log["diff"], regexps)
         # Important: assumes script inputs and outputs one or more files.
         # Check that input and output files recorded have the same
         # local names.
