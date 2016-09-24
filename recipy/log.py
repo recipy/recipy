@@ -304,6 +304,9 @@ def output_file_diffs():
         diffs = diffs_table.search(Query().run_id == RUN_ID)
 
     for item in diffs:
+        if option_set('general', 'debug'):
+            print('Storing file diff for "%s"' % item['filename'])
+
         lines1 = None
         lines2 = None
         for enc in encodings:
