@@ -13,6 +13,7 @@ from tinydb import Query
 import difflib
 import warnings
 import codecs
+from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
 from recipyCommon.config import option_set, get_db_path
@@ -171,7 +172,8 @@ def log_output(filename, source):
 
     db = open_or_create_db()
 
-    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
+    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename) \
+       and not is_binary(filename):
         tf = tempfile.NamedTemporaryFile(delete=False)
         shutil.copy2(filename, tf.name)
         add_file_diff_to_db(filename, tf.name, db)
