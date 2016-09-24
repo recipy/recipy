@@ -13,3 +13,4 @@ flask-testing
 blinker
 six
 colorama
+binaryornot

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 import datetime
 import sys
@@ -11,6 +12,8 @@ import shutil
 from tinydb import Query
 import difflib
 import warnings
+import codecs
+from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
 from recipyCommon.config import option_set, get_db_path
@@ -169,7 +172,8 @@ def log_output(filename, source):
 
     db = open_or_create_db()
 
-    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
+    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename) \
+       and not is_binary(filename):
         tf = tempfile.NamedTemporaryFile(delete=False)
         shutil.copy2(filename, tf.name)
         add_file_diff_to_db(filename, tf.name, db)
@@ -293,17 +297,44 @@ def output_file_diffs():
     if not option_set('data', 'file_diff_outputs'):
         return
 
-    db = open_or_create_db()
-    diffs_table = db.table('filediffs')
-    diffs = diffs_table.search(Query().run_id == RUN_ID)
+    encodings = ['utf-8', 'latin-1']
+
+    with open_or_create_db() as db:
+        diffs_table = db.table('filediffs')
+        diffs = diffs_table.search(Query().run_id == RUN_ID)
+
     for item in diffs:
-        diff = difflib.unified_diff(open(item['tempfilename']).readlines(),
-                                    open(item['filename']).readlines(),
-                                    fromfile='before this run',
-                                    tofile='after this run')
-        diffs_table.update({'diff': ''.join([l for l in diff])},
-                           eids=[item.eid])
+        if option_set('general', 'debug'):
+            print('Storing file diff for "%s"' % item['filename'])
+
+        lines1 = None
+        lines2 = None
+        for enc in encodings:
+            try:
+                with codecs.open(item['tempfilename'], encoding=enc) as f:
+                    lines1 = f.readlines()
+            except UnicodeDecodeError:
+                pass
+
+            try:
+                with codecs.open(item['filename'], encoding=enc) as f:
+                    lines2 = f.readlines()
+            except UnicodeDecodeError:
+                pass
+
+        if lines1 is not None and lines2 is not None:
+            diff = difflib.unified_diff(lines1,
+                                        lines2,
+                                        fromfile='before this run',
+                                        tofile='after this run')
+            with open_or_create_db() as db:
+                diffs_table.update({'diff': ''.join([l for l in diff])},
+                                   eids=[item.eid])
+        else:
+            msg = ('Unable to read file "{}" using supported encodings ({}). '
+                   'To be able to store file diffs, use one of the supported '
+                   'encodings to write the output file.')
+            warnings.warn(msg.format(item['filename'], ', '.join(encodings)))
 
         # delete temporary file
         os.remove(item['tempfilename'])
-    db.close()
