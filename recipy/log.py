@@ -67,7 +67,8 @@ def log_init():
         "date": datetime.datetime.utcnow(),
         "command_args": " ".join(cmd_args),
         "warnings": [],
-        "libraries": [get_version('recipy')]
+        "libraries": [get_version('recipy')],
+        "custom_values": {}
     }
 
     if not option_set('ignored metadata', 'git'):
@@ -97,6 +98,30 @@ def log_init():
 
     # Register exception hook so exceptions can be logged
     sys.excepthook = log_exception
+
+
+def log_values(custom_values=None, **kwargs):
+    """ Log a custom value-key pairs into the database
+    e.g,
+    >>> log_values(a=1, b=2)
+    >>> log_values({'c': 3, 'd': 4})
+    >>> log_values({'e': 5, 'f': 6}, g=7, h=8)
+    """
+
+    # create dictionary of custom values from arguments
+    custom_values = {} if custom_values is None else custom_values
+    assert isinstance(custom_values, dict), \
+        "custom_values must be a dict. type(custom_values) = %s" % type(custom_values)
+    custom_values.update(kwargs)
+
+    # debugging
+    if option_set('general', 'debug'):
+        print('Logging custom values: %s' % str(custom_values))
+
+    # Update object in DB
+    db = open_or_create_db()
+    db.update(add_dict("custom_values", custom_values), eids=[RUN_ID])
+    db.close()
 
 
 def log_input(filename, source):
@@ -219,6 +244,18 @@ def append(field, value, no_duplicates=False):
             pass
         else:
             element[field].append(value)
+
+    return transform
+
+
+def add_dict(field, dict_of_values):
+    """
+    Add a given dict of values to a given array field.
+    """
+    def transform(element):
+        assert isinstance(element[field], dict), \
+            "add_dict called on a non-dict object. type(element[%s]) = %s" % (field, type(element[field]))
+        element[field].update(dict_of_values)
 
     return transform
 
