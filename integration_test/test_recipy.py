@@ -198,3 +198,30 @@ class TestRecipy:
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0
         assert 'No results found' in stdout[0]
+
+    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
+    @pytest.mark.parametrize("pattern", [".*input.csv", ".*inp.*"])
+    def test_search_r(self, json_flag, pattern):
+        """
+        Test "recipy search -r PATTERN [-j|json]".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", "-r", pattern, json_flag])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        json_log = json.loads(" ".join(stdout))
+        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
+        self.compare_json_logs(json_log, db_log)
+
+    def test_search_r_unknown(self):
+        """
+        Test "recipy search -r NO_MATCHING_PATTERN".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", "-r", ".*unknown.*"])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0
+        assert 'No results found' in stdout[0]
