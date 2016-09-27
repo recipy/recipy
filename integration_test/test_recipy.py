@@ -70,12 +70,12 @@ class TestRecipy:
         TestRecipy.output_file =\
             os.path.join(TestRecipy.directory, "output.csv")
         TestRecipy.patterns = {}
-        TestRecipy.patterns["-f"] = "input.cs"
-        TestRecipy.patterns["--fuzzy"] = "input.cs"
-        TestRecipy.patterns["-r"] = ".*input.*"
-        TestRecipy.patterns["--regex"] = ".*input.*"
+        TestRecipy.patterns["-f"] = "input.c"
+        TestRecipy.patterns["--fuzzy"] = "output.c"
+        TestRecipy.patterns["-r"] = ".*inp.*"
+        TestRecipy.patterns["--regex"] = ".*out.*"
         TestRecipy.patterns["-p"] = TestRecipy.input_file
-        TestRecipy.patterns["--filepath"] = TestRecipy.input_file
+        TestRecipy.patterns["--filepath"] = TestRecipy.output_file
 
     @classmethod
     def teardown_class(cls):
@@ -104,6 +104,23 @@ class TestRecipy:
         """
         if os.path.isfile(TestRecipy.output_file):
             os.remove(TestRecipy.output_file)
+
+    def compare_json_logs(self, log1, log2):
+        """
+        Compare two recipy JSON logs for equality.
+
+        :param log1: Log
+        :type log1: dict
+        :param log2: Another log
+        :type log2: dict
+        :raises AssertionError: if log1 and log2 differ in their keys
+        and/or values
+        """
+        # Convert dates from str or unicode to datetime.datetime.
+        for key in ["date", "exit_date"]:
+            log1[key] = environment.get_tinydatestr_as_date(log1[key])
+            log2[key] = environment.get_tinydatestr_as_date(log2[key])
+        assert log1 == log2, "Expected equal logs"
 
     def test_no_arguments(self):
         """
@@ -166,23 +183,6 @@ class TestRecipy:
                    r"Outputs:\n"]
         helpers.search_regexps(" ".join(stdout), regexps)
 
-    def compare_json_logs(self, log1, log2):
-        """
-        Compare two recipy JSON logs for equality.
-
-        :param log1: Log
-        :type log1: dict
-        :param log2: Another log
-        :type log2: dict
-        :raises AssertionError: if log1 and log2 differ in their keys
-        and/or values
-        """
-        # Convert dates from str or unicode to datetime.datetime.
-        for key in ["date", "exit_date"]:
-            log1[key] = environment.get_tinydatestr_as_date(log1[key])
-            log2[key] = environment.get_tinydatestr_as_date(log2[key])
-        assert log1 == log2, "Expected equal logs"
-
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
     def test_latest_json(self, json_flag):
         """
@@ -198,45 +198,29 @@ class TestRecipy:
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         self.compare_json_logs(json_log, db_log)
 
-    @pytest.mark.parametrize("regex_flag", ["-r", "--regex"])
-    @pytest.mark.parametrize("pattern",
-                             [".*input.csv", ".*inp.*",
-                              ".*output.csv", ".*out.*"])
+    @pytest.mark.parametrize("search_flag", ["-f", "--fuzzy",
+                                             "-r", "--regex",
+                                             "-p", "--filepath"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_r(self, regex_flag, pattern, json_flag):
+    def test_search_flags(self, search_flag, json_flag):
         """
-        Test "recipy search -r|--regex PATTERN -j|--json".
+        Test "recipy search -p|--filepath|-f|--fuzzy
+        |-r|--regex PATTERN -j|--json".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        pattern = TestRecipy.patterns[search_flag]
         exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", regex_flag, pattern, json_flag])
+            "recipy", ["search", search_flag, pattern, json_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         self.compare_json_logs(json_log, db_log)
 
-    @pytest.mark.parametrize("path_flag", ["-p", "--filepath"])
-    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_p(self, path_flag, json_flag):
-        """
-        Test "recipy search -p|--filepath FILE [-j|--json]".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        for f in [TestRecipy.input_file, TestRecipy.output_file]:
-            exit_code, stdout = process.execute_and_capture(
-                "recipy", ["search", path_flag, f, json_flag])
-            assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-            assert len(stdout) > 0, "Expected stdout"
-            json_log = json.loads(" ".join(stdout))
-            db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-            self.compare_json_logs(json_log, db_log)
-
     @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i(self, id_flag, json_flag):
+    def test_search_id(self, id_flag, json_flag):
         """
         Test "recipy search -i|--id HASH [-j|--json]".
         """
@@ -254,25 +238,7 @@ class TestRecipy:
 
     @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i(self, id_flag, json_flag):
-        """
-        Test "recipy search -i|--id HASH [-j|--json]".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        unique_id = db_log["unique_id"]
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", id_flag, str(unique_id), json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        assert len(stdout) > 0, "Expected stdout"
-        json_log = json.loads(" ".join(stdout))
-        assert len(json_log) == 1, "Expected a single JSON log"
-        self.compare_json_logs(json_log[0], db_log)
-
-    @pytest.mark.parametrize("id_flag", ["-i", "--id"])
-    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i_hash_prefix(self, id_flag, json_flag):
+    def test_search_id_hash_prefix(self, id_flag, json_flag):
         """
         Test "recipy search -i|--id HASH_PREFIX [-j|--json]".
         """
@@ -289,32 +255,13 @@ class TestRecipy:
         assert len(json_log) == 1, "Expected a single JSON log"
         self.compare_json_logs(json_log[0], db_log)
 
-    @pytest.mark.parametrize("fuzzy_flag", ["-f", "--fuzzy"])
-    @pytest.mark.parametrize("pattern",
-                             ["input.cs", "inp",
-                              "output.cs", "out"])
-    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_f(self, fuzzy_flag, pattern, json_flag):
-        """
-        Test "recipy search -f|--fuzzy PATTERN -j|--json".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", fuzzy_flag, pattern, json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        assert len(stdout) > 0, "Expected stdout"
-        json_log = json.loads(" ".join(stdout))
-        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        self.compare_json_logs(json_log, db_log)
-
     @pytest.mark.parametrize("flag", ["-i", "--id",
                                       "-p", "--filepath",
                                       "-f", "--fuzzy",
                                       "-r", "--regex"])
     def test_search_bad_syntax(self, flag):
         """
-"        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
+        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
         |-r|--regex VALUE UNEXPECTED_VALUE".
         """
         exit_code, _ = TestRecipy.run_script()
