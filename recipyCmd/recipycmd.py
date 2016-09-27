@@ -3,14 +3,13 @@ import os
 import sys
 import re
 import six
-import tempfile
 import click
 from colorama import init as colorama_init
 from json import dumps
 from tinydb import where, Query
 
 from recipyCommon import config, utils
-from recipyCommon.config import get_editor, read_config_file
+from recipyCommon.config import read_config_file
 from recipyCommon.version_control import hash_file
 from recipyCmd.templating import render_run_template, render_debug_template
 
@@ -68,56 +67,6 @@ def debug_info():
     s = six.StringIO()
     cnf.write(s)
     return render_debug_template(config.get_db_path(), s.getvalue())
-
-
-def annotate(args):
-    # get the text editor
-    editor = get_editor()
-
-    if args['<idvalue>']:
-        try:
-            run = db.search(where('unique_id') == args['<idvalue>'])[0]
-        except IndexError:
-            print('Could not find id %s' % args['<idvalue>'])
-            return
-    else:
-        run = get_latest_run()
-
-    # Get temp filename
-    f = tempfile.NamedTemporaryFile(delete=False, mode='w')
-
-    if run.get('notes'):
-        f.write(run['notes'])
-
-    # Write something to the bottom of it
-    f.write('\n' + '-' * 80 + '\n')
-    f.write('\n')
-    f.write('Enter your notes on this run above this line')
-    f.write('\n' * 3)
-    f.write(render_run_template(run, nocolor=True))
-
-    f.close()
-
-    # Open your editor
-    os.system('%s %s' % (editor, f.name))
-
-    # Grab the text
-    annotation = ""
-    with open(f.name, 'r') as f:
-        for line in f:
-            if line == '-' * 80 + '\n':
-                break
-            annotation += line
-
-    notes = annotation.strip()
-
-    if notes == "":
-        print('No annotation entered, exiting.')
-        return
-
-    # Store in the DB
-    db.update({'notes': notes}, where('unique_id') == run['unique_id'])
-    db.close()
 
 
 def gui(args):
