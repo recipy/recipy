@@ -32,6 +32,8 @@ class TestRecipy:
     """ Absolute path to sample input data file for above script. """
     output_file = ""
     """ Absolute path to sample output data file for above script. """
+    patterns = {}
+    """ Dictionary of search flags to patterns. """
 
     @classmethod
     def run_script(cls):
@@ -67,6 +69,13 @@ class TestRecipy:
             csv_file.write("\n")
         TestRecipy.output_file =\
             os.path.join(TestRecipy.directory, "output.csv")
+        TestRecipy.patterns = {}
+        TestRecipy.patterns["-f"] = "input.cs"
+        TestRecipy.patterns["--fuzzy"] = "input.cs"
+        TestRecipy.patterns["-r"] = ".*input.*"
+        TestRecipy.patterns["--regex"] = ".*input.*"
+        TestRecipy.patterns["-p"] = TestRecipy.input_file
+        TestRecipy.patterns["--filepath"] = TestRecipy.input_file
 
     @classmethod
     def teardown_class(cls):
@@ -364,17 +373,13 @@ class TestRecipy:
         assert len(stdout) > 0, "Expected stdout"
         assert 'No results found' in stdout[0]
 
-
-
-
-
     @pytest.mark.parametrize("flag", ["-i", "--id",
                                       "-p", "--filepath",
                                       "-f", "--fuzzy",
                                       "-r", "--regex"])
     def test_search_bad_syntax(self, flag):
         """
-        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
+"        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
         |-r|--regex VALUE UNEXPECTED_VALUE".
         """
         exit_code, _ = TestRecipy.run_script()
@@ -385,3 +390,25 @@ class TestRecipy:
         exit_code, stdout = process.execute_and_capture(
             "recipy", ["search", flag, "value", "unexpected_value"])
         assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
+
+    @pytest.mark.parametrize("search_flag", ["-f", "--fuzzy",
+                                             "-r", "--regex",
+                                             "-p", "--filepath"])
+    @pytest.mark.parametrize("all_flag", ["-a", "--all"])
+    def test_search_all(self, search_flag, all_flag):
+        """
+        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
+        |-r|--regex VALUE -j -a|--all".
+        """
+        num_runs = 3
+        for i in range(num_runs):
+            exit_code, _ = TestRecipy.run_script()
+            assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        pattern = TestRecipy.patterns[search_flag]
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", search_flag, pattern, "-j", all_flag])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0, "Expected stdout"
+#        print(stdout)
+        json_logs = json.loads(" ".join(stdout))
+        assert num_runs == len(json_logs), "Unexpected number of JSON logs"
