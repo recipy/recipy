@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 import re
 import six
 import tempfile
@@ -15,6 +16,7 @@ from recipyCmd.templating import render_run_template, render_debug_template
 
 colorama_init()
 db = utils.open_or_create_db()
+
 
 class CliConfig(object):
     """Passes configuration between commands."""
@@ -58,15 +60,14 @@ def main(config, debug):
     For more info type: recipy COMMAND --help"""
     config.debug = debug
     if config.debug:
-        click.echo('Debug info...')
+        click.echo(debug_info())
 
 
-def debug(args):
+def debug_info():
     cnf = read_config_file()
     s = six.StringIO()
     cnf.write(s)
-    print(render_debug_template(args, config.get_db_path(), s.getvalue()))
-    return
+    return render_debug_template(config.get_db_path(), s.getvalue())
 
 
 def annotate(args):

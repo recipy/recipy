@@ -19,4 +19,4 @@ def test_main_correctly_passes_config(runner):
                            ['--debug', 'annotate'])
     assert not result.exception
     assert result.exit_code == 0
-    assert 'Debug info...' in result.output
+    assert 'Full config file (as interpreted):' in result.output

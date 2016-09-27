@@ -53,9 +53,7 @@ none
 {% endif %}
 """
 
-debug_template = """Command-line arguments:
-{{ args }}
-DB path: {{ db_path }}
+debug_template = """DB path: {{ db_path }}
 Full config file (as interpreted):
 ----------------------------------
 {{ config }}
@@ -79,6 +77,6 @@ def render_run_template(run, nocolor=False):
     return template.render(**run)
 
 
-def render_debug_template(args, db_path, config):
+def render_debug_template(db_path, config):
     template = Template(debug_template)
-    return template.render(args=args, db_path=db_path, config=config)
+    return template.render(db_path=db_path, config=config)
