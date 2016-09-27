@@ -189,7 +189,69 @@ class TestRecipy:
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         self.compare_json_logs(json_log, db_log)
 
-    def test_search_i_unknown(self):
+    @pytest.mark.parametrize("regex_flag", ["-r", "--regex"])
+    @pytest.mark.parametrize("pattern",
+                             [".*input.csv", ".*inp.*",
+                              ".*output.csv", ".*out.*"])
+    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
+    def test_search_r(self, regex_flag, pattern, json_flag):
+        """
+        Test "recipy search -r|--regex PATTERN -j|--json".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", regex_flag, pattern, json_flag])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0, "Expected stdout"
+        json_log = json.loads(" ".join(stdout))
+        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
+        self.compare_json_logs(json_log, db_log)
+
+    @pytest.mark.parametrize("regex_flag", ["-r", "--regex"])
+    def test_search_r_unknown(self, regex_flag):
+        """
+        Test "recipy search -r|--regex NO_MATCHING_PATTERN".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", regex_flag, ".*unknown.*"])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0, "Expected stdout"
+        assert 'No results found' in stdout[0]
+
+    @pytest.mark.parametrize("path_flag", ["-p", "--filepath"])
+    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
+    def test_search_p(self, path_flag, json_flag):
+        """
+        Test "recipy search -p|--filepath FILE [-j|--json]".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        for f in [TestRecipy.input_file, TestRecipy.output_file]:
+            exit_code, stdout = process.execute_and_capture(
+                "recipy", ["search", path_flag, f, json_flag])
+            assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+            assert len(stdout) > 0, "Expected stdout"
+            json_log = json.loads(" ".join(stdout))
+            db_log, _ = helpers.get_log(recipyenv.get_recipydb())
+            self.compare_json_logs(json_log, db_log)
+
+    @pytest.mark.parametrize("path_flag", ["-p", "--filepath"])
+    def test_search_p_unknown(self, path_flag):
+        """
+        Test "recipy search -p|--filepath NO_MATCHING_FILE".
+        """
+        exit_code, _ = TestRecipy.run_script()
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["search", path_flag, "unknown.csv"])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0, "Expected stdout"
+        assert 'No results found' in stdout[0]
+
+    def test_search_i_unknown(self, id):
         """
         Test "recipy search -i unknown" if no database.
         """
@@ -199,102 +261,47 @@ class TestRecipy:
         assert len(stdout) > 0, "Expected stdout"
         assert 'No results found' in stdout[0]
 
+    @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    @pytest.mark.parametrize("pattern",
-                             [".*input.csv", ".*inp.*",
-                              ".*output.csv", ".*out.*"])
-    def test_search_r(self, json_flag, pattern):
+    def test_search_i(self, id_flag, json_flag):
         """
-        Test "recipy search -r PATTERN -j|--json".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-r", pattern, json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        assert len(stdout) > 0, "Expected stdout"
-        json_log = json.loads(" ".join(stdout))
-        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        self.compare_json_logs(json_log, db_log)
-
-    def test_search_r_unknown(self):
-        """
-        Test "recipy search -r NO_MATCHING_PATTERN".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-r", ".*unknown.*"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        assert len(stdout) > 0, "Expected stdout"
-        assert 'No results found' in stdout[0]
-
-    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_p(self, json_flag):
-        """
-        Test "recipy search -p FILE [-j|--json]".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        for f in [TestRecipy.input_file, TestRecipy.output_file]:
-            exit_code, stdout = process.execute_and_capture(
-                "recipy", ["search", "-p", f, json_flag])
-            assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-            assert len(stdout) > 0, "Expected stdout"
-            json_log = json.loads(" ".join(stdout))
-            db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-            self.compare_json_logs(json_log, db_log)
-
-    def test_search_p_unknown(self):
-        """
-        Test "recipy search -p NO_MATCHING_FILE".
-        """
-        exit_code, _ = TestRecipy.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-p", "unknown.csv"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        assert len(stdout) > 0, "Expected stdout"
-        assert 'No results found' in stdout[0]
-
-    @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i(self, json_flag):
-        """
-        Test "recipy search -i HASH [-j|--json]".
+        Test "recipy search -i|--id HASH [-j|--json]".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-i", str(unique_id), json_flag])
+            "recipy", ["search", id_flag, str(unique_id), json_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert len(json_log) == 1, "Expected a single JSON log"
         self.compare_json_logs(json_log[0], db_log)
 
+    @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i(self, json_flag):
+    def test_search_i(self, id_flag, json_flag):
         """
-        Test "recipy search -i HASH [-j|--json]".
+        Test "recipy search -i|--id HASH [-j|--json]".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-i", str(unique_id), json_flag])
+            "recipy", ["search", id_flag, str(unique_id), json_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert len(json_log) == 1, "Expected a single JSON log"
         self.compare_json_logs(json_log[0], db_log)
 
+    @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i_hash_prefix(self, json_flag):
+    def test_search_i_hash_prefix(self, id_flag, json_flag):
         """
-        Test "recipy search -i HASH_PREFIX [-j|--json]".
+        Test "recipy search -i|--id HASH_PREFIX [-j|--json]".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
@@ -302,32 +309,37 @@ class TestRecipy:
         unique_id = db_log["unique_id"]
         half_id = unique_id[0:int(len(unique_id) / 2)]
         exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-i", str(half_id), json_flag])
+            "recipy", ["search", id_flag, str(half_id), json_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert len(json_log) == 1, "Expected a single JSON log"
         self.compare_json_logs(json_log[0], db_log)
 
+    @pytest.mark.parametrize("id_flag", ["-i", "--id"])
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
-    def test_search_i_unknown(self, json_flag):
+    def test_search_i_unknown(self, id_flag, json_flag):
         """
-        Test "recipy search -i UNKNOWN_HASH -j|--json".
+        Test "recipy search -i|--id UNKNOWN_HASH -j|--json".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", "-i", "unknown", json_flag])
+            "recipy", ["search", id_flag, "unknown", json_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert json_log == [], "Expected []"
 
-    @pytest.mark.parametrize("flag", ["-i", "-f", "-r", "-p"])
+    @pytest.mark.parametrize("flag", ["-i", "--id",
+                                      "-p", "--filepath",
+                                      "-f", "--fuzzy",
+                                      "-r", "--regex"])
     def test_search_bad_syntax(self, flag):
         """
-        Test "recipy search -i|-f|-r|-p VALUE UNEXPECTED_VALUE".
+        Test "recipy search -i|--id|-p|--filepath|-f|--fuzzy
+        |-r|--regex VALUE UNEXPECTED_VALUE".
         """
         exit_code, _ = TestRecipy.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
