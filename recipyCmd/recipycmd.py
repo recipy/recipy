@@ -1,38 +1,13 @@
 #!/usr/bin/env python
-"""recipy - a frictionless provenance tool for Python
-
-Usage:
-  recipy search [options] <outputfile>
-  recipy latest [--diff --json]
-  recipy gui [--no-browser --debug]
-  recipy annotate [<idvalue>]
-  recipy (-h | --help)
-  recipy --version
-
-Options:
-  -h --help        Show this screen
-  --version        Show version
-  -p --filepath    Search based on filepath rather than hash
-  -f --fuzzy       Use fuzzy searching on filename
-  -r --regex       Use regex searching on filename
-  -i --id          Search based on (a fragment of) the run ID
-  -a --all         Show all results (otherwise just latest result given)
-  -d --diff        Show diff
-  -j --json        Show output as JSON
-  --no-browser     Do not open browser window
-  --debug          Turn on debugging mode
-
-"""
 import os
 import re
 import six
 import tempfile
+import click
 from colorama import init as colorama_init
-from docopt import docopt
 from json import dumps
 from tinydb import where, Query
 
-from . import __version__
 from recipyCommon import config, utils
 from recipyCommon.config import get_editor, read_config_file
 from recipyCommon.version_control import hash_file
@@ -41,22 +16,49 @@ from recipyCmd.templating import render_run_template, render_debug_template
 colorama_init()
 db = utils.open_or_create_db()
 
+class CliConfig(object):
+    """Passes configuration between commands."""
+    def __init__(self):
+        self.debug = False
 
-def main():
-    """Entry point for recipy CLI. It parses the arguments passed
-    via command line and calls relevant functions.
-    """
-    arguments = docopt(__doc__, version='recipy v%s' % __version__)
+pass_config = click.make_pass_decorator(CliConfig, ensure=True)
+cmd_folder = os.path.dirname(__file__)
 
-    if arguments['--debug']:
-        debug(arguments)
 
-    functions = {'search': search, 'gui': gui,
-                 'latest': latest, 'annotate': annotate}
+class CLI(click.MultiCommand):
+    """Implements MultiCommand click class methods to find other
+    commands in the cmd_folder. Command files must be in
+    format cmd_COMMANDNAME.py"""
 
-    for arg, is_passed in arguments.items():
-        if arg in functions and is_passed:
-            functions[arg](arguments)
+    def list_commands(self, ctx):
+        cmd = []
+        for filename in os.listdir(cmd_folder):
+            if filename.endswith('.py') and filename.startswith('cmd_'):
+                cmd.append(filename[4:-3])
+        cmd.sort()
+        return cmd
+
+    def get_command(self, ctx, cmd_name):
+        try:
+            if sys.version_info[0] == 2:
+                cmd_name = cmd_name.encode('ascii', 'replace')
+            mod = __import__('recipyCmd.cmd_' + cmd_name, fromlist=['cmd'])
+        except ImportError:
+            return
+        return mod.cmd
+
+
+@click.command(cls=CLI)
+@click.version_option(version='0.1.0')
+@click.option('--debug', is_flag=True,
+              help='Show debug info while running command.')
+@pass_config
+def main(config, debug):
+    """Frictionless provenance tracking in Python.
+    For more info type: recipy COMMAND --help"""
+    config.debug = debug
+    if config.debug:
+        click.echo('Debug info...')
 
 
 def debug(args):
