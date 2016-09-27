@@ -154,6 +154,23 @@ class TestRecipy:
                    r"Options:\n"]
         helpers.search_regexps(" ".join(stdout), regexps)
 
+    def test_debug(self):
+        """
+        Test "recipy latest --debug", to look for debug-related output
+        on stdout.
+        """
+        exit_code, stdout = process.execute_and_capture(
+            "recipy", ["latest", "--debug"])
+        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        assert len(stdout) > 0, "Expected stdout"
+        print(stdout)
+        regexps = [r"Command-line arguments: \n",
+                   r"DB path: .*\n",
+                   r"Full config file \(as interpreted\):\n",
+                   r"----------------------------------\n",
+                   r"----------------------------------\n"]
+        helpers.search_regexps(" ".join(stdout), regexps)
+
     def test_latest_empty_db(self):
         """
         Test "recipy latest" if no database.
