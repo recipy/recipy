@@ -17,7 +17,7 @@ from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
-class TestRecipyBase:
+class TestRecipyBase(object):
     """
     Base class for recipy tests.
     """
