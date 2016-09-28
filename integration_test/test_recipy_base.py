@@ -4,17 +4,15 @@ Base class for recipy tests.
 
 # Copyright (c) 2016 University of Edinburgh.
 
-import json
 import os
 import os.path
 import shutil
 import tempfile
-import pytest
+import git
 
 from integration_test import environment
 from integration_test import helpers
 from integration_test import process
-from integration_test import recipy_environment as recipyenv
 
 
 class TestRecipyBase(object):
@@ -24,19 +22,60 @@ class TestRecipyBase(object):
 
     SCRIPT_NAME = "run_numpy.py"
     """ Test script assumed to be in same directory as this class. """
-    script = ""
-    """ Absolute path to test script. """
-    directory = ""
-    """ Absolute path to temporary directory for these tests. """
-    input_file = ""
-    """ Absolute path to sample input data file for above script. """
-    output_file = ""
-    """ Absolute path to sample output data file for above script. """
-    patterns = {}
-    """ Dictionary of search flags to patterns. """
 
-    @classmethod
-    def run_script(cls):
+    def setup_method(self, method):
+        """
+        py.test setup function, creates test directory in $TEMP,
+        initialises it as a Git repository, copies SCRIPT_NAME to it,
+        creates input file, and commits SCRIPT_NAME.
+
+        Note: this function defines member variables self.directory,
+        self.script, self.original_script, self.input_file and
+        self.output_file. These cannot be defined in an __init__
+        constructor as py.test cannot collect test classes with
+        constructors.
+
+        :param method: Test method
+        :type method: function
+        """
+        # Absolute path to temporary directory for these tests.
+        self.directory = tempfile.mkdtemp(TestRecipyBase.__name__)
+        # Absolute path to original copy of test script.
+        self.original_script =\
+            os.path.join(os.path.dirname(__file__),
+                         TestRecipyBase.SCRIPT_NAME)
+        # Absolute path to test script.
+        self.script = os.path.join(self.directory,
+                                   TestRecipyBase.SCRIPT_NAME)
+        shutil.copy(self.original_script, self.script)
+        # Absolute path to sample input data file for above script.
+        self.input_file = os.path.join(self.directory, "input.csv")
+        with open(self.input_file, "w") as csv_file:
+            csv_file.write("1,4,9,16\n")
+            csv_file.write("1,8,27,64\n")
+            csv_file.write("\n")
+        # Absolute path to sample output data file for above script.
+        self.output_file = os.path.join(self.directory, "output.csv")
+        repository = git.Repo.init(self.directory)
+        repository.index.add([TestRecipyBase.SCRIPT_NAME])
+        repository.index.commit("Initial commit")
+        # Clear cache,
+        # See: https://github.com/gitpython-developers/GitPython/issues/508
+        repository.git.clear_cache()
+        # Purge recipy ready for testing.
+        helpers.clean_recipy()
+
+    def teardown_method(self, method):
+        """
+        py.test teardown function, deletes test directory.
+
+        :param method: Test method
+        :type method: function
+        """
+        if os.path.isdir(self.directory):
+            shutil.rmtree(self.directory)
+
+    def run_script(self):
         """
         Run test_script using current Python executable.
 
@@ -45,55 +84,4 @@ class TestRecipyBase(object):
         """
         return process.execute_and_capture(
             environment.get_python_exe(),
-            [TestRecipyBase.script,
-             TestRecipyBase.input_file,
-             TestRecipyBase.output_file])
-
-    @classmethod
-    def setup_class(cls):
-        """
-        py.test setup function, creates test directory in $TEMP,
-        test_input_file path, test_input_file with CSV,
-        test_output_file path.
-        """
-        TestRecipyBase.script =\
-            os.path.join(os.path.dirname(__file__),
-                         TestRecipyBase.SCRIPT_NAME)
-        TestRecipyBase.directory =\
-            tempfile.mkdtemp(TestRecipyBase.__name__)
-        TestRecipyBase.input_file =\
-            os.path.join(TestRecipyBase.directory, "input.csv")
-        with open(TestRecipyBase.input_file, "w") as csv_file:
-            csv_file.write("1,4,9,16\n")
-            csv_file.write("1,8,27,64\n")
-            csv_file.write("\n")
-        TestRecipyBase.output_file =\
-            os.path.join(TestRecipyBase.directory, "output.csv")
-
-    @classmethod
-    def teardown_class(cls):
-        """
-        py.test teardown function, deletes test directory in $TEMP.
-        """
-        if os.path.isdir(TestRecipyBase.directory):
-            shutil.rmtree(TestRecipyBase.directory)
-
-    def setup_method(self, method):
-        """
-        py.test setup function, empties ~/.recipy, deletes recipyrc and
-        .recipyrc.
-
-        :param method: Test method
-        :type method: function
-        """
-        helpers.clean_recipy()
-
-    def teardown_method(self, method):
-        """
-        py.test teardown function, deletes output_file.
-
-        :param method: Test method
-        :type method: function
-        """
-        if os.path.isfile(TestRecipyBase.output_file):
-            os.remove(TestRecipyBase.output_file)
+            [self.script, self.input_file, self.output_file])

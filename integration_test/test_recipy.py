@@ -5,13 +5,8 @@ Tests of recipy commands.
 # Copyright (c) 2016 University of Edinburgh.
 
 import json
-import os
-import os.path
-import shutil
-import tempfile
 import pytest
 
-from integration_test import environment
 from integration_test import helpers
 from integration_test import process
 from integration_test import recipy_environment as recipyenv
@@ -23,24 +18,26 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
     Tests of recipy commands.
     """
 
-    patterns = {}
-    """ Dictionary of search flags to patterns. """
+    def setup_method(self, method):
+        """
+        py.test setup function, initialises dictionary of search flags to
+        search patterns.
+        Note: this function defines member variable self.patterns. This
+        cannot be defined in an __init__ constructor as py.test cannot
+        collect test classes with constructors.
 
-    @classmethod
-    def setup_class(cls):
+        :param method: Test method
+        :type method: function
         """
-        py.test setup function, creates test directory in $TEMP,
-        test_input_file path, test_input_file with CSV,
-        test_output_file path.
-        """
-        super(TestRecipy, cls).setup_class()
-        TestRecipy.patterns = {}
-        TestRecipy.patterns["-f"] = "input.c"
-        TestRecipy.patterns["--fuzzy"] = "output.c"
-        TestRecipy.patterns["-r"] = ".*inp.*"
-        TestRecipy.patterns["--regex"] = ".*out.*"
-        TestRecipy.patterns["-p"] = TestRecipy.input_file
-        TestRecipy.patterns["--filepath"] = TestRecipy.output_file
+        super(TestRecipy, self).setup_method(method)
+        # Dictionary of search flags to patterns.
+        self.patterns = {}
+        self.patterns["-f"] = "input.c"
+        self.patterns["--fuzzy"] = "output.c"
+        self.patterns["-r"] = ".*inp.*"
+        self.patterns["--regex"] = ".*out.*"
+        self.patterns["-p"] = self.input_file
+        self.patterns["--filepath"] = self.output_file
 
     def get_search(self, flag, run_id=None):
         """
@@ -57,10 +54,10 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         if flag in ["-i", "--id"]:
             return [flag, run_id]
-        elif flag in TestRecipy.patterns.keys():
-            return [flag, TestRecipy.patterns[flag]]
+        elif flag in list(self.patterns.keys()):
+            return [flag, self.patterns[flag]]
         else:
-            return [TestRecipy.input_file]
+            return [self.input_file]
 
     def get_unknown_search(self, flag):
         """
@@ -138,7 +135,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         exit_code, stdout = process.execute_and_capture(
             "recipy", ["latest"])
@@ -146,25 +143,24 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         # Validate using logged data
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        regexps = [r"Run ID: "  + db_log["unique_id"] + "\n",
+        regexps = [r"Run ID: " + db_log["unique_id"] + "\n",
                    r"Created by " + db_log["author"] + " on .*\n",
-                   r"Ran " + db_log["script"].replace("\\","\\\\") +
-                       " using .*\n",
+                   r"Ran " + db_log["script"].replace("\\", "\\\\") +
+                   " using .*\n",
                    r"Git: commit " + db_log["gitcommit"] +
-                       ", in repo " +
-                       db_log["gitrepo"].replace("\\", "\\\\") +
-                       ", with origin " + db_log["gitorigin"] + ".*\n",
+                   ", in repo " +
+                   db_log["gitrepo"].replace("\\", "\\\\") +
+                   ", with origin " + str(db_log["gitorigin"]) + ".*\n",
                    r"Environment: .*\n",
                    r"Libraries: " + ", ".join(db_log["libraries"]) + "\n",
                    r"Inputs:\n",
                    db_log["inputs"][0][0].replace("\\", "\\\\"),
                    db_log["inputs"][0][1],
                    db_log["inputs"][0][0].replace("\\", "\\\\") +
-                       " \(" + db_log["inputs"][0][1] + "\)\n",
+                   r" \(" + db_log["inputs"][0][1] + r"\)\n",
                    r"Outputs:\n",
                    db_log["outputs"][0][0].replace("\\", "\\\\") +
-                       " \(" + db_log["outputs"][0][1] + "\)\n"
-        ]
+                   r" \(" + db_log["outputs"][0][1] + r"\)\n"]
         helpers.search_regexps(" ".join(stdout), regexps)
 
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
@@ -172,7 +168,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest -j|--json".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         exit_code, stdout = process.execute_and_capture(
             "recipy", ["latest", json_flag])
@@ -193,7 +189,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy search [-p|--filepath|-f|--fuzzy
         |-r|--regex] VALUE -j|--json".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
@@ -220,7 +216,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy search [-i|--id|-p|--filepath|-f|--fuzzy
         |-r|--regex] UNKNOWN_VALUE".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         pattern = self.get_unknown_search(search_flag)
         args = ["search"]
@@ -241,7 +237,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy search [-i|--id|-p|--filepath|-f|--fuzzy
         |-r|--regex] UNKNOWN_VALUE -j|--json".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         pattern = self.get_unknown_search(search_flag)
         args = ["search"]
@@ -265,8 +261,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         |-r|--regex] VALUE -a|--all -j|--json".
         """
         num_runs = 3
-        for i in range(num_runs):
-            exit_code, _ = TestRecipy.run_script()
+        for _ in range(num_runs):
+            exit_code, _ = self.run_script()
             assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
@@ -287,7 +283,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy search -i|--id HASH_PREFIX [-j|--json]".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
@@ -311,7 +307,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy search -p|--filepath|-f|--fuzzy
         |-r|--regex PATTERN VALUE -j|--json".
         """
-        exit_code, _ = TestRecipy.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
@@ -320,5 +316,5 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         args.extend(pattern)
         args.append("value")
         args.append(json_flag)
-        exit_code, stdout = process.execute_and_capture("recipy", args)
+        exit_code, _ = process.execute_and_capture("recipy", args)
         assert exit_code == 1, ("Unexpected exit code " + str(exit_code))

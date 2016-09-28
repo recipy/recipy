@@ -7,13 +7,9 @@ files.
 
 import os
 import os.path
-import shutil
-import tempfile
 import pytest
 
-from integration_test import environment
 from integration_test import helpers
-from integration_test import process
 from integration_test import recipy_environment as recipyenv
 from integration_test import test_recipy_base
 
@@ -31,7 +27,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         done to see that the database is created in
         ~/recipy/recipyDB.json.
         """
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
@@ -50,10 +46,10 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         :param recipyrc: recipyrc file
         :type recipyrc: str or unicode
         """
-        recipydb = os.path.join(TestRecipyrc.directory,
+        recipydb = os.path.join(self.directory,
                                 str(id(self)) + "DB.json")
         helpers.update_recipyrc(recipyrc, "database", "path", recipydb)
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
@@ -74,15 +70,15 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         :type recipyrc_files: (str or unicode, str or unicode)
         """
         (recipyrc, ignore_recipyrc) = recipyrc_files
-        recipydb = os.path.join(TestRecipyrc.directory,
+        recipydb = os.path.join(self.directory,
                                 str(id(self)) + "DB.json")
         helpers.update_recipyrc(recipyrc,
                                 "database", "path", recipydb)
-        ignore_recipydb = os.path.join(TestRecipyrc.directory,
+        ignore_recipydb = os.path.join(self.directory,
                                        str(id(self)) + "ignoreDB.json")
         helpers.update_recipyrc(ignore_recipyrc,
                                 "database", "path", ignore_recipydb)
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
         assert not os.path.isfile(ignore_recipydb),\
@@ -96,7 +92,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc,
                                 "unknown", "unknown", "unknown")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
@@ -109,7 +105,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc,
                                 "database", "unknown", "unknown")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
@@ -121,7 +117,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "database", "path", "unknown")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
 
     def test_general_debug(self):
@@ -131,7 +127,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "general", "debug")
-        exit_code, stdout = TestRecipyrc.run_script()
+        exit_code, stdout = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         # Important: order of log statements is tightly-coupled to
         # script.
@@ -151,7 +147,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "general", "quiet")
-        exit_code, stdout = TestRecipyrc.run_script()
+        exit_code, stdout = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         # Important: assumes script does no output of its own.
         assert len(stdout) == 0, ("Unexpected output " + str(stdout))
@@ -173,7 +169,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata",
                                 recipyrc_key)
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         # Important: assumes script inputs and outputs one or more files.
         (log, _) = helpers.get_log(recipyenv.get_recipydb())
@@ -193,18 +189,18 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "data", "file_diff_outputs")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is None, "Expected filediffs to be None"
 
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is not None, "Expected filediffs not to be None"
-        assert filediffs["filename"] == TestRecipyrc.output_file,\
+        assert filediffs["filename"] == self.output_file,\
             ("Expected filediffs['filename'] to be " +
-             TestRecipyrc.output_file)
+             self.output_file)
         assert filediffs["diff"] == "",\
             "Expected filediffs['diff'] to be empty"
 
@@ -217,14 +213,14 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "data", "file_diff_outputs")
         # Create an empty output file.
-        open(TestRecipyrc.output_file, 'w').close()
-        exit_code, _ = TestRecipyrc.run_script()
+        open(self.output_file, 'w').close()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is not None, "Expected filediffs not to be None"
-        assert filediffs["filename"] == TestRecipyrc.output_file,\
+        assert filediffs["filename"] == self.output_file,\
             ("Expected filediffs['filename'] to be " +
-             TestRecipyrc.output_file)
+             self.output_file)
         regexps = ["before this run", "after this run"]
         helpers.search_regexps(filediffs['diff'], regexps)
 
@@ -244,14 +240,14 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         (recipyrc_key, log_key) = ignores
         recipyrc = recipyenv.get_recipyrc()
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) > 0, "Expected functions to be logged"
 
         # Important: assumes script uses "numpy".
         helpers.update_recipyrc(recipyrc, recipyrc_key, "numpy")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) == 0, "Expected no functions to be logged"
@@ -273,7 +269,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         (recipyrc_key, log_key) = ignores
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, recipyrc_key, "all")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) == 0, "Expected no functions to be logged"
@@ -283,13 +279,13 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         If [ignored metadata].diff is present then no 'diff'
         information is in the log.
         """
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert "diff" in log, "Expected 'diff' in log"
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata", "diff")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert "diff" not in log, "Unexpected 'diff' in log"
@@ -299,7 +295,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         If [ignored metadata].git is present then no 'gitrepo',
         'gitorigin', 'gitcommit' information is in the log.
         """
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         keys = ["gitrepo", "gitorigin", "gitcommit"]
@@ -307,7 +303,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
             assert key in log, ("Expected " + key + " in log")
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata", "git")
-        exit_code, _ = TestRecipyrc.run_script()
+        exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         for key in keys:
