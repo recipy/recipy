@@ -4,6 +4,7 @@ Tests of 'diff' logging when recipy is used within Git.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+import git
 import os
 import os.path
 import shutil
@@ -39,10 +40,14 @@ class TestGit:
         :type method: function
         """
         TestGit.directory = tempfile.mkdtemp(TestGit.__name__)
-        TestGit.script = os.path.join(os.path.dirname(__file__),
+        TestGit.original_script = os.path.join(os.path.dirname(__file__),
+                                               TestGit.SCRIPT_NAME)
+        TestGit.script = os.path.join(TestGit.directory,
                                       TestGit.SCRIPT_NAME)
-        TestGit.original_script = TestGit.script + ".orig"
-        shutil.copy(TestGit.script, TestGit.original_script)
+        shutil.copy(TestGit.original_script, TestGit.script)
+        repository = git.Repo.init(TestGit.directory)
+        repository.index.add([TestGit.SCRIPT_NAME])
+        repository.index.commit("Initial commit")
 
     def teardown_method(self, method):
         """
@@ -51,9 +56,7 @@ class TestGit:
         """
         if os.path.isdir(TestGit.directory):
             shutil.rmtree(TestGit.directory)
-        os.remove(TestGit.script)
-        os.rename(TestGit.original_script, TestGit.script)
-
+ 
     def test_git(self):
         """
         Running a script and then running it after it has been
@@ -90,7 +93,6 @@ class TestGit:
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         git_log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert git_log["diff"] != "", "Expected 'diff' to be non-empty"
-
         # Search for diff-related mark-up.
         regexps = [
             r"---.*" + TestGit.SCRIPT_NAME + "\n",
