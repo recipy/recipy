@@ -113,6 +113,34 @@ def gui(args):
     recipyGui.run(debug=args['--debug'], port=port)
 
 
+def get_run(db, id=None, latest=False, starts_with=False):
+    """Get the runs from db satisfying conditions passed as kwargs.
+    If run is unique returns a dict else list of dicts.
+
+    :param id: if provided will match the run id with this value.
+    :param latest: if True will return last run.
+    :param starts_with: if True and id exists will return all runs starting with id.
+    """
+    runs = None
+    if latest:
+        try:
+            runs = sorted(db.all(), key=lambda x: x['date'])[-1]
+        except (KeyError, IndexError) as _:
+            pass
+
+    elif starts_with and id:
+        runs = db.search(where('unique_id').matches('{}.*'.format(id)))
+        if len(runs) == 1:
+            runs = runs[0]
+
+    elif not starts_with and id:
+        try:
+            runs = db.search(where('unique_id') == id)[0]
+        except IndexError:
+            pass
+    return runs
+
+
 def get_latest_run():
     results = db.all()
 
