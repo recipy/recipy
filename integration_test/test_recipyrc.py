@@ -15,87 +15,14 @@ from integration_test import environment
 from integration_test import helpers
 from integration_test import process
 from integration_test import recipy_environment as recipyenv
+from integration_test import test_recipy_base
 
 
-class TestRecipyrc:
+class TestRecipyrc(test_recipy_base.TestRecipyBase):
     """
     Tests of recipy configuration, provided via recipyr configuration
     files.
     """
-
-    SCRIPT_NAME = "run_numpy.py"
-    """ Test script assumed to be in same directory as this class. """
-    script = ""
-    """ Absolute path to test script. """
-    directory = ""
-    """ Absolute path to temporary directory for these tests. """
-    input_file = ""
-    """ Absolute path to sample input data file for above script. """
-    output_file = ""
-    """ Absolute path to sample output data file for above script. """
-
-    @classmethod
-    def run_script(cls):
-        """
-        Run test_script using current Python executable.
-
-        :return: (exit code, standard output and error)
-        :rtype: (int, str or unicode)
-        """
-        return process.execute_and_capture(
-            environment.get_python_exe(),
-            [TestRecipyrc.script,
-             TestRecipyrc.input_file,
-             TestRecipyrc.output_file])
-
-    @classmethod
-    def setup_class(cls):
-        """
-        py.test setup function, creates test directory in $TEMP,
-        test_input_file path, test_input_file with CSV,
-        test_output_file path.
-        """
-        TestRecipyrc.script =\
-            os.path.join(os.path.dirname(__file__),
-                         TestRecipyrc.SCRIPT_NAME)
-        TestRecipyrc.directory =\
-            tempfile.mkdtemp(TestRecipyrc.__name__)
-        TestRecipyrc.input_file =\
-            os.path.join(TestRecipyrc.directory, "input.csv")
-        with open(TestRecipyrc.input_file, "w") as csv_file:
-            csv_file.write("1,4,9,16\n")
-            csv_file.write("1,8,27,64\n")
-            csv_file.write("\n")
-        TestRecipyrc.output_file =\
-            os.path.join(TestRecipyrc.directory, "output.csv")
-
-    @classmethod
-    def teardown_class(cls):
-        """
-        py.test teardown function, deletes test directory in $TEMP.
-        """
-        if os.path.isdir(TestRecipyrc.directory):
-            shutil.rmtree(TestRecipyrc.directory)
-
-    def setup_method(self, method):
-        """
-        py.test setup function, empties ~/.recipy, deletes recipyrc and
-        .recipyrc.
-
-        :param method: Test method
-        :type method: function
-        """
-        helpers.clean_recipy()
-
-    def teardown_method(self, method):
-        """
-        py.test teardown function, deletes output_file.
-
-        :param method: Test method
-        :type method: function
-        """
-        if os.path.isfile(TestRecipyrc.output_file):
-            os.remove(TestRecipyrc.output_file)
 
     def test_recipyrc(self):
         """
