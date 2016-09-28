@@ -144,14 +144,27 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
             "recipy", ["latest"])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        regexps = [r"Run ID: .*\n",
-                   r"Created by .* on .*\n",
-                   r"Ran .* using .*\n",
-                   r"Git: commit .*, in .*, with origin .*\n",
+        # Validate using logged data
+        db_log, _ = helpers.get_log(recipyenv.get_recipydb())
+        regexps = [r"Run ID: "  + db_log["unique_id"] + "\n",
+                   r"Created by " + db_log["author"] + " on .*\n",
+                   r"Ran " + db_log["script"].replace("\\","\\\\") +
+                       " using .*\n",
+                   r"Git: commit " + db_log["gitcommit"] +
+                       ", in repo " +
+                       db_log["gitrepo"].replace("\\", "\\\\") +
+                       ", with origin " + db_log["gitorigin"] + ".*\n",
                    r"Environment: .*\n",
-                   r"Libraries: .*\n",
+                   r"Libraries: " + ", ".join(db_log["libraries"]) + "\n",
                    r"Inputs:\n",
-                   r"Outputs:\n"]
+                   db_log["inputs"][0][0].replace("\\", "\\\\"),
+                   db_log["inputs"][0][1],
+                   db_log["inputs"][0][0].replace("\\", "\\\\") +
+                       " \(" + db_log["inputs"][0][1] + "\)\n",
+                   r"Outputs:\n",
+                   db_log["outputs"][0][0].replace("\\", "\\\\") +
+                       " \(" + db_log["outputs"][0][1] + "\)\n"
+        ]
         helpers.search_regexps(" ".join(stdout), regexps)
 
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
