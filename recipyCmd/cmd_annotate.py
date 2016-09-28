@@ -1,7 +1,8 @@
 import click
 from tinydb import where
 from recipyCmd.templating import render_run_template
-from recipyCmd.recipycmd import db, get_run
+from recipyCmd.recipycmd import db
+from recipyCommon.utils import get_run
 
 
 @click.command('annotate', short_help='Add a note to the latest run.')

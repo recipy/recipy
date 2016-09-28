@@ -11,7 +11,6 @@ from .forms import SearchForm, AnnotateRunForm
 from .controller import search_database
 
 from recipyCommon import utils
-from recipyCmd.recipycmd import get_latest_run, _change_date
 
 
 routes = Blueprint('routes', __name__, template_folder='templates')
@@ -32,7 +31,7 @@ def index():
     db = utils.open_or_create_db()
 
     runs = search_database(db, query=escaped_query)
-    runs = [_change_date(r) for r in runs]
+    runs = [utils._change_date(r) for r in runs]
 
     runs = sorted(runs, key=lambda x: x['date'], reverse=True)
 
@@ -65,7 +64,7 @@ def run_details():
         flash('Run not found.', 'danger')
         diffs = []
 
-    r = _change_date(r)
+    r = utils._change_date(r)
 
     db.close()
 
@@ -80,7 +79,7 @@ def latest_run():
     annotateRunForm = AnnotateRunForm()
 
     db = utils.open_or_create_db()
-    r = get_latest_run()
+    r = utils.get_run(db, latest=True)
 
     if r is not None:
         diffs = db.table('filediffs').search(Query().run_id == r.eid)
@@ -88,7 +87,7 @@ def latest_run():
         flash('No latest run (database is empty).', 'danger')
         diffs = []
 
-    r = _change_date(r)
+    r = utils._change_date(r)
 
     db.close()
 
