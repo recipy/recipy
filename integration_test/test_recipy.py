@@ -167,7 +167,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        self.compare_json_logs(json_log, db_log)
+        helpers.compare_json_logs(json_log, db_log)
 
     @pytest.mark.parametrize("search_flag", ["default",
                                              "-i", "--id",
@@ -195,7 +195,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         # Handle case where 'recipy search HASH' returns a list
         if isinstance(json_log, list):
             json_log = json_log[0]
-        self.compare_json_logs(json_log, db_log)
+        helpers.compare_json_logs(json_log, db_log)
 
     @pytest.mark.parametrize("search_flag", ["default",
                                              "-i", "--id",
@@ -285,7 +285,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert len(json_log) == 1, "Expected a single JSON log"
-        self.compare_json_logs(json_log[0], db_log)
+        helpers.compare_json_logs(json_log[0], db_log)
 
     @pytest.mark.parametrize("search_flag", ["default",
                                              "-i", "--id",

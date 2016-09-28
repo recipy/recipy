@@ -97,20 +97,3 @@ class TestRecipyBase(object):
         """
         if os.path.isfile(TestRecipyBase.output_file):
             os.remove(TestRecipyBase.output_file)
-
-    def compare_json_logs(self, log1, log2):
-        """
-        Compare two recipy JSON logs for equality.
-
-        :param log1: Log
-        :type log1: dict
-        :param log2: Another log
-        :type log2: dict
-        :raises AssertionError: if log1 and log2 differ in their keys
-        and/or values
-        """
-        # Convert dates from str or unicode to datetime.datetime.
-        for key in ["date", "exit_date"]:
-            log1[key] = environment.get_tinydatestr_as_date(log1[key])
-            log2[key] = environment.get_tinydatestr_as_date(log2[key])
-        assert log1 == log2, "Expected equal logs"
