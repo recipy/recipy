@@ -114,29 +114,6 @@ def gui(args):
     recipyGui.run(debug=args['--debug'], port=port)
 
 
-def latest(args):
-    run = get_run(db, latest=True)
-
-    if not run:
-        if args['--json']:
-            print('[]')
-            return
-        else:
-            print("Database is empty")
-            return
-
-    if args['--json']:
-        output = dumps(run, indent=2, sort_keys=True, default=utils.json_serializer)
-        print(output)
-    else:
-        print(render_run_template(run))
-
-        if args['--diff']:
-            if 'diff' in run:
-                print("\n\n")
-                print(run['diff'])
-
-
 def find_by_hash(x, val):
     for output in x:
         if isinstance(output, six.string_types):
