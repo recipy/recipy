@@ -71,7 +71,7 @@ Please see https://github.com/recipy/recipy for further information.
     install_requires=['wrapt', 'tinydb>=3.0.0', 'tinydb-serialization',
                       'jinja2', 'docopt', 'GitPython', 'Flask', 'colorama',
                       'Flask-Script', 'flask_bootstrap', 'flask-wtf',
-                      'python-dateutil', 'six', "svn"],
+                      'python-dateutil', 'six', 'svn'],
 
     entry_points={
         'console_scripts': [

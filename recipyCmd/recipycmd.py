@@ -15,16 +15,15 @@ from recipyCommon.version_control import hash_file
 from recipyCmd.templating import render_run_template, render_debug_template
 
 colorama_init()
-db = utils.open_or_create_db()
 
 
 class CliConfig(object):
     """Passes configuration between commands."""
     def __init__(self):
         self.debug = False
+        self.db = utils.open_or_create_db()
 
 pass_config = click.make_pass_decorator(CliConfig, ensure=True)
-cmd_folder = os.path.dirname(__file__)
 
 
 class CLI(click.MultiCommand):
@@ -34,6 +33,7 @@ class CLI(click.MultiCommand):
 
     def list_commands(self, ctx):
         cmd = []
+        cmd_folder = os.path.dirname(__file__)
         for filename in os.listdir(cmd_folder):
             if filename.endswith('.py') and filename.startswith('cmd_'):
                 cmd.append(filename[4:-3])
