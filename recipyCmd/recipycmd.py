@@ -4,17 +4,13 @@ import sys
 import re
 import six
 import click
-from colorama import init as colorama_init
 from json import dumps
 from tinydb import where, Query
 
 from recipyCommon import config, utils
 from recipyCommon.config import read_config_file
-from recipyCommon.utils import get_run
 from recipyCommon.version_control import hash_file
 from recipyCmd.templating import render_run_template, render_debug_template
-
-colorama_init()
 
 
 class CliConfig(object):
@@ -70,48 +66,6 @@ def debug_info():
     return render_debug_template(config.get_db_path(), s.getvalue())
 
 
-def gui(args):
-    """
-    Loads recipy GUI from the command-line
-    """
-    from recipyGui import recipyGui
-    import threading
-    import webbrowser
-    import socket
-
-    def get_free_port():
-        port = None
-        base_port = config.get_gui_port()
-        for trial_port in range(base_port, base_port + 5):
-            try:
-                s = socket.socket()
-                s.bind(('', trial_port))
-                s.close()
-                port = trial_port
-                break
-            except Exception:
-                # port already bound
-                # Please note that this also happens when the gui is run in
-                # debug mode!
-                pass
-        if not port:
-            # no free ports above, fall back to random
-            s = socket.socket()
-            s.bind(('', 0))
-            port = s.getsockname()[1]
-            s.close()
-        return port
-
-    port = get_free_port()
-    url = "http://127.0.0.1:{0}".format(port)
-
-    if not args['--no-browser']:
-        # Give the application some time before it starts
-        threading.Timer(1.25, lambda: webbrowser.open(url)).start()
-
-    # Turn off reloading by setting debug = False (this also fixes starting the
-    # application twice)
-    recipyGui.run(debug=args['--debug'], port=port)
 
 
 def find_by_hash(x, val):
