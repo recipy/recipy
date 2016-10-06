@@ -17,8 +17,8 @@ from recipyCommon.version_control import hash_file
 @click.option('--allruns', '-a', is_flag=True, help='Return all runs.')
 @click.option('--diff', '-d', is_flag=True, help='Show diff. Ignored if --json.')
 @click.option('--json', '-j', is_flag=True, help='Return results as JSON.')
-@click.option('--inputs', is_flag=True, help='Restrict search to run inputs only.')
-@click.option('--outputs', is_flag=True, help='Restrict search to run outputs only.')
+@click.option('--inputs', '-i', is_flag=True, help='Restrict search to run inputs only.')
+@click.option('--outputs', '-o', is_flag=True, help='Restrict search to run outputs only.')
 @click.argument('file', required=True)
 @pass_config
 def cmd(config, fuzzy, allruns, diff, json, inputs, outputs, file):
@@ -38,20 +38,29 @@ def cmd(config, fuzzy, allruns, diff, json, inputs, outputs, file):
 
     db = config.db
     Run = Query()
+    results = []
+
+    # If no flags provided search in both inputs and outputs
+    if inputs is False and outputs is False:
+       inputs, outputs = True, True
 
     if fuzzy:
-        results = db.search(Run.outputs.test(find_by_regex, '.*{}.*'.format(file)))
-        results += db.search(Run.inputs.test(find_by_regex, '.*{}.*'.format(file)))
+        if outputs:
+            results += db.search(Run.outputs.test(find_by_regex, '.*{}.*'.format(file)))
+        if inputs:
+            results += db.search(Run.inputs.test(find_by_regex, '.*{}.*'.format(file)))
     else:
         try:
-            assert os.path.isfile(file)
+            # Should we be checking whether the file exists before calculating its hash?
             hash_value = hash_file(file)
         except Exception:
             click.echo('No file {} found.'.format(file))
             return
 
-        results = db.search(Run.outputs.test(find_by_hash, hash_value))
-        results += db.search(Run.inputs.test(find_by_hash, hash_value))
+        if outputs:
+            results += db.search(Run.outputs.test(find_by_hash, hash_value))
+        if inputs:
+            results += db.search(Run.inputs.test(find_by_hash, hash_value))
 
     results.sort(key=lambda x: x['date'])
 
@@ -60,9 +69,9 @@ def cmd(config, fuzzy, allruns, diff, json, inputs, outputs, file):
         return
 
     if not allruns:
-        # Return only the latest run
         if len(results) > 1:
             click.echo('***** Older runs found. Use -a --allruns to show. Below is most recent. *****')
+        # Must be a tuple since render_run_template will expect an iterable which elements are runs
         results = (results[-1], )
 
     if json:
@@ -73,7 +82,7 @@ def cmd(config, fuzzy, allruns, diff, json, inputs, outputs, file):
         separator = '-' * 60 + '\n'
         click.echo(separator.join((render_run_template(r) for r in results)))
         if diff and 'diff' in results[-1]:
-            click.echo('\n\n' + results[-1]['diff'])
+            click.echo('\n' + results[-1]['diff'])
 
 
 def find_by_hash(x, val):
