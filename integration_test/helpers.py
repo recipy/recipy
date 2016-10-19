@@ -16,6 +16,7 @@ except:
 
 from integration_test import database
 from integration_test import environment
+from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
@@ -95,7 +96,7 @@ def enable_recipy(source, destination):
         destination_file.writelines(lines)
 
 
-def search_regexps(string, regexps):
+def assert_matches_regexps(string, regexps):
     """
     Look for each regular expression pattern in a string.
 
@@ -110,7 +111,7 @@ def search_regexps(string, regexps):
         assert match is not None, ("Expected " + regexp)
 
 
-def compare_json_logs(log1, log2):
+def assert_equal_json_logs(log1, log2):
     """
     Compare two recipy JSON logs for equality.
 
@@ -126,3 +127,23 @@ def compare_json_logs(log1, log2):
         log1[key] = environment.get_tinydatestr_as_date(log1[key])
         log2[key] = environment.get_tinydatestr_as_date(log2[key])
     assert log1 == log2, "Expected equal logs"
+
+
+def execute_python(arguments, exit_status=0):
+    """
+    Run script using current Python executable.
+
+    :param arguments: Arguments to Python
+    :type arguments: list of str or unicode
+    :param exit_status: Expected exit status
+    :type exit_status: int
+    :return: (exit code, standard output and error)
+    :rtype: (int, str or unicode)
+    :raises AssertionError: if actual exit status does not match
+    exit_status
+    """
+    actual_exit_status, stdout = process.execute_and_capture(
+        environment.get_python_exe(), arguments)
+    assert exit_status == actual_exit_status,\
+        ("Unexpected exit code " + str(actual_exit_status))
+    return actual_exit_status, stdout

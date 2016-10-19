@@ -28,8 +28,8 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         done to see that the database is created in
         ~/recipy/recipyDB.json.
         """
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
@@ -50,8 +50,8 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipydb = os.path.join(self.directory,
                                 str(id(self)) + "DB.json")
         helpers.update_recipyrc(recipyrc, "database", "path", recipydb)
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
     @pytest.mark.parametrize("recipyrc_files", [
@@ -73,14 +73,13 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         (recipyrc, ignore_recipyrc) = recipyrc_files
         recipydb = os.path.join(self.directory,
                                 str(id(self)) + "DB.json")
-        helpers.update_recipyrc(recipyrc,
-                                "database", "path", recipydb)
+        helpers.update_recipyrc(recipyrc, "database", "path", recipydb)
         ignore_recipydb = os.path.join(self.directory,
                                        str(id(self)) + "ignoreDB.json")
-        helpers.update_recipyrc(ignore_recipyrc,
-                                "database", "path", ignore_recipydb)
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.update_recipyrc(ignore_recipyrc, "database", "path",
+                                ignore_recipydb)
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
         assert not os.path.isfile(ignore_recipydb),\
             ("Did not expect to find " + ignore_recipydb)
@@ -91,10 +90,10 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         and does not prevent recipy from running.
         """
         recipyrc = recipyenv.get_recipyrc()
-        helpers.update_recipyrc(recipyrc,
-                                "unknown", "unknown", "unknown")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.update_recipyrc(recipyrc, "unknown", "unknown",
+                                "unknown")
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
@@ -104,10 +103,10 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         ignored and does not prevent recipy from running.
         """
         recipyrc = recipyenv.get_recipyrc()
-        helpers.update_recipyrc(recipyrc,
-                                "database", "unknown", "unknown")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.update_recipyrc(recipyrc, "database", "unknown",
+                                "unknown")
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         recipydb = recipyenv.get_recipydb()
         assert os.path.isfile(recipydb), ("Expected to find " + recipydb)
 
@@ -118,8 +117,8 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "database", "path", "unknown")
-        exit_code, _ = self.run_script()
-        assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file], 1)
 
     def test_general_debug(self):
         """
@@ -128,12 +127,13 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "general", "debug")
-        exit_code, stdout = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute_python([self.script,
+                                            self.input_file,
+                                            self.output_file])
         # Order of log statements from get_debug_regexps
         # is tightly-coupled to script.
-        helpers.search_regexps(" ".join(stdout),
-                               regexps.get_debug())
+        helpers.assert_matches_regexps(" ".join(stdout),
+                                       regexps.get_debug())
 
     def test_general_quiet(self):
         """
@@ -142,8 +142,9 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "general", "quiet")
-        exit_code, stdout = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute_python([self.script,
+                                            self.input_file,
+                                            self.output_file])
         assert len(stdout) == 0, ("Unexpected output " + str(stdout))
 
     @pytest.mark.parametrize("ignores", [
@@ -163,9 +164,9 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata",
                                 recipyrc_key)
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        (log, _) = helpers.get_log(recipyenv.get_recipydb())
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
+        log, _ = helpers.get_log(recipyenv.get_recipydb())
         files = log[log_key]
         assert len(files) >= 1, "Unexpected number of files"
         assert not isinstance(files[0], list), "Unexpected list"
@@ -175,25 +176,24 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         If [data].file_diff_outputs is present then:
 
         * If output files are created, then there are no 'filediffs'
-              for the run.
+          for the run.
         * If output files with the same content are created, then
-             there are 'filediffs' for the run, with an empty 'diffs'
+          there are 'filediffs' for the run, with an empty 'diffs'
           value.
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "data", "file_diff_outputs")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is None, "Expected filediffs to be None"
 
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is not None, "Expected filediffs not to be None"
         assert filediffs["filename"] == self.output_file,\
-            ("Expected filediffs['filename'] to be " +
-             self.output_file)
+            ("Expected filediffs['filename'] to be " + self.output_file)
         assert filediffs["diff"] == "",\
             "Expected filediffs['diff'] to be empty"
 
@@ -205,17 +205,16 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "data", "file_diff_outputs")
-        # Create an empty output file.
+        # Create empty output file.
         open(self.output_file, 'w').close()
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         _, filediffs = helpers.get_log(recipyenv.get_recipydb())
         assert filediffs is not None, "Expected filediffs not to be None"
         assert filediffs["filename"] == self.output_file,\
-            ("Expected filediffs['filename'] to be " +
-             self.output_file)
-        helpers.search_regexps(filediffs['diff'],
-                               regexps.get_filediffs())
+            ("Expected filediffs['filename'] to be " + self.output_file)
+        helpers.assert_matches_regexps(filediffs['diff'],
+                                       regexps.get_filediffs())
 
     @pytest.mark.parametrize("ignores", [
         ("ignored inputs", "inputs"),
@@ -233,14 +232,15 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         """
         (recipyrc_key, log_key) = ignores
         recipyrc = recipyenv.get_recipyrc()
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) > 0, "Expected functions to be logged"
 
-        helpers.update_recipyrc(recipyrc, recipyrc_key, "numpy")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.update_recipyrc(recipyrc, recipyrc_key,
+                                TestRecipyrc.LIBRARY)
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) == 0, "Expected no functions to be logged"
 
@@ -261,8 +261,8 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         (recipyrc_key, log_key) = ignores
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, recipyrc_key, "all")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) == 0, "Expected no functions to be logged"
 
@@ -271,14 +271,14 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         If [ignored metadata].diff is present then no 'diff'
         information is in the log.
         """
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert "diff" in log, "Expected 'diff' in log"
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata", "diff")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert "diff" not in log, "Unexpected 'diff' in log"
 
@@ -287,16 +287,16 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         If [ignored metadata].git is present then no 'gitrepo',
         'gitorigin', 'gitcommit' information is in the log.
         """
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         keys = ["gitrepo", "gitorigin", "gitcommit"]
         for key in keys:
             assert key in log, ("Expected " + key + " in log")
         recipyrc = recipyenv.get_recipyrc()
         helpers.update_recipyrc(recipyrc, "ignored metadata", "git")
-        exit_code, _ = self.run_script()
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        helpers.execute_python([self.script, self.input_file,
+                                self.output_file])
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         for key in keys:
             assert key not in log, ("Unexpected " + key + " in log")

@@ -7,7 +7,7 @@ assumptions are made:
 * Co-located with this test script, in the same directory.
 * Imports recipy.
 * Expects two arguments via the command-line: an input file
-  name and an output file name.
+  of comma-separated values and an output file name.
 * Reads the input file and creates the output file using numpy,
   which recipy is configured to log.
 * Prints nothing to standard output.
@@ -21,9 +21,7 @@ import shutil
 import tempfile
 import git
 
-from integration_test import environment
 from integration_test import helpers
-from integration_test import process
 
 
 class TestRecipyBase(object):
@@ -33,6 +31,8 @@ class TestRecipyBase(object):
 
     SCRIPT_NAME = "run_numpy.py"
     """ Test script assumed to be in same directory as this class. """
+    LIBRARY = "numpy"
+    """ Test script assumped to use numpy library. """
 
     def setup_method(self, method):
         """
@@ -67,6 +67,7 @@ class TestRecipyBase(object):
             csv_file.write("\n")
         # Absolute path to sample output data file for above script.
         self.output_file = os.path.join(self.directory, "output.csv")
+
         repository = git.Repo.init(self.directory)
         repository.index.add([TestRecipyBase.SCRIPT_NAME])
         repository.index.commit("Initial commit")
@@ -85,14 +86,4 @@ class TestRecipyBase(object):
         """
         if os.path.isdir(self.directory):
             shutil.rmtree(self.directory)
-
-    def run_script(self):
-        """
-        Run test_script using current Python executable.
-
-        :return: (exit code, standard output and error)
-        :rtype: (int, str or unicode)
-        """
-        return process.execute_and_capture(
-            environment.get_python_exe(),
-            [self.script, self.input_file, self.output_file])
+        helpers.clean_recipy()
