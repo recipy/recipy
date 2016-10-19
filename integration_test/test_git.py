@@ -69,9 +69,9 @@ class TestGit(test_recipy_base.TestRecipyBase):
                    ("Expected same number of " + key + " files")
             for index in range(0, len(log[key])):
                 [import_file, _] = log[key][index]
-                [file, _] = git_log[key][index]
+                [git_file, _] = git_log[key][index]
                 assert os.path.basename(import_file) ==\
-                    os.path.basename(file),\
+                    os.path.basename(git_file),\
                     "Expected local file names to be equal"
         # Remove fields that are specific to a run.
         for key in ["unique_id", "diff", "date", "exit_date",
