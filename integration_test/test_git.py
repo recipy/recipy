@@ -11,6 +11,7 @@ from integration_test import environment
 from integration_test import helpers
 from integration_test import process
 from integration_test import recipy_environment as recipyenv
+from integration_test import regexps
 from integration_test import test_recipy_base
 
 
@@ -56,12 +57,8 @@ class TestGit(test_recipy_base.TestRecipyBase):
         git_log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert git_log["diff"] != "", "Expected 'diff' to be non-empty"
         # Search for diff-related mark-up.
-        regexps = [
-            r"---.*" + TestGit.SCRIPT_NAME + "\n",
-            r"\+\+\+.*" + TestGit.SCRIPT_NAME + "\n",
-            r"@@.*\n",
-            r"\+pass.*\n"]
-        helpers.search_regexps(git_log["diff"], regexps)
+        helpers.search_regexps(git_log["diff"],
+                               regexps.get_diff(TestGit.SCRIPT_NAME))
         # Check that input and output files recorded have the same
         # local names.
         for key in ["inputs", "outputs"]:

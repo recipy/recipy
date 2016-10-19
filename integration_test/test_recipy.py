@@ -10,6 +10,7 @@ import pytest
 from integration_test import helpers
 from integration_test import process
 from integration_test import recipy_environment as recipyenv
+from integration_test import regexps
 from integration_test import test_recipy_base
 
 
@@ -81,7 +82,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         exit_code, stdout = process.execute_and_capture("recipy", [])
         assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        helpers.search_regexps(stdout[0], ["Usage:\n"])
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_usage())
 
     def test_version(self):
         """
@@ -91,7 +93,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
             "recipy", ["--version"])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        helpers.search_regexps(stdout[0], [r"recipy v[0-9]\.[0-9]\.[0-9]"])
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_version())
 
     @pytest.mark.parametrize("help_flag", ["-h", "--help"])
     def test_help(self, help_flag):
@@ -101,10 +104,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         exit_code, stdout = process.execute_and_capture("recipy", [help_flag])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        regexps = [r"recipy - a frictionless provenance tool for Python\n",
-                   r"Usage:\n",
-                   r"Options:\n"]
-        helpers.search_regexps(" ".join(stdout), regexps)
+        helpers.search_regexps(" ".join(stdout), regexps.get_help())
 
     def test_debug(self):
         """
@@ -115,12 +115,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
             "recipy", ["latest", "--debug"])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        regexps = [r"Command-line arguments: \n",
-                   r"DB path: .*\n",
-                   r"Full config file \(as interpreted\):\n",
-                   r"----------------------------------\n",
-                   r"----------------------------------\n"]
-        helpers.search_regexps(" ".join(stdout), regexps)
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_debug_recipy())
 
     def test_latest_empty_db(self):
         """
@@ -129,37 +125,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         exit_code, stdout = process.execute_and_capture("recipy", ["latest"])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        assert 'Database is empty' in stdout[0]
-
-    def get_stdout_regexps(self, log):
-        """
-        Get regular expressions with expected "diff" information
-        corresponding to modification of modify_script.
-
-        :param log: Recipy database log
-        :type log: dict
-        :returns: regular expressions
-        :rtype: list of str or unicode
-        """
-        regexps = [r"Run ID: " + log["unique_id"] + "\n",
-                   r"Created by " + log["author"] + " on .*\n",
-                   r"Ran " + log["script"].replace("\\", "\\\\") +
-                   " using .*\n",
-                   r"Git: commit " + log["gitcommit"] +
-                   ", in repo " +
-                   log["gitrepo"].replace("\\", "\\\\") +
-                   ", with origin " + str(log["gitorigin"]) + ".*\n",
-                   r"Environment: .*\n",
-                   r"Libraries: " + ", ".join(log["libraries"]) + "\n",
-                   r"Inputs:\n",
-                   log["inputs"][0][0].replace("\\", "\\\\"),
-                   log["inputs"][0][1],
-                   log["inputs"][0][0].replace("\\", "\\\\") +
-                   r" \(" + log["inputs"][0][1] + r"\)\n",
-                   r"Outputs:\n",
-                   log["outputs"][0][0].replace("\\", "\\\\") +
-                   r" \(" + log["outputs"][0][1] + r"\)\n"]
-        return regexps
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_db_empty())
 
     def test_latest(self):
         """
@@ -173,8 +140,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         # Validate using logged data
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        regexps = self.get_stdout_regexps(db_log)
-        helpers.search_regexps(" ".join(stdout), regexps)
+        helpers.search_regexps(" ".join(stdout), regexps.get_stdout(db_log))
 
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
     def test_latest_json(self, json_flag):
@@ -201,21 +167,6 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
             destination_file.writelines(lines)
             destination_file.write("pass\n")
 
-    def get_diff_regexps(self):
-        """
-        Get regular expressions with expected "diff" information
-        corresponding to modification of modify_script.
-
-        :returns: regular expressions
-        :rtype: list of str or unicode
-        """
-        regexps = [
-            r"---.*" + TestRecipy.SCRIPT_NAME + "\n",
-            r"\+\+\+.*" + TestRecipy.SCRIPT_NAME + "\n",
-            r"@@.*\n",
-            r"\+pass.*\n"]
-        return regexps
-
     def test_latest_diff(self):
         """
         Test "recipy latest --diff".
@@ -228,8 +179,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         # Validate using logged data
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        regexps = self.get_stdout_regexps(db_log)
-        helpers.search_regexps(" ".join(stdout), regexps)
+        helpers.search_regexps(" ".join(stdout), regexps.get_stdout(db_log))
 
         self.modify_script()
 
@@ -241,9 +191,9 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         assert len(stdout) > 0, "Expected stdout"
         # Validate using logged data
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        regexps = self.get_stdout_regexps(db_log)
-        regexps.extend(self.get_diff_regexps())
-        helpers.search_regexps(" ".join(stdout), regexps)
+        helpers.search_regexps(" ".join(stdout), regexps.get_stdout(db_log))
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_diff(TestRecipy.SCRIPT_NAME))
 
     @pytest.mark.parametrize("json_flag", ["-j", "--json"])
     def test_latest_diff_json(self, json_flag):
@@ -273,8 +223,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         helpers.compare_json_logs(json_log, db_log)
         assert json_log["diff"] != "", "Expected 'diff' to be non-empty"
-        # Search for diff-related mark-up.
-        helpers.search_regexps(json_log["diff"], self.get_diff_regexps())
+        helpers.search_regexps(json_log["diff"],
+                               regexps.get_diff(TestRecipy.SCRIPT_NAME))
 
     @pytest.mark.parametrize("search_flag", ["default",
                                              "-i", "--id",
@@ -322,7 +272,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         exit_code, stdout = process.execute_and_capture("recipy", args)
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         assert len(stdout) > 0, "Expected stdout"
-        assert 'No results found' in stdout[0]
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_no_results())
 
     @pytest.mark.parametrize("search_flag", ["default",
                                              "-i", "--id",

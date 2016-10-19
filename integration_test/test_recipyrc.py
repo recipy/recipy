@@ -11,6 +11,7 @@ import pytest
 
 from integration_test import helpers
 from integration_test import recipy_environment as recipyenv
+from integration_test import regexps
 from integration_test import test_recipy_base
 
 
@@ -129,15 +130,10 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         helpers.update_recipyrc(recipyrc, "general", "debug")
         exit_code, stdout = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        # Order of log statements is tightly-coupled to script.
-        regexps = ["recipy run inserted",
-                   "Patching",
-                   "Patching input function",
-                   "Patching output function",
-                   "Input from",
-                   "Output to",
-                   "recipy run complete"]
-        helpers.search_regexps(" ".join(stdout), regexps)
+        # Order of log statements from get_debug_regexps
+        # is tightly-coupled to script.
+        helpers.search_regexps(" ".join(stdout),
+                               regexps.get_debug())
 
     def test_general_quiet(self):
         """
@@ -218,8 +214,8 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         assert filediffs["filename"] == self.output_file,\
             ("Expected filediffs['filename'] to be " +
              self.output_file)
-        regexps = ["before this run", "after this run"]
-        helpers.search_regexps(filediffs['diff'], regexps)
+        helpers.search_regexps(filediffs['diff'],
+                               regexps.get_filediffs())
 
     @pytest.mark.parametrize("ignores", [
         ("ignored inputs", "inputs"),
