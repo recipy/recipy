@@ -1,5 +1,15 @@
 """
 Base class for recipy tests.
+
+Sub-classes use a Python script (run_numpy.py) about which the following
+assumptions are made:
+
+* Co-located with this test script, in the same directory.
+* Imports recipy.
+* Expects two arguments via the command-line: an input file
+  name and an output file name.
+* Reads the input file and creates the output file using a library
+  which recipy is configured to log.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
