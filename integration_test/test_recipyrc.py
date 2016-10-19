@@ -129,8 +129,7 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         helpers.update_recipyrc(recipyrc, "general", "debug")
         exit_code, stdout = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        # Important: order of log statements is tightly-coupled to
-        # script.
+        # Order of log statements is tightly-coupled to script.
         regexps = ["recipy run inserted",
                    "Patching",
                    "Patching input function",
@@ -149,7 +148,6 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         helpers.update_recipyrc(recipyrc, "general", "quiet")
         exit_code, stdout = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        # Important: assumes script does no output of its own.
         assert len(stdout) == 0, ("Unexpected output " + str(stdout))
 
     @pytest.mark.parametrize("ignores", [
@@ -171,7 +169,6 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
                                 recipyrc_key)
         exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
-        # Important: assumes script inputs and outputs one or more files.
         (log, _) = helpers.get_log(recipyenv.get_recipydb())
         files = log[log_key]
         assert len(files) >= 1, "Unexpected number of files"
@@ -245,7 +242,6 @@ class TestRecipyrc(test_recipy_base.TestRecipyBase):
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         assert len(log[log_key]) > 0, "Expected functions to be logged"
 
-        # Important: assumes script uses "numpy".
         helpers.update_recipyrc(recipyrc, recipyrc_key, "numpy")
         exit_code, _ = self.run_script()
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
