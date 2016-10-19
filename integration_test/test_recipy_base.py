@@ -8,8 +8,9 @@ assumptions are made:
 * Imports recipy.
 * Expects two arguments via the command-line: an input file
   name and an output file name.
-* Reads the input file and creates the output file using a library
+* Reads the input file and creates the output file using numpy,
   which recipy is configured to log.
+* Prints nothing to standard output.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
