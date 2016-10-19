@@ -1,5 +1,14 @@
 """
 Tests of 'python -m recipy' usage.
+
+This script uses a Python script (run_numpy_no_recipy.py) about
+which the following assumptions are made:
+
+* Co-located with this test script, in the same directory.
+* Expects two arguments via the command-line: an input file
+  name and an output file name.
+* Reads the input file and creates the output file using a library
+  which recipy is configured to log.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
@@ -80,22 +89,21 @@ class TestMflag:
             [TestMflag.script, input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         import_log, _ = helpers.get_log(recipyenv.get_recipydb())
-        # Important: assumes script inputs and outputs one or more files.
-        # Check that input and output files recorded have the same
-        # local names.
         for key in ["inputs", "outputs"]:
             assert len(module_log[key]) == len(import_log[key]),\
                    ("Expected same number of " + key + " files")
-            [import_file, _] = module_log[key][0]
-            [module_file, _] = import_log[key][0]
-            assert os.path.basename(import_file) ==\
-                os.path.basename(module_file),\
-                "Expected local file names to be equal"
+            for index in range(0, len(module_log[key])):
+                [import_file, _] = module_log[key][index]
+                [module_file, _] = import_log[key][index]
+                assert os.path.basename(import_file) ==\
+                    os.path.basename(module_file),\
+                    "Expected local file names to be equal"
         # Remove fields that are specific to a run.
         for key in ["unique_id", "diff", "date", "exit_date",
                     "command_args", "inputs", "outputs"]:
-            del module_log[key]
-            del import_log[key]
+            if key in module_log:
+                del module_log[key]
+                del import_log[key]
         assert module_log == import_log,\
             ("Expected " + str(module_log) + " to equal " +
              str(import_log))
