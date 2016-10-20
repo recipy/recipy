@@ -46,3 +46,4 @@ install:
 
 script:
   - py.test -v integration_test
+
