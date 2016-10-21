@@ -50,8 +50,6 @@ def get_log(recipydb):
 
     :param recipydb: recipydb path
     :type recipydb: str or unicode
-    :return: log
-    :rtype: dict
     :return: log and filediffs. If no 'filediffs' then this value
     is None. If no log exists then None is returned.
     :rtype: (dict, dict)
@@ -63,6 +61,22 @@ def get_log(recipydb):
     diffs = database.get_filediffs(connection, log_number)
     database.close_db(connection)
     return (log, diffs)
+
+
+def get_number_of_logs(recipydb):
+    """
+    Get the number of logs in the database.
+
+    :param recipydb: recipydb path
+    :type recipydb: str or unicode
+    :return: Number of logs
+    :rtype: int
+    """
+    connection_data = {database.TINYDB_PATH: recipydb}
+    connection = database.open_db(connection_data)
+    number_of_logs = database.number_of_logs(connection)
+    database.close_db(connection)
+    return number_of_logs
 
 
 def clean_recipy():
