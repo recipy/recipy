@@ -68,7 +68,7 @@ def get_python_version():
     :return: Python version
     :rtype: str or unicode
     """
-    return sys.version
+    return sys.version.split("\n")[0]
 
 
 def get_os():
