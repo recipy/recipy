@@ -16,7 +16,7 @@ run_numpy.py:
   outputs: [ out.npz ]
 - arguments: [ savez_compressed ]
   libraries: [ numpy ]
-  outputs: [ outz.npz ]
+  outputs: [ out.npz ]
 - arguments: [ savetxt ]
   libraries: [ numpy ]
   outputs: [ out.txt ]
