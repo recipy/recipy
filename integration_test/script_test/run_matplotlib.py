@@ -15,8 +15,6 @@ import matplotlib.pyplot as plt
 
 from integration_test.script_test.base import Base
 
-print(matplotlib.matplotlib_fname())
-
 class MatplotlibSample(Base):
     """
     Sample script that runs matplotlib functions logged by recipy.
