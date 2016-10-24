@@ -1,15 +1,172 @@
 """
 recipy test case runner.
+
+Run tests to check that recipy logs information on input and output
+functions invoked by scripts which use packages that recipy has been
+configured to log.
+
+Tests are specified using a [YAML](http://yaml.org/) (YAML Ain't
+Markup Language) configuration file. YAML syntax is:
+
+* `---` indicates the start of a document.
+* `:` denotes a dictionary. `:` must be followed by a space.
+* `-` denotes a list.
+
+The test configuration file has format:
+
+    ---
+    SCRIPT:
+    - libraries: [LIBRARY, LIBRARY, ... ]
+      arguments: [..., ..., ...]
+      inputs: [INPUT, INPUT, ...]
+      outputs: [OUTPUT, OUTPUT, ...]
+    - libraries: [LIBRARY, LIBRARY, ... ]
+      arguments: [..., ..., ...]
+      inputs: [INPUT, INPUT, ...]
+      outputs: [OUTPUT, OUTPUT, ...]
+    - ...
+    SCRIPT:
+    ...
+
+where each script to be tested is defined by:
+
+* 'SCRIPT': script name, with a relative or absolute path
+* One or more test cases, each of which defines:
+  - 'libraries':  e.g. ['numpy']. A list of one or more libraries used
+    by the script, and which are expected to be logged by recipy, when
+    the script is run with the given arguments. The list may contain
+    either generic names e.g. 'numpy' (compatible with any version of
+    numpy) or version qualified names e.g. 'numpy v1.11.1' (compatible
+    with numpy v1.11.1+).
+  - 'arguments': e.g. ['loadtxt'], ['savetxt']. A list of arguments to
+    be passed to the script. If none, then this can be omitted.
+  - 'inputs': e.g. ['data.csv']. A list of zero or more input files
+    which the script will read, and which are expected to be logged by
+    recipy, when running the script with the arguments. If none, then
+    this can be omitted.
+  - 'outputs': e.g. ['data.csv']. A list of zero or more output files
+    which the script will write, and which are expected to be logged
+    by recipy, when running the script with the arguments. If none,
+    then this can be omitted.
+
+For example:
+
+    ---
+    test_numpy.py:
+    - libraries: [numpy]
+      arguments: [loadtxt]
+      inputs: [input.csv]
+    - libraries: [numpy]
+      arguments: [savetxt]
+      outputs: [output.csv]
+    - libraries: [numpy]
+      arguments: [load_and_save_txt]
+      inputs: [input.csv]
+      outputs: [output.csv]
+
+It is up to the developer to ensure the 'libraries', 'input' and
+'output' lists correctly record the libraries, input and output files
+that it is expected recipy will log when the script is run with the
+given arguments.
+
+The test configuration file is provided via an environment variable,
+'RECIPY_TEST_CONFIG'. If undefined, then a default of
+'integration_test/testcases/recipy.yml' is assumed.
 """
 
 import os
 import os.path
+import pytest
 
 from integration_test import environment
 from integration_test.file_utils import load_file
 from integration_test import helpers
 from integration_test import process
 from integration_test import recipy_environment as recipyenv
+
+
+TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
+"""
+Environment variable holding recipy test configuration file name
+"""
+
+DEFAULT_CONFIG = "integration_test/testcases/recipy.yml"
+""" Default recipy test configuration file name """
+
+
+def get_test_cases():
+    """
+    py.test callback to associate each test script with its test
+    cases. This function:
+
+    * Gets the test configuration file name from the environment
+      variable 'RECIPY_TEST_CONFIG'. If undefined, then a default of
+      'integration_test/testcases/recipy.yml' is assumed.
+    * Loads the test configuration file.
+    * Associates each test script in the test configuration with each
+      of its individual test cases using get_script_test_cases.
+
+    py.test parameterized tests will generate one test function per
+    tuple.
+
+    :return: test cases
+    :rtype: list of (str or unicode, dict)
+    """
+    config_file = helpers.get_environment_value(TEST_CONFIG_ENV,
+                                                DEFAULT_CONFIG)
+    configuration = load_file(config_file)
+    return get_script_test_cases(configuration)
+
+
+def get_script_test_cases(configuration):
+    """
+    Associates each test script in the test configuration with each of
+    its individual test cases.
+
+    This function takes a test configuration, a dictionary indexed by
+    scripts, each of which has an associated list of one or more test
+    cases (each of which are a dictionary of 'libraries', 'arguments',
+    'inputs' and 'outputs'), and creates a list of tuples (script,
+    test_case), where test_case is the individual test case for the
+    script.
+
+    :param configuration: Test case configuration
+    :type dict: dict of list of dict
+    :return: test cases
+    :rtype: list of (str or unicode, dict)
+    """
+    print(("Configuration: ", configuration))
+    script_test_cases = []
+    for script in configuration:
+        test_cases = configuration[script]
+        for test_case in test_cases:
+            script_test_cases.append((script, test_case))
+    print(("Script test cases: ", script_test_cases))
+    return script_test_cases
+
+
+def get_test_case_id(script_test_case):
+    """
+    py.test callback to generate test case function names.
+
+    Function names are of form 'script:arguments' where 'arguments'
+    is formed by concatenating the 'arguments' entry for a script's
+    test case and removing all spaces.
+
+    For example, for a script 'run_numpy.py' and a test case with
+    ''arguments':[ 'loadtxt' ]' the test case name is
+    'run_numpy.py:loadtxt'.
+
+    :param script_test_case: Script plus test case configuration
+    :type script_test_case: (str or unicode, dict)
+    :return: Test case name
+    :rtype: str or unicode
+    """
+    [script, test_case] = script_test_case
+    arguments_str = [str(argument) for argument in test_case["arguments"]]
+    arguments_str = "".join(arguments_str).replace(" ", "_")
+    test_case_name = str(script) + ":" + arguments_str
+    return test_case_name
 
 
 class TestCaseRunner(object):
@@ -49,7 +206,7 @@ class TestCaseRunner(object):
         :type test_cases_directory: str or unicode
         :param script: test case script e.g. 'run_numpy.py'
         :type script: str or unicode
-        :param test_case: test case specification
+        :param test_case: test case configuration
         :type test_case: dict
         """
         number_of_logs = helpers.get_number_of_logs(recipyenv.get_recipydb())
@@ -214,18 +371,20 @@ class TestCaseRunner(object):
             assert io_file in logged_files,\
                 ("Could not find " + io_key + " " + io_file)
 
-    def test_case(self):
+    @pytest.mark.parametrize("script_test_case",
+                             get_test_cases(),
+                             ids=get_test_case_id)
+    def test_scripts(self, script_test_case):
         """
-        # TODO switch to parameterised tests
+        Run a test defined in the recipy test configuration.
+
+        :param script_test_case: Script and a single test case for
+         that script
+        :type script_test_case: (str or unicode, dict)
         """
-        specification = load_file("integration_test/testcases/recipy.yml")
-        print(("Specification: ", specification))
-        for script in specification:
-            print(("Script: ", script))
-            test_cases = specification[script]
-            # TODO remove this which ensures just one run is done.
-            # test_cases = [test_cases[0]]
-            for test_case in test_cases:
-                self.run_test_case("integration_test/testcases",
-                                   script,
-                                   test_case)
+        (script, test_case) = script_test_case
+        print(("Test case: ", test_case))
+        # TODO resolve use of this path
+        self.run_test_case("integration_test/testcases",
+                           script,
+                           test_case)
