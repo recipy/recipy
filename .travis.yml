@@ -45,8 +45,6 @@ install:
   - pip freeze
 
 script:
-  - ls
-  - echo 'backend : Agg' > matplotlibrc
-  - ls
 # Set matplotlib to not try and plot to screen
+  - cp integration_test/script_test/matplotlibrc .
   - py.test -v integration_test
