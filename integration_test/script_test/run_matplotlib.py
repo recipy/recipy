@@ -10,7 +10,7 @@ import os
 import sys
 import matplotlib
 # Set non-interactive matplotlib back-end.
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from integration_test.script_test.base import Base
@@ -26,11 +26,10 @@ class MatplotlibSample(Base):
 
     def __init__(self):
         """
-        Constructor. Set data_dir attribute with path to data files needed
-        by this class.
+        Constructor.
         """
         Base.__init__(self)
-        self.data_dir = os.path.join(self.current_dir, "data", "numpy")
+        self.data_dir = os.path.join(self.current_dir, "data")
         print(("Data directory: ", self.data_dir))
 
     def savefig(self):
@@ -38,8 +37,6 @@ class MatplotlibSample(Base):
         Use pyplot.plot to save "data.png".
         """
         file_name = os.path.join(self.data_dir, "out.png")
-        # Set non-interactive matplotlib back-end.
-        matplotlib.use('Agg')
         plt.plot([1, 2, 3])
         print(("Saving plot:", file_name))
         plt.savefig(file_name)
