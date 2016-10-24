@@ -366,6 +366,9 @@ class TestCaseRunner(object):
                 library_version = library + " v" + version
                 assert library_version in logged_libraries,\
                     ("Could not find library " + library_version)
+            else:
+                raise ConfigError((
+                    "Library {} is not installed".format(library)))
 
     def check_dates(self, logged_start_date, logged_end_date):
         """
@@ -443,3 +446,39 @@ class TestCaseRunner(object):
         """
         (name, script_path, command, test_case) = script_test_case
         self.run_test_case(name, script_path, command, test_case)
+
+
+class ConfigError(Exception):
+    """Test configuration error."""
+
+    def __init__(self, message, exception=None):
+        """Create error.
+
+        :param message: Message
+        :type message: str or unicode
+        :param exception: Exception
+        :type value: Exception
+        """
+        super(ConfigError, self).__init__()
+        self._message = message
+        self._exception = exception
+
+    def __str__(self):
+        """Get error as a formatted string.
+
+        :return: formatted string
+        :rtype: str or unicode
+        """
+        message = self._message
+        if self._exception is not None:
+            message += " : " + str(self._exception)
+        return repr(message)
+
+    @property
+    def exception(self):
+        """Get exception.
+
+        :param exception: Exception
+        :type value: Exception
+        """
+        return self._exception
