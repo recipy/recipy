@@ -78,6 +78,7 @@ import os
 import os.path
 import pytest
 
+from integration_test.database import DatabaseError
 from integration_test import environment
 from integration_test.file_utils import load_file
 from integration_test import helpers
@@ -209,14 +210,22 @@ class TestCaseRunner(object):
         :param test_case: test case configuration
         :type test_case: dict
         """
-        number_of_logs = helpers.get_number_of_logs(recipyenv.get_recipydb())
+        number_of_logs = 0
+        try:
+            number_of_logs =\
+               helpers.get_number_of_logs(recipyenv.get_recipydb())
+        except DatabaseError:
+            # Database may not exist if running tests for first time so
+            # give benefit of doubt at this stage and assume running script
+            # will bring it into life.
+            pass
         print(("Number of logs: ", number_of_logs))
         libraries = test_case[TestCaseRunner.LIBRARIES]
         if TestCaseRunner.ARGUMENTS in test_case:
             arguments = test_case[TestCaseRunner.ARGUMENTS]
         else:
             arguments = []
-	# TODO Clean up, convert from:
+        # TODO Clean up, convert from:
         # python integration_test/script_test/run_numpy.py
         # to:
         # python -m integration_test.script_test.run_numpy
