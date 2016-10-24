@@ -12,14 +12,12 @@ from subprocess import call
 from tempfile import TemporaryFile
 
 
-def execute(command, arguments, stdout=None, stderr=None):
+def execute(command, stdout=None, stderr=None):
     """
     Run a command via the operating system.
 
-    :param command: Command to run
-    :type command: str or unicode
-    :param arguments: Arguments to the command
-    :type arguments: list of str or unicode
+    :param command: Command to run plus any arguments
+    :type command: list of str or unicode
     :param stdout: File for standard output stream
     :type stdout: file
     :param stderr: File for standard error stream
@@ -28,29 +26,24 @@ def execute(command, arguments, stdout=None, stderr=None):
     :rtype: int
     :raises OSError: if there are problems running the command
     """
-    command_line = [command]
-    command_line.extend(arguments)
-    print((" ".join(command_line)))
-    return_code = call(command_line, stdout=stdout, stderr=stderr)
+    print((" ".join(command)))
+    return_code = call(command, stdout=stdout, stderr=stderr)
     return return_code
 
 
-def execute_and_capture(command, arguments):
+def execute_and_capture(command):
     """
     Run a command via the operating system and capture and return
     standard output and standard error.
 
-    :param command: Command to run
-    :type command: str or unicode
-    :param arguments: Arguments to the command
-    :type arguments: list of str or unicode
+    :param command: Command to run plus any arguments
+    :type command: list of str or unicode
     :return: (exit code, standard output and error)
     :rtype: (int, str or unicode)
     :raises OSError: if there are problems running the command
     """
     with TemporaryFile(mode='w+', suffix="log") as stdouterr:
-        result = execute(command, arguments,
-                         stdout=stdouterr, stderr=stdouterr)
+        result = execute(command, stdout=stdouterr, stderr=stdouterr)
         stdouterr.seek(0)
         log = stdouterr.readlines()
     return (result, log)

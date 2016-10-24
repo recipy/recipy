@@ -82,7 +82,6 @@ from integration_test.database import DatabaseError
 from integration_test import environment
 from integration_test.file_utils import load_file
 from integration_test import helpers
-from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
@@ -231,10 +230,7 @@ class TestCaseRunner(object):
         script_module = script_module.replace("/", ".")
         script_module = script_module.replace("\\", ".")
         cmd = ["-m", script_module] + arguments
-        exit_status, _ =\
-            process.execute_and_capture(environment.get_python_exe(),
-                                        cmd)
-        assert exit_status == 0, ("Unexpected exit status " + str(exit_status))
+        _, _ = helpers.execute_python(cmd, 0)
         # Validate recipy database
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         # Number of logs

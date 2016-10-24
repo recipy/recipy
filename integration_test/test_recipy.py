@@ -9,7 +9,6 @@ import json
 import pytest
 
 from integration_test import helpers
-from integration_test import process
 from integration_test import recipy_environment as recipyenv
 from integration_test import regexps
 from integration_test import test_recipy_base
@@ -95,8 +94,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy".
         """
-        exit_code, stdout = process.execute_and_capture("recipy", [])
-        assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy"], 1)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout),
                                        regexps.get_usage())
@@ -105,9 +103,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy --version".
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["--version"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "--version"], 0)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout),
                                        regexps.get_version())
@@ -117,8 +113,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy -h|--help".
         """
-        exit_code, stdout = process.execute_and_capture("recipy", [help_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", help_flag], 0)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout), regexps.get_help())
 
@@ -127,9 +122,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy latest --debug", to look for debug-related output
         on stdout.
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", "--debug"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest", "--debug"], 0)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout),
                                        regexps.get_debug_recipy())
@@ -139,8 +132,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         Test "recipy latest" if no database.
         """
         helpers.clean_recipy()
-        exit_code, stdout = process.execute_and_capture("recipy", ["latest"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest"], 0)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout),
                                        regexps.get_db_empty())
@@ -149,9 +141,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest".
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest"], 0)
         assert len(stdout) > 0, "Expected stdout"
         # Validate using logged data
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
@@ -163,9 +153,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest -j|--json".
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest", json_flag], 0)
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
@@ -175,9 +163,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest --diff".
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", "--diff"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest", "--diff"], 0)
         assert len(stdout) > 0, "Expected stdout"
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         # Validate standard output.
@@ -190,9 +176,7 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         helpers.execute_python([self.script, self.input_file,
                                 self.output_file])
 
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", "--diff"])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(["recipy", "latest", "--diff"], 0)
         assert len(stdout) > 0, "Expected stdout"
         diff_db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         # Validate standard output.
@@ -230,9 +214,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         """
         Test "recipy latest --diff -j|--json".
         """
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", "--diff", json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(
+            ["recipy", "latest", "--diff", json_flag], 0)
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
@@ -243,9 +226,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         helpers.execute_python([self.script, self.input_file,
                                 self.output_file])
 
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["latest", "--diff", json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(
+            ["recipy", "latest", "--diff", json_flag], 0)
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
@@ -269,11 +251,10 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         pattern = self.get_search(search_flag, unique_id)
-        args = ["search"]
-        args.extend(pattern)
-        args.append(json_flag)
-        exit_code, stdout = process.execute_and_capture("recipy", args)
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        cmd = ["recipy", "search"]
+        cmd.extend(pattern)
+        cmd.append(json_flag)
+        _, stdout = helpers.execute(cmd, 0)
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         # Handle case where 'recipy search HASH' returns a list
@@ -292,10 +273,9 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         |-r|--regex] UNKNOWN_VALUE".
         """
         pattern = self.get_unknown_search(search_flag)
-        args = ["search"]
-        args.extend(pattern)
-        exit_code, stdout = process.execute_and_capture("recipy", args)
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        cmd = ["recipy", "search"]
+        cmd.extend(pattern)
+        _, stdout = helpers.execute(cmd, 0)
         assert len(stdout) > 0, "Expected stdout"
         helpers.assert_matches_regexps(" ".join(stdout),
                                        regexps.get_no_results())
@@ -312,11 +292,10 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         |-r|--regex] UNKNOWN_VALUE -j|--json".
         """
         pattern = self.get_unknown_search(search_flag)
-        args = ["search"]
-        args.extend(pattern)
-        args.append(json_flag)
-        exit_code, stdout = process.execute_and_capture("recipy", args)
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        cmd = ["recipy", "search"]
+        cmd.extend(pattern)
+        cmd.append(json_flag)
+        _, stdout = helpers.execute(cmd, 0)
         assert len(stdout) > 0, "Expected stdout"
         json_logs = json.loads(" ".join(stdout))
         assert json_logs == [], "Expected []"
@@ -339,12 +318,11 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         pattern = self.get_search(search_flag, unique_id)
-        args = ["search"]
-        args.extend(pattern)
-        args.append(all_flag)
-        args.append(json_flag)
-        exit_code, stdout = process.execute_and_capture("recipy", args)
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        cmd = ["recipy", "search"]
+        cmd.extend(pattern)
+        cmd.append(all_flag)
+        cmd.append(json_flag)
+        _, stdout = helpers.execute(cmd, 0)
         assert len(stdout) > 0, "Expected stdout"
         json_logs = json.loads(" ".join(stdout))
         assert num_runs + 1 == len(json_logs),\
@@ -359,9 +337,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         half_id = unique_id[0:int(len(unique_id) / 2)]
-        exit_code, stdout = process.execute_and_capture(
-            "recipy", ["search", id_flag, str(half_id), json_flag])
-        assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
+        _, stdout = helpers.execute(
+            ["recipy", "search", id_flag, str(half_id), json_flag], 0)
         assert len(stdout) > 0, "Expected stdout"
         json_log = json.loads(" ".join(stdout))
         assert len(json_log) == 1, "Expected a single JSON log"
@@ -381,9 +358,8 @@ class TestRecipy(test_recipy_base.TestRecipyBase):
         db_log, _ = helpers.get_log(recipyenv.get_recipydb())
         unique_id = db_log["unique_id"]
         pattern = self.get_search(search_flag, unique_id)
-        args = ["search"]
-        args.extend(pattern)
-        args.append("value")
-        args.append(json_flag)
-        exit_code, _ = process.execute_and_capture("recipy", args)
-        assert exit_code == 1, ("Unexpected exit code " + str(exit_code))
+        cmd = ["recipy", "search"]
+        cmd.extend(pattern)
+        cmd.append("value")
+        cmd.append(json_flag)
+        _, _ = helpers.execute(cmd, 1)

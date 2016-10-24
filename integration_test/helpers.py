@@ -165,21 +165,38 @@ def assert_equal_json_logs(log1, log2):
     assert log1 == log2, "Expected equal logs"
 
 
+def execute(command, exit_status=0):
+    """
+    Run command.
+
+    :param command: Command plus any arguments
+    :type command: list of str or unicode
+    :param exit_status: Expected exit status
+    :type exit_status: int
+    :return: (exit code, standard output and error)
+    :rtype: (int, str or unicode)
+    :raises AssertionError: if actual exit status does not match
+     exit_status
+    """
+    actual_exit_status, stdout = process.execute_and_capture(command)
+    assert exit_status == actual_exit_status,\
+        ("Unexpected exit code " + str(actual_exit_status))
+    return actual_exit_status, stdout
+
+
 def execute_python(arguments, exit_status=0):
     """
     Run script using current Python executable.
 
-    :param arguments: Arguments to Python
+    :param arguments: Python arguments
     :type arguments: list of str or unicode
     :param exit_status: Expected exit status
     :type exit_status: int
     :return: (exit code, standard output and error)
     :rtype: (int, str or unicode)
     :raises AssertionError: if actual exit status does not match
-    exit_status
+     exit_status
     """
-    actual_exit_status, stdout = process.execute_and_capture(
-        environment.get_python_exe(), arguments)
-    assert exit_status == actual_exit_status,\
-        ("Unexpected exit code " + str(actual_exit_status))
-    return actual_exit_status, stdout
+    command = list(arguments)
+    command.insert(0, environment.get_python_exe())
+    return execute(command, exit_status)

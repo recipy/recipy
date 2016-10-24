@@ -18,9 +18,7 @@ import os.path
 import shutil
 import tempfile
 
-from integration_test import environment
 from integration_test import helpers
-from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
@@ -75,8 +73,7 @@ class TestMflag:
             csv_file.write("1,4,9,16\n")
         output_file = os.path.join(TestMflag.directory, "output.csv")
 
-        exit_code, _ = process.execute_and_capture(
-            environment.get_python_exe(),
+        exit_code, _ = helpers.execute_python(
             ["-m", "recipy", TestMflag.script,
              input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
@@ -84,9 +81,9 @@ class TestMflag:
 
         helpers.enable_recipy(TestMflag.original_script, TestMflag.script)
 
-        exit_code, _ = process.execute_and_capture(
-            environment.get_python_exe(),
-            [TestMflag.script, input_file, output_file])
+        exit_code, _ = helpers.execute_python(
+            ["-m", "recipy", TestMflag.script,
+             input_file, output_file])
         assert exit_code == 0, ("Unexpected exit code " + str(exit_code))
         import_log, _ = helpers.get_log(recipyenv.get_recipydb())
         for key in ["inputs", "outputs"]:
