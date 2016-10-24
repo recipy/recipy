@@ -22,3 +22,9 @@ numpy:
   - arguments: [ savetxt ]
     libraries: [ numpy ]
     outputs: [ out.txt ]
+matplotlib:
+  script: run_matplotlib.py
+  test_cases:
+  - arguments: [ savefig ]
+    libraries: [ matplotlib ]
+    outputs: [ out.png ]
