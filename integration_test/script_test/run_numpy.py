@@ -10,7 +10,7 @@ import os
 import sys
 import numpy as np
 
-from integration_test.testcases.base import Base
+from integration_test.script_test.base import Base
 
 
 class NumpyTests(Base):

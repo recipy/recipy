@@ -71,7 +71,7 @@ given arguments.
 
 The test configuration file is provided via an environment variable,
 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-'integration_test/testcases/recipy.yml' is assumed.
+'integration_test/script_test/recipy.yml' is assumed.
 """
 
 import os
@@ -90,7 +90,7 @@ TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
 Environment variable holding recipy test configuration file name
 """
 
-DEFAULT_CONFIG = "integration_test/testcases/recipy.yml"
+DEFAULT_CONFIG = "integration_test/script_test/recipy.yml"
 """ Default recipy test configuration file name """
 
 
@@ -101,7 +101,7 @@ def get_test_cases():
 
     * Gets the test configuration file name from the environment
       variable 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-      'integration_test/testcases/recipy.yml' is assumed.
+      'integration_test/script_test/recipy.yml' is assumed.
     * Loads the test configuration file.
     * Associates each test script in the test configuration with each
       of its individual test cases using get_script_test_cases.
@@ -216,10 +216,10 @@ class TestCaseRunner(object):
             arguments = test_case[TestCaseRunner.ARGUMENTS]
         else:
             arguments = []
-        # Convert from:
-        # python integration_test/testcases/run_numpy.py
+	# TODO Clean up, convert from:
+        # python integration_test/script_test/run_numpy.py
         # to:
-        # python -m integration_test.testcases.run_numpy
+        # python -m integration_test.script_test.run_numpy
         script_path = os.path.join(test_cases_directory, script)
         print(("Script path: ", script_path))
         script_module = os.path.splitext(script_path)[0]
@@ -385,6 +385,6 @@ class TestCaseRunner(object):
         (script, test_case) = script_test_case
         print(("Test case: ", test_case))
         # TODO resolve use of this path
-        self.run_test_case("integration_test/testcases",
+        self.run_test_case("integration_test/script_test",
                            script,
                            test_case)
