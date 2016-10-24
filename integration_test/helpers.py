@@ -180,7 +180,7 @@ def execute(command, exit_status=0):
     """
     actual_exit_status, stdout = process.execute_and_capture(command)
     assert exit_status == actual_exit_status,\
-        ("Unexpected exit code " + str(actual_exit_status))
+        ("Unexpected exit code " + str(actual_exit_status) + "\n" + stdout)
     return actual_exit_status, stdout
 
 
