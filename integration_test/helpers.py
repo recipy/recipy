@@ -20,6 +20,28 @@ from integration_test import process
 from integration_test import recipy_environment as recipyenv
 
 
+def get_environment_value(env_var, default_value):
+    """
+    Get an environment value.
+
+    * If an environment variable with name 'env_var' is defined,
+      then its value is returned.
+    * Else, 'default_value' is returned.
+
+    :param env_var: Environment variable with value
+    :type env_var: str or unicode
+    :param default_value: Default value
+    :type default_value: str or unicode
+    :return: value
+    :rtype: str or unicode
+    """
+    if env_var in os.environ:
+        value = os.environ[env_var]
+    else:
+        value = default_value
+    return value
+
+
 def update_recipyrc(recipyrc, section, key, value=None):
     """
     Update recipyrc configuration file.
