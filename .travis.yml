@@ -37,6 +37,8 @@ install:
   - pip install gitpython
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
+# Set matplotlib to not try and plot to screen
+  - echo "backend : Agg" > ~/.matplotlib/matplotlibrc
   - python setup.py install
   - which python
   - which pip
