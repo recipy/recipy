@@ -43,6 +43,9 @@ install:
   - which py.test
   - py.test --version
   - pip freeze
+# Build matplotlib font cache (so warnings don't appear in recipy
+# logs when running matplot scripts for the first time)
+  - python -c 'import matplotlib.pyplot'
 
 script:
 # Set matplotlib to not try and plot to screen
