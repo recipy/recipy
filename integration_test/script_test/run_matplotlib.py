@@ -10,11 +10,12 @@ import os
 import sys
 import matplotlib
 # Set non-interactive matplotlib back-end.
-# matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from integration_test.script_test.base import Base
 
+print(matplotlib.matplotlib_fname())
 
 class MatplotlibSample(Base):
     """
