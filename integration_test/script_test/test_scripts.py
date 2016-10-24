@@ -136,13 +136,11 @@ def get_script_test_cases(configuration):
     :return: test cases
     :rtype: list of (str or unicode, dict)
     """
-    print(("Configuration: ", configuration))
     script_test_cases = []
     for script in configuration:
         test_cases = configuration[script]
         for test_case in test_cases:
             script_test_cases.append((script, test_case))
-    print(("Script test cases: ", script_test_cases))
     return script_test_cases
 
 
@@ -219,7 +217,6 @@ class TestCaseRunner(object):
             # give benefit of doubt at this stage and assume running script
             # will bring it into life.
             pass
-        print(("Number of logs: ", number_of_logs))
         libraries = test_case[TestCaseRunner.LIBRARIES]
         if TestCaseRunner.ARGUMENTS in test_case:
             arguments = test_case[TestCaseRunner.ARGUMENTS]
@@ -230,57 +227,40 @@ class TestCaseRunner(object):
         # to:
         # python -m integration_test.script_test.run_numpy
         script_path = os.path.join(test_cases_directory, script)
-        print(("Script path: ", script_path))
         script_module = os.path.splitext(script_path)[0]
         script_module = script_module.replace("/", ".")
         script_module = script_module.replace("\\", ".")
         cmd = ["-m", script_module] + arguments
-        print(("Command: ", cmd))
-        exit_code, stdout = process.execute_and_capture(
-            environment.get_python_exe(),
-            cmd)
-        print(("Exit code: ", exit_code))
-        print(("Standard output: ", stdout))
-
+        exit_status, _ =\
+            process.execute_and_capture(environment.get_python_exe(),
+                                        cmd)
+        assert exit_status == 0, ("Unexpected exit status " + str(exit_status))
         # Validate recipy database
         log, _ = helpers.get_log(recipyenv.get_recipydb())
         # Number of logs
         new_number_of_logs =\
             helpers.get_number_of_logs(recipyenv.get_recipydb())
-        print(("Number of logs: ", new_number_of_logs))
         assert new_number_of_logs == (number_of_logs + 1),\
             ("Unexpected number of logs " + new_number_of_logs)
         # Script that was invoked
-        print((log["script"]))
-        print((log["command_args"]))
         self.check_script(script_path, log["script"],
                           arguments, log["command_args"])
         # Libraries
-        print((log["libraries"]))
         self.check_libraries(libraries, log["libraries"])
         # Inputs and outputs (local filenames only)
-        print((log["inputs"]))
         self.check_input_outputs(test_case,
                                  TestCaseRunner.INPUTS,
                                  log["inputs"])
-        print((log["outputs"]))
         self.check_input_outputs(test_case,
                                  TestCaseRunner.OUTPUTS,
                                  log["outputs"])
         # Dates
-        print((log["date"]))
-        print((log["exit_date"]))
         self.check_dates(log["date"], log["exit_date"])
         # Execution environment
-        print((log["command"]))
-        print((log["environment"]))
         self.check_environment(log["command"], log["environment"])
         # Miscellaneous
-        print((log["author"]))
         assert environment.get_user() == log["author"], "Unexpected author"
-        print((log["description"]))
         assert log["description"] == "", "Unexpected description"
-        print((log["warnings"]))
         assert [] == log["warnings"], "Unexpected warnings"
 
     def check_script(self, script, logged_script,
@@ -392,7 +372,8 @@ class TestCaseRunner(object):
         :type script_test_case: (str or unicode, dict)
         """
         (script, test_case) = script_test_case
-        print(("Test case: ", test_case))
+        print("\nTest case: ")
+        print(test_case)
         # TODO resolve use of this path
         self.run_test_case("integration_test/script_test",
                            script,
