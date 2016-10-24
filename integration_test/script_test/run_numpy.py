@@ -1,5 +1,5 @@
 """
-recipy numpy test cases.
+Sample script that runs numpy functions logged by recipy.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
@@ -13,9 +13,9 @@ import numpy as np
 from integration_test.script_test.base import Base
 
 
-class NumpyTests(Base):
+class NumpySample(Base):
     """
-    recipy numpy test cases.
+    Sample script that runs numpy functions logged by recipy.
 
     This class assumes the existence of a data/numpy directory,
     co-located with this file, with the following content:
@@ -123,5 +123,5 @@ class NumpyTests(Base):
         os.remove(file_name)
 
 if __name__ == "__main__":
-    numpy_tests = NumpyTests()
-    numpy_tests.invoke(sys.argv)
+    numpy_sample = NumpySample()
+    numpy_sample.invoke(sys.argv)

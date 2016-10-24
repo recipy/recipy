@@ -1,5 +1,5 @@
 """
-Base class for recipy test cases.
+Base class for sample scripts that run functions logged by recipy.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
@@ -11,7 +11,7 @@ import collections
 
 class Base:
     """
-    Base class for recipy test cases.
+    Base class for sample scripts that run functions logged by recipy.
     """
 
     def __init__(self):
