@@ -45,10 +45,6 @@ install:
   - pip freeze
 
 script:
-# Trigger build of matplotlib font cache (so warnings don't appear in
-# recipy logs when running matplot scripts for the first time).
-# From: https://github.com/matplotlib/matplotlib/issues/5836
-  - python -c 'import matplotlib.pyplot'
 # Copy matplotlib configuration so it does not try and plot to
 # screen. 
   - cp integration_test/script_test/matplotlibrc .
