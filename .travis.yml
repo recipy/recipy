@@ -38,7 +38,7 @@ install:
 # Install matplotlib.
   - conda install matplotlib
 # Install pandas.
-  - conda install pandas tables xlrd xlwt
+  - conda install pandas pytables xlrd xlwt
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
   - python setup.py install
