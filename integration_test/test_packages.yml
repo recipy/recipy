@@ -4,36 +4,38 @@ libraries: [ sklearn ]
 test_cases:
 - arguments: [ load_svmlight_file ]
   inputs: [ data.svmlight ]
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' logging this function"
 - arguments: [ save_svmlight_file ]
   outputs: [ out.svmlight ]
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' logging this function"
 ---
 script: run_pil.py
 libraries: [ pillow ]
 test_cases:
 - arguments: [ image_open ]
   inputs: [ data.png ]
-  skip: "Code to manage PIL in recipy currently commented-out"
+  skip: "PIL code in recipy currently commented-out"
 - arguments: [ image_save ]
   inputs: [ data.png ]
   outputs: [ out.png ]
-  skip: "Code to manage PIL in recipy currently commented-out"
+  skip: "PIL code in recipy currently commented-out"
 ---
 script: run_lxml.py
 libraries: [ lxml ]
 test_cases:
 - arguments: [ parse ]
   inputs: [ data.xml ]
-  skip: "recipy records version as 'lxml v?'"
+  skip: "recipy logs version as 'lxml v?'"
 - arguments: [ iterparse ]
   inputs: [ data.xml ]
-  skip: "recipy records version as 'lxml v?'"
+  skip: "recipy logs version as 'lxml v?'"
 ---
 script: run_bs4.py
 libraries: [ bs4 ]
 test_cases:
 - arguments: [ beautifulsoup ]
   inputs: [ data.html ]
-  skip: "recipy raises an error if logging this function"
+  skip: "recipy raises 'TypeError: must be type, not FunctionWrapper' logging this function"
 ---
 script: run_numpy.py
 libraries: [ numpy ]
@@ -78,7 +80,7 @@ test_cases:
   inputs: [ dataframe.mpack ]
 - arguments: [ panel_to_excel ]
   outputs: [ out.xls ]
-  skip: "recipy raises an error if logging this function"
+  skip: "recipy raises 'TypeError: _getfullpathname: illegal type for path parameter' logging this function"
 - arguments: [ panel_to_hdf ]
   outputs: [ out.hdf ]
 - arguments: [ panel_to_msgpack ]
