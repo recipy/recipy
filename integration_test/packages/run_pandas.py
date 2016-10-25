@@ -323,25 +323,29 @@ class PandasSample(Base):
 
     def create_sample_data(self):
         """
-        Use pandas.DataFrame.to_excel to save a file out.xls.
-        Use pandas.DataFrame.to_hdf to save a file out.hdf.
-        Use pandas.DataFrame.to_msgpack to save a file out.mpack.
-        Use pandas.DataFrame.to_pickle to save a file out.pickle.
-        Use pandas.DataFrame.to_csv to save a file out.csv.
-        Use pandas.DataFrame.to_stata to save a file out.dta.
+        Create sample data files. The files created are:
+
+        * dataframe.csv: comma-separated values
+        * dataframe.xls: Pandas-compliant Excel
+        * dataframe.hdf: HDF5 file
+        * dataframe.pickle: Pickle file
+        * dataframe.dta: Stata file
+        * dataframe.mpack: MsgPack file
         """
         dataframe = self.get_dataframe()
-        file_name = os.path.join(self.data_dir, "out.xls")
+        file_name = os.path.join(self.data_dir, "dataframe.xls")
         dataframe.to_excel(file_name, sheet_name="SampleSheet")
-        file_name = os.path.join(self.data_dir, "out.hdf")
+        file_name = os.path.join(self.data_dir, "dataframe.hdf")
         dataframe.to_hdf(file_name, key="Sample", mode="w")
-        file_name = os.path.join(self.data_dir, "out.mpack")
+        file_name = os.path.join(self.data_dir, "dataframe.mpack")
         dataframe.to_msgpack(file_name)
+        file_name = os.path.join(self.data_dir, "dataframe.pickle")
         dataframe.to_pickle(file_name)
-        file_name = os.path.join(self.data_dir, "out.csv")
+        file_name = os.path.join(self.data_dir, "dataframe.csv")
         dataframe.to_csv(file_name)
-        file_name = os.path.join(self.data_dir, "out.dta")
+        file_name = os.path.join(self.data_dir, "dataframe.dta")
         dataframe.to_stata(file_name)
+
 
 if __name__ == "__main__":
     pandas_sample = PandasSample()
