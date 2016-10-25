@@ -39,6 +39,8 @@ install:
   - conda install matplotlib
 # Install pandas.
   - conda install pandas pytables xlrd xlwt
+# Install lxml (also needed for bs4)
+  - conda install lxml
 # Install bs4.
   - conda install beautifulsoup4
 # setup.py fails to install flask for as-yet-unknown reason.
