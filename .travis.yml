@@ -43,6 +43,8 @@ install:
   - conda install lxml
 # Install bs4.
   - conda install beautifulsoup4
+# Install PIL/pillow.
+  - conda install pillow
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
   - python setup.py install

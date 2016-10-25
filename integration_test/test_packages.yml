@@ -1,4 +1,13 @@
 ---
+script: run_pil.py
+libraries: [ pillow ]
+test_cases:
+- arguments: [ image_open ]
+  inputs: [ data.png ]
+- arguments: [ image_save ]
+  inputs: [ data.png ]
+  outputs: [ out.png ]
+---
 script: run_lxml.py
 libraries: [ lxml ]
 test_cases:
