@@ -17,6 +17,7 @@ The test configuration file has format:
     ---
     script: SCRIPT
     [standalone: True|False]
+    libraries: [LIBRARY, LIBRARY, ... ]
     test_cases:
     - libraries: [LIBRARY, LIBRARY, ... ]
       arguments: [..., ..., ...]
@@ -40,8 +41,15 @@ where each script to be tested is defined by:
   omitted, then the script is assumed to be a recipy sample script,
   runnable via the command 'python -m
   integration_test.packages.<script>'.
+* 'libraries': A list of zero or more libraries used by the script,
+   which are expected to be logged by recipy when the script is
+   run regardless of arguments (i.e. any libraries common to all test
+   cases). The list may contain either generic names e.g. 'numpy'
+   (compatible with any version of numpy) or version qualified names
+   e.g. 'numpy v1.11.1' (compatible with numpy v1.11.1+). If none,
+   then this can be omitted.
 * One or more test cases, each of which defines:
-  - 'libraries': A list of one or more libraries used by the script,
+  - 'libraries': A list of zero or more libraries used by the script,
     which are expected to be logged by recipy when the script is
     run with the given arguments. The list may contain either generic
     names e.g. 'numpy' (compatible with any version of numpy) or
@@ -57,19 +65,21 @@ where each script to be tested is defined by:
     running the script with the arguments. If none, then this can be
     omitted.
 
+Note that every test case must have at least one library defined,
+either in the common 'libraries' list or in its test_case-specific
+'libraries' list.
+
 For example:
 
     ---
     script: run_numpy.py
+    libraries: [numpy]
     test_cases:
-    - libraries: [numpy]
-      arguments: [loadtxt]
+    - arguments: [loadtxt]
       inputs: [input.csv]
-    - libraries: [numpy]
-      arguments: [savetxt]
+    - arguments: [savetxt]
       outputs: [output.csv]
-    - libraries: [numpy]
-      arguments: [load_and_save_txt]
+    - arguments: [load_and_save_txt]
       inputs: [input.csv]
       outputs: [output.csv]
     ---
@@ -131,6 +141,42 @@ DEFAULT_SAMPLES = "integration_test/packages"
 """ Default recipy sample scripts directory """
 
 
+class ConfigError(Exception):
+    """Test configuration error."""
+
+    def __init__(self, message, exception=None):
+        """Create error.
+
+        :param message: Message
+        :type message: str or unicode
+        :param exception: Exception
+        :type value: Exception
+        """
+        super(ConfigError, self).__init__()
+        self._message = message
+        self._exception = exception
+
+    def __str__(self):
+        """Get error as a formatted string.
+
+        :return: formatted string
+        :rtype: str or unicode
+        """
+        message = self._message
+        if self._exception is not None:
+            message += " : " + str(self._exception)
+        return repr(message)
+
+    @property
+    def exception(self):
+        """Get exception.
+
+        :param exception: Exception
+        :type value: Exception
+        """
+        return self._exception
+
+
 def get_test_cases():
     """
     py.test callback to associate each test script with its test
@@ -161,10 +207,10 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     case.
 
     This function takes test configurations, a list of dictionaries,
-    each of which has a 'script', optional 'standalone' flag, and
-    'test_cases', a list of one or more test cases (each of which
-    is a dictionary of 'libraries', 'arguments', 'inputs' and
-    'outputs').
+    each of which has a 'script', optional 'standalone' flag, optional
+    'libaries' list and 'test_cases', a list of one or more test cases
+    (each of which is a dictionary of 'libraries', 'arguments',
+    'inputs' and 'outputs').
 
     It returns a list of tuples (script path, command, test case) where:
 
@@ -180,7 +226,8 @@ def get_script_test_cases(configurations, recipy_samples_directory):
         or no such value, then the command to run the script is
         assumed to be "-m integration_test.packages.SCRIPT"
       - Otherwise, the 'script' configuration value is used as-is.
-    * test_case is a single test case configuration.
+    * test_case is a single test case configuration, with any common
+      libraries appended to its 'libraries'.
 
     :param configurations: Test configurations
     :type dict: list of dict
@@ -188,6 +235,8 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     :type recipy_samples_directory: str or unicode
     :return: test cases
     :rtype: list of (str or unicode, str or unicode, dict)
+    :raises ConfigError: if there are no libraries specified for a
+    test case
     """
     test_cases = []
     for configuration in configurations:
@@ -206,8 +255,20 @@ def get_script_test_cases(configurations, recipy_samples_directory):
         else:
             script_path = script
             command = [script]
+        if LIBRARIES in configuration:
+            common_libraries = configuration[LIBRARIES]
+        else:
+            common_libraries = []
         for test_case in configuration[TEST_CASES]:
-            test_cases.append((script_path, command, test_case))
+            if LIBRARIES in test_case:
+                test_case[LIBRARIES].extend(common_libraries)
+            else:
+                test_case[LIBRARIES] = common_libraries
+            single_test_case = (script_path, command, test_case)
+            if test_case[LIBRARIES] == []:
+                raise ConfigError(("No libraries for test case",
+                                   single_test_case))
+            test_cases.append(single_test_case)
     return test_cases
 
 
@@ -343,6 +404,7 @@ class TestCaseRunner(object):
         :type libraries: list of str or unicode
         :param logged_libraries: Libraries logged by recipy
         :type logged_libraries: list of str or unicode
+        :raises ConfigError: if any library is not installed
         """
         packages = environment.get_packages()
         for library in libraries:
@@ -430,39 +492,3 @@ class TestCaseRunner(object):
         """
         (script_path, command, test_case) = script_test_case
         self.run_test_case(script_path, command, test_case)
-
-
-class ConfigError(Exception):
-    """Test configuration error."""
-
-    def __init__(self, message, exception=None):
-        """Create error.
-
-        :param message: Message
-        :type message: str or unicode
-        :param exception: Exception
-        :type value: Exception
-        """
-        super(ConfigError, self).__init__()
-        self._message = message
-        self._exception = exception
-
-    def __str__(self):
-        """Get error as a formatted string.
-
-        :return: formatted string
-        :rtype: str or unicode
-        """
-        message = self._message
-        if self._exception is not None:
-            message += " : " + str(self._exception)
-        return repr(message)
-
-    @property
-    def exception(self):
-        """Get exception.
-
-        :param exception: Exception
-        :type value: Exception
-        """
-        return self._exception
