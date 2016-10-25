@@ -1,4 +1,12 @@
 ---
+script: run_sklearn.py
+libraries: [ sklearn ]
+test_cases:
+- arguments: [ load_svmlight_file ]
+  inputs: [ data.svmlight ]
+- arguments: [ save_svmlight_file ]
+  outputs: [ out.svmlight ]
+---
 script: run_pil.py
 libraries: [ pillow ]
 test_cases:

@@ -35,18 +35,16 @@ install:
   - conda install pytest python-dateutil pyyaml numpy
 # conda can't find gitpython so pip install.
   - pip install gitpython
-# Install matplotlib.
-  - conda install matplotlib
-# Install pandas.
-  - conda install pandas pytables xlrd xlwt
-# Install lxml (also needed for bs4)
-  - conda install lxml
-# Install bs4.
-  - conda install beautifulsoup4
-# Install PIL/pillow.
-  - conda install pillow
 # setup.py fails to install flask for as-yet-unknown reason.
   - conda install flask
+# Install packages for testing recipy.
+  - conda install matplotlib
+  - conda install pandas pytables xlrd xlwt
+  - conda install lxml
+  - conda install beautifulsoup4
+  - conda install pillow
+  - conda install scikit-learn
+# Install recipy.
   - python setup.py install
   - which python
   - which pip
