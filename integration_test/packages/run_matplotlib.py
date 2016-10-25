@@ -16,7 +16,7 @@ import matplotlib
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     import matplotlib.pyplot as plt
-from integration_test.script_test.base import Base
+from integration_test.packages.base import Base
 
 
 class MatplotlibSample(Base):

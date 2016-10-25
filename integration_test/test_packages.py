@@ -37,11 +37,11 @@ where each script to be tested is defined by:
 * 'NAME': human-readable name for a set of test cases.
 * 'SCRIPT': script, with a relative or absolute path. For recipy
   sample scripts the path is assumed to be relative to
-  "integration_test/script_test".
+  "integration_test/packages".
 * 'standalone': is the script a standalone script? If "False" or if
   omitted then the script is assumed to be a recipy sample script,
   runnable via the command 'python -m
-  integration_test.script_test.SCRIPT'.
+  integration_test.packages.SCRIPT'.
 * One or more test cases, each of which defines:
   - 'libraries': A list of one or more libraries used by the script,
     and which are expected to be logged by recipy, when the script is
@@ -90,7 +90,7 @@ given arguments.
 
 The test configuration file is provided via an environment variable,
 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-'integration_test/script_test/recipy.yml' is assumed.
+'integration_test/recipy.yml' is assumed.
 """
 
 import os
@@ -129,10 +129,10 @@ TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
 Environment variable holding recipy test configuration file name
 """
 
-DEFAULT_CONFIG = "integration_test/script_test/recipy.yml"
+DEFAULT_CONFIG = "integration_test/recipy.yml"
 """ Default recipy test configuration file name """
 
-DEFAULT_SAMPLES = "integration_test/script_test"
+DEFAULT_SAMPLES = "integration_test/packages"
 """ Default recipy sample scripts directory """
 
 
@@ -143,7 +143,7 @@ def get_test_cases():
 
     * Gets the test configuration file name from the environment
       variable 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-      'integration_test/script_test/recipy.yml' is assumed.
+      'integration_test/recipy.yml' is assumed.
     * Loads the test configuration file.
     * Creates a list of standalone tuples, each representing one
       test case, using get_script_test_cases.
@@ -179,14 +179,14 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     * script_path is the path to the script.
       - If the test configuration has a 'standalone' value of "False",
         or no such value, then the script is assumed to be a recipy
-        sample script in "integration_test/script_test/script".
+        sample script in "integration_test/packages/script".
       - Otherwise, the 'script' configuration value is used as-is.
     * commmand is the command-line invocation that will be used to run
       the script (not including "python" or any arguments, which are
       test-case specific):
       - If the test configuration has a 'standalone' value of "False",
         or no such value, then the command to run the script is
-        assumed to be "-m integration_test.script_test.SCRIPT"
+        assumed to be "-m integration_test.packages.SCRIPT"
       - Otherwise, the 'script' configuration value is used as-is.
     * test_case is a single test case configuration.
 
@@ -205,14 +205,14 @@ def get_script_test_cases(configurations, recipy_samples_directory):
         if STANDALONE not in named_config:
             # recipy sample test
             script_path = os.path.join(recipy_samples_directory, script)
-            # e.g. integration_test/script_test/run_numpy.py
+            # e.g. integration_test/packages/run_numpy.py
             script_module = os.path.splitext(script_path)[0]
-            # e.g. integration_test/script_test/run_numpy
+            # e.g. integration_test/packages/run_numpy
             script_module = script_module.replace("/", ".")
             script_module = script_module.replace("\\", ".")
-            # e.g. integration_test.script_test.run_numpy
+            # e.g. integration_test.packages.run_numpy
             command = ["-m", script_module]
-            # e.g. -m integration_test.script_test.run_numpy
+            # e.g. -m integration_test.packages.run_numpy
         else:
             script_path = script
             command = [script]

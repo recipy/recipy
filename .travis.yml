@@ -47,5 +47,5 @@ install:
 script:
 # Copy matplotlib configuration so it does not try and plot to
 # screen. 
-  - cp integration_test/script_test/matplotlibrc .
+  - cp integration_test/packages/matplotlibrc .
   - py.test -v integration_test
