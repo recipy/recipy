@@ -4,7 +4,7 @@ libraries: [ bs4 ]
 test_cases:
 - arguments: [ beautifulsoup ]
   inputs: [ data.html ]
-#  skip: "recipy raises an error if logging this function"
+  skip: "recipy raises an error if logging this function"
 ---
 script: run_numpy.py
 libraries: [ numpy ]
