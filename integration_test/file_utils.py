@@ -9,27 +9,7 @@ from __future__ import (nested_scopes, generators, division,
                         print_function, unicode_literals)
 
 import json
-import os
 import yaml
-
-
-def load_file(file_name):
-    """Load the contents of a YAML or JSON file.
-
-    :param file_name: File name with extension .yaml, .yml, json or
-    .jsn
-    :type file_name: str or unicode
-    :return: content
-    :rtype: dict
-    :raises IOError: if the file is not found
-    :raises FileContentError: if there is a problem parsing the file
-    """
-    _, ext = os.path.splitext(file_name)
-    if ext.lower() in [".yaml", ".yml"]:
-        return load_yaml(file_name)
-    elif ext.lower() in [".json", ".jsn"]:
-        return load_json(file_name)
-    raise ValueError(file_name + " has an unrecognised extension")
 
 
 def load_yaml(file_name):
@@ -37,14 +17,15 @@ def load_yaml(file_name):
 
     :param file_name: File name
     :type file_name: str or unicode
-    :return: content or None if file is empty
-    :rtype: dict
+    :return: content (list of dictionaries, one per YAML document
+    in the file) or None if file is empty
+    :rtype: list of dict
     :raises IOError: if the file is not found
     :raises FileContentError: if there is a problem parsing YAML
     """
     with open(file_name, 'r') as f:
         try:
-            content = yaml.load(f)
+            content = [data for data in yaml.load_all(f)]
         except yaml.YAMLError as e:
             raise FileContentError(file_name, e)
     return content

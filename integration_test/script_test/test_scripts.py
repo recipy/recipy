@@ -99,7 +99,7 @@ import pytest
 
 from integration_test.database import DatabaseError
 from integration_test import environment
-from integration_test.file_utils import load_file
+from integration_test.file_utils import load_yaml
 from integration_test import helpers
 from integration_test import recipy_environment as recipyenv
 
@@ -156,11 +156,11 @@ def get_test_cases():
     """
     config_file = helpers.get_environment_value(TEST_CONFIG_ENV,
                                                 DEFAULT_CONFIG)
-    configuration = load_file(config_file)
+    configuration = load_yaml(config_file)
     return get_script_test_cases(configuration, DEFAULT_SAMPLES)
 
 
-def get_script_test_cases(configuration, recipy_samples_directory):
+def get_script_test_cases(configurations, recipy_samples_directory):
     """
     Creates a list of standalone tuples, each representing one test
     case.
@@ -190,13 +190,14 @@ def get_script_test_cases(configuration, recipy_samples_directory):
       - Otherwise, the 'script' configuration value is used as-is.
     * test_case is a single test case configuration.
 
-    :param configuration: Test case configuration
-    :type dict: dict
+    :param configurations: Test case configurations
+    :type dict: list of dict
     :param recipy_samples_directory: directory with recipy samples
     :type recipy_samples_directory: str or unicode
     :return: test cases
     :rtype: list of (str or unicode, str or unicode, str or unicode, dict)
     """
+    [configuration] = configurations
     test_cases = []
     for name in configuration:
         named_config = configuration[name]
