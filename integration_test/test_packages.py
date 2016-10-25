@@ -27,6 +27,7 @@ The test configuration file has format:
       arguments: [..., ..., ...]
       inputs: [INPUT, INPUT, ...]
       outputs: [OUTPUT, OUTPUT, ...]
+      [ skip: "Known issue with recipy" ]
     - ...
     ---
     script: SCRIPT
@@ -64,6 +65,8 @@ where each script to be tested is defined by:
     will write, and which are expected to be logged by recipy when
     running the script with the arguments. If none, then this can be
     omitted.
+  - 'skip': An optional value. If present this test case is marked as
+    skipped. The value is the reason for skipping the test case.
 
 Note that every test case must have at least one library defined,
 either in the common 'libraries' list or in its test_case-specific
@@ -129,6 +132,9 @@ INPUTS = "inputs"
 """ Test case configuration key. """
 
 OUTPUTS = "outputs"
+""" Test case configuration key. """
+
+SKIP = "skip"
 """ Test case configuration key. """
 
 TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
@@ -210,7 +216,7 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     each of which has a 'script', optional 'standalone' flag, optional
     'libaries' list and 'test_cases', a list of one or more test cases
     (each of which is a dictionary of 'libraries', 'arguments',
-    'inputs' and 'outputs').
+    'inputs', 'outputs', optional 'skip').
 
     It returns a list of tuples (script path, command, test case) where:
 
@@ -228,6 +234,9 @@ def get_script_test_cases(configurations, recipy_samples_directory):
       - Otherwise, the 'script' configuration value is used as-is.
     * test_case is a single test case configuration, with any common
       libraries appended to its 'libraries'.
+
+    If any test case contains a 'skip' entry then that test case is marked
+    up via pytest.mark.skip.
 
     :param configurations: Test configurations
     :type dict: list of dict
@@ -268,6 +277,9 @@ def get_script_test_cases(configurations, recipy_samples_directory):
             if test_case[LIBRARIES] == []:
                 raise ConfigError(("No libraries for test case",
                                    single_test_case))
+            if SKIP in test_case:
+                single_test_case = pytest.mark.skip(
+                    reason=test_case[SKIP])(single_test_case)
             test_cases.append(single_test_case)
     return test_cases
 
