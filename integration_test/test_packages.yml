@@ -4,8 +4,10 @@ libraries: [ lxml ]
 test_cases:
 - arguments: [ parse ]
   inputs: [ data.xml ]
+  skip: "recipy records version as 'lxml v?'"
 - arguments: [ iterparse ]
   inputs: [ data.xml ]
+  skip: "recipy records version as 'lxml v?'"
 ---
 script: run_bs4.py
 libraries: [ bs4 ]
