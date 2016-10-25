@@ -15,36 +15,34 @@ Markup Language) configuration file. YAML syntax is:
 The test configuration file has format:
 
     ---
-    NAME:
-      script: SCRIPT
-      [standalone: True|False]
-      test_cases:
-      - libraries: [LIBRARY, LIBRARY, ... ]
-        arguments: [..., ..., ...]
-        inputs: [INPUT, INPUT, ...]
-        outputs: [OUTPUT, OUTPUT, ...]
-      - libraries: [LIBRARY, LIBRARY, ... ]
-        arguments: [..., ..., ...]
-        inputs: [INPUT, INPUT, ...]
-        outputs: [OUTPUT, OUTPUT, ...]
-      - ...
-    NAME:
-      script: SCRIPT
-      ...
+    script: SCRIPT
+    [standalone: True|False]
+    test_cases:
+    - libraries: [LIBRARY, LIBRARY, ... ]
+      arguments: [..., ..., ...]
+      inputs: [INPUT, INPUT, ...]
+      outputs: [OUTPUT, OUTPUT, ...]
+    - libraries: [LIBRARY, LIBRARY, ... ]
+      arguments: [..., ..., ...]
+      inputs: [INPUT, INPUT, ...]
+      outputs: [OUTPUT, OUTPUT, ...]
+    - ...
+    ---
+    script: SCRIPT
+    ...
 
 where each script to be tested is defined by:
 
-* 'NAME': human-readable name for a set of test cases.
 * 'SCRIPT': script, with a relative or absolute path. For recipy
-  sample scripts the path is assumed to be relative to
+  sample scripts, the script is assumed in a sub-directory
   "integration_test/packages".
-* 'standalone': is the script a standalone script? If "False" or if
-  omitted then the script is assumed to be a recipy sample script,
+* 'standalone': is the script a standalone script? If "False", or if
+  omitted, then the script is assumed to be a recipy sample script,
   runnable via the command 'python -m
-  integration_test.packages.SCRIPT'.
+  integration_test.packages.<script>'.
 * One or more test cases, each of which defines:
   - 'libraries': A list of one or more libraries used by the script,
-    and which are expected to be logged by recipy, when the script is
+    which are expected to be logged by recipy when the script is
     run with the given arguments. The list may contain either generic
     names e.g. 'numpy' (compatible with any version of numpy) or
     version qualified names e.g. 'numpy v1.11.1' (compatible with
@@ -52,36 +50,35 @@ where each script to be tested is defined by:
   - 'arguments': A list of arguments to be passed to the script. If
     none, then this can be omitted.
   - 'inputs': A list of zero or more input files which the script will
-    read, and which are expected to be logged by recipy, when running
+    read, and which are expected to be logged by recipy when running
     the script with the arguments. If none, then this can be omitted.
   - 'outputs': A list of zero or more output files which the script
-    will write, and which are expected to be logged by recipy, when
+    will write, and which are expected to be logged by recipy when
     running the script with the arguments. If none, then this can be
     omitted.
 
 For example:
 
     ---
-    numpy:
-      script: run_numpy.py
-      cases:
-      - libraries: [numpy]
-        arguments: [loadtxt]
-        inputs: [input.csv]
-      - libraries: [numpy]
-        arguments: [savetxt]
-        outputs: [output.csv]
-      - libraries: [numpy]
-        arguments: [load_and_save_txt]
-        inputs: [input.csv]
-        outputs: [output.csv]
-    custom:
-      script: "/home/users/user/run_my_script.py"
-      standalone: True
-      cases:
-      - arguments: [ ]
-        libraries: [ numpy ]
-        outputs: [ data.csv ]
+    script: run_numpy.py
+    test_cases:
+    - libraries: [numpy]
+      arguments: [loadtxt]
+      inputs: [input.csv]
+    - libraries: [numpy]
+      arguments: [savetxt]
+      outputs: [output.csv]
+    - libraries: [numpy]
+      arguments: [load_and_save_txt]
+      inputs: [input.csv]
+      outputs: [output.csv]
+    ---
+    script: "/home/users/user/run_my_script.py"
+    standalone: True
+    test_cases:
+    - arguments: [ ]
+      libraries: [ numpy ]
+      outputs: [ data.csv ]
 
 It is up to the developer to ensure the 'libraries', 'input' and
 'output' lists correctly record the libraries, input and output files
@@ -125,9 +122,7 @@ OUTPUTS = "outputs"
 """ Test case configuration key. """
 
 TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
-"""
-Environment variable holding recipy test configuration file name
-"""
+""" Environment variable for recipy test configuration file name """
 
 DEFAULT_CONFIG = "integration_test/recipy.yml"
 """ Default recipy test configuration file name """
@@ -148,11 +143,11 @@ def get_test_cases():
     * Creates a list of standalone tuples, each representing one
       test case, using get_script_test_cases.
 
-    py.test parameterized tests will generate one test function per
+    py.test parameterized tests generates one test function per
     tuple.
 
     :return: test cases
-    :rtype: list of (str or unicode, str or unicode, str or unicode, dict)
+    :rtype: list of (str or unicode, str or unicode, dict)
     """
     config_file = helpers.get_environment_value(TEST_CONFIG_ENV,
                                                 DEFAULT_CONFIG)
@@ -165,21 +160,18 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     Creates a list of standalone tuples, each representing one test
     case.
 
-    This function takes a test configuration, a dictionary indexed by
-    test names, each of which has a 'script', optional 'standalone'
-    flag, and 'cases', a list of one or more test cases (each of which
+    This function takes test configurations, a list of dictionaries,
+    each of which has a 'script', optional 'standalone' flag, and
+    'test_cases', a list of one or more test cases (each of which
     is a dictionary of 'libraries', 'arguments', 'inputs' and
     'outputs').
 
-    It returns a list of tuples (name, script path, command, test
-    case) where:
+    It returns a list of tuples (script path, command, test case) where:
 
-    * name is the name of a collection of test cases associated with a
-      script.
-    * script_path is the path to the script.
+    * script_path is the path to the script:
       - If the test configuration has a 'standalone' value of "False",
         or no such value, then the script is assumed to be a recipy
-        sample script in "integration_test/packages/script".
+        sample script in "integration_test/packages/".
       - Otherwise, the 'script' configuration value is used as-is.
     * commmand is the command-line invocation that will be used to run
       the script (not including "python" or any arguments, which are
@@ -190,19 +182,17 @@ def get_script_test_cases(configurations, recipy_samples_directory):
       - Otherwise, the 'script' configuration value is used as-is.
     * test_case is a single test case configuration.
 
-    :param configurations: Test case configurations
+    :param configurations: Test configurations
     :type dict: list of dict
     :param recipy_samples_directory: directory with recipy samples
     :type recipy_samples_directory: str or unicode
     :return: test cases
-    :rtype: list of (str or unicode, str or unicode, str or unicode, dict)
+    :rtype: list of (str or unicode, str or unicode, dict)
     """
-    [configuration] = configurations
     test_cases = []
-    for name in configuration:
-        named_config = configuration[name]
-        script = named_config[SCRIPT]
-        if STANDALONE not in named_config:
+    for configuration in configurations:
+        script = configuration[SCRIPT]
+        if STANDALONE not in configuration:
             # recipy sample test
             script_path = os.path.join(recipy_samples_directory, script)
             # e.g. integration_test/packages/run_numpy.py
@@ -216,8 +206,8 @@ def get_script_test_cases(configurations, recipy_samples_directory):
         else:
             script_path = script
             command = [script]
-        for test_case in named_config[TEST_CASES]:
-            test_cases.append((name, script_path, command, test_case))
+        for test_case in configuration[TEST_CASES]:
+            test_cases.append((script_path, command, test_case))
     return test_cases
 
 
@@ -225,25 +215,23 @@ def get_test_case_function_name(script_test_case):
     """
     py.test callback to generate test case function names.
 
-    Function names are of form 'name_arguments' where 'arguments'
-    is the 'arguments' for the test case converted to strings,
-    joined and with all forward slashes, backslashes, colons,
+    Function names are of form 'script_arguments' where 'script'
+    and 'arguments' are the 'script_path' conjoined to the test case's
+    'arguments' with with all forward slashes, backslashes, colons,
     semi-colons and spaces replaced by '_'.
 
-    :param script_test_case: Name, script path, command, test case
-     specification - consistent with a tuple from
-     get_script_test_cases.
-    :type script_test_case: (str or unicode, str or unicode, str or
-     unicode, dict)
+    :param script_test_case: Script path, command, test case
+    specification (a tuple from get_script_test_cases).
+    :type script_test_case: (str or unicode, str or unicode, dict)
     :return: Test case function name
     :rtype: str or unicode
     """
-    [name, _, _, test_case] = script_test_case
-    arguments_str = [str(argument) for argument in test_case[ARGUMENTS]]
-    arguments_str = "_".join(arguments_str)
-    for char in [" ", "\\", "/", ":", ";"]:
-        arguments_str = arguments_str.replace(char, "_")
-    function_name = name + "_" + arguments_str
+    [script_path, _, test_case] = script_test_case
+    arguments = [str(argument) for argument in test_case[ARGUMENTS]]
+    function_name = "_".join(arguments)
+    function_name = os.path.split(script_path)[1] + "_" + function_name
+    for char in [" ", "\\", "/", ":", ";", "."]:
+        function_name = function_name.replace(char, "_")
     return function_name
 
 
@@ -252,12 +240,11 @@ class TestCaseRunner(object):
     recipy test case runner.
     """
 
-    def run_test_case(self, name, script_path, command, test_case):
+    def run_test_case(self, script_path, command, test_case):
         """
-        Run a single test case. This runs a test case script
-        using arguments in test_case and validates that recipy
-        has logged information about the script, also using data
-        in test_case.
+        Run a single test case. This runs a script using arguments in
+        test_case and validates that recipy has logged information
+        about the script, also using data in test_case.
 
         test_case is assumed to have the following
         entries:
@@ -273,14 +260,11 @@ class TestCaseRunner(object):
           the script with the argument will write
           e.g. ['data.csv']. If none, then this can be omitted.
 
-        :param name: Name of a collection of test cases associated with a
-         script.
-        :type name: str or unicode
         :param script_path: Path to the script.
         :type script_path: str or unicode
-        :param commmand: is the command-line invocation that will be
-          used to run the script (not including "python" or any
-         arguments, which are test-case specific).
+        :param commmand: Command-line invocation used to run the
+        script (not including "python" or any arguments, which are
+        test-case specific).
         :type command: str or unicode
         :param test_case: Test case configuration.
         :type test_case: dict
@@ -439,14 +423,13 @@ class TestCaseRunner(object):
         """
         Run a test defined in the recipy test configuration.
 
-        :param script_test_case: Name, script path, command, test case
-         specification - consistent with a tuple from
-         get_script_test_cases.
-        :type script_test_case: (str or unicode, str or unicode, str or
-         unicode, dict)
+        :param script_test_case: Ncript path, command, test case
+        specification - consistent with a tuple from
+        get_script_test_cases.
+        :type script_test_case: (str or unicode, str or unicode, dict)
         """
-        (name, script_path, command, test_case) = script_test_case
-        self.run_test_case(name, script_path, command, test_case)
+        (script_path, command, test_case) = script_test_case
+        self.run_test_case(script_path, command, test_case)
 
 
 class ConfigError(Exception):

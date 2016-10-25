@@ -1,30 +1,30 @@
-numpy:
-  script: run_numpy.py
-  test_cases:
-  - arguments: [ loadtxt ]
-    libraries: [ numpy ]
-    inputs: [ data.csv ]
-  - arguments: [ fromfile ]
-    libraries: [ numpy ]
-    inputs: [ data.csv ]
-  - arguments: [ genfromtxt ]
-    libraries: [ numpy ]
-    inputs: [ data_incomplete.csv ]
-  - arguments: [ save ]
-    libraries: [ numpy ]
-    outputs: [ out.npy ]
-  - arguments: [ savez ]
-    libraries: [ numpy ]
-    outputs: [ out.npz ]
-  - arguments: [ savez_compressed ]
-    libraries: [ numpy ]
-    outputs: [ out.npz ]
-  - arguments: [ savetxt ]
-    libraries: [ numpy ]
-    outputs: [ out.txt ]
-matplotlib:
-  script: run_matplotlib.py
-  test_cases:
-  - arguments: [ savefig ]
-    libraries: [ matplotlib ]
-    outputs: [ out.png ]
+---
+script: run_numpy.py
+test_cases:
+- arguments: [ loadtxt ]
+  libraries: [ numpy ]
+  inputs: [ data.csv ]
+- arguments: [ fromfile ]
+  libraries: [ numpy ]
+  inputs: [ data.csv ]
+- arguments: [ genfromtxt ]
+  libraries: [ numpy ]
+  inputs: [ data_incomplete.csv ]
+- arguments: [ save ]
+  libraries: [ numpy ]
+  outputs: [ out.npy ]
+- arguments: [ savez ]
+  libraries: [ numpy ]
+  outputs: [ out.npz ]
+- arguments: [ savez_compressed ]
+  libraries: [ numpy ]
+  outputs: [ out.npz ]
+- arguments: [ savetxt ]
+  libraries: [ numpy ]
+  outputs: [ out.txt ]
+---
+script: run_matplotlib.py
+test_cases:
+- arguments: [ savefig ]
+  libraries: [ matplotlib ]
+  outputs: [ out.png ]
