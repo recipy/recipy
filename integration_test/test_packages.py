@@ -207,6 +207,30 @@ def get_test_cases():
     return get_script_test_cases(configuration, DEFAULT_SAMPLES)
 
 
+def get_test_case_function_name(script_test_case):
+    """
+    py.test callback to generate test case function names.
+
+    Function names are of form 'script_arguments' where 'script'
+    and 'arguments' are the 'script_path' conjoined to the test case's
+    'arguments' with with all forward slashes, backslashes, colons,
+    semi-colons and spaces replaced by '_'.
+
+    :param script_test_case: Script path, command, test case
+    specification (a tuple from get_script_test_cases).
+    :type script_test_case: (str or unicode, str or unicode, dict)
+    :return: Test case function name
+    :rtype: str or unicode
+    """
+    [script_path, _, test_case] = script_test_case
+    arguments = [str(argument) for argument in test_case[ARGUMENTS]]
+    function_name = "_".join(arguments)
+    function_name = os.path.split(script_path)[1] + "_" + function_name
+    for char in [" ", "\\", "/", ":", ";", "."]:
+        function_name = function_name.replace(char, "_")
+    return function_name
+
+
 def get_script_test_cases(configurations, recipy_samples_directory):
     """
     Creates a list of standalone tuples, each representing one test
@@ -278,34 +302,12 @@ def get_script_test_cases(configurations, recipy_samples_directory):
                 raise ConfigError(("No libraries for test case",
                                    single_test_case))
             if SKIP in test_case:
+                reason = get_test_case_function_name(single_test_case)
+                reason = reason + ": " + test_case[SKIP]
                 single_test_case = pytest.mark.skip(
-                    reason=test_case[SKIP])(single_test_case)
+                    reason=reason)((single_test_case))
             test_cases.append(single_test_case)
     return test_cases
-
-
-def get_test_case_function_name(script_test_case):
-    """
-    py.test callback to generate test case function names.
-
-    Function names are of form 'script_arguments' where 'script'
-    and 'arguments' are the 'script_path' conjoined to the test case's
-    'arguments' with with all forward slashes, backslashes, colons,
-    semi-colons and spaces replaced by '_'.
-
-    :param script_test_case: Script path, command, test case
-    specification (a tuple from get_script_test_cases).
-    :type script_test_case: (str or unicode, str or unicode, dict)
-    :return: Test case function name
-    :rtype: str or unicode
-    """
-    [script_path, _, test_case] = script_test_case
-    arguments = [str(argument) for argument in test_case[ARGUMENTS]]
-    function_name = "_".join(arguments)
-    function_name = os.path.split(script_path)[1] + "_" + function_name
-    for char in [" ", "\\", "/", ":", ";", "."]:
-        function_name = function_name.replace(char, "_")
-    return function_name
 
 
 def run_test_case(script_path, command, test_case):
