@@ -87,7 +87,7 @@ given arguments.
 
 The test configuration file is provided via an environment variable,
 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-'integration_test/recipy.yml' is assumed.
+'integration_test/test_packages.yml' is assumed.
 """
 
 import os
@@ -124,7 +124,7 @@ OUTPUTS = "outputs"
 TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
 """ Environment variable for recipy test configuration file name """
 
-DEFAULT_CONFIG = "integration_test/recipy.yml"
+DEFAULT_CONFIG = "integration_test/test_packages.yml"
 """ Default recipy test configuration file name """
 
 DEFAULT_SAMPLES = "integration_test/packages"
@@ -138,7 +138,7 @@ def get_test_cases():
 
     * Gets the test configuration file name from the environment
       variable 'RECIPY_TEST_CONFIG'. If undefined, then a default of
-      'integration_test/recipy.yml' is assumed.
+      'integration_test/test_packages.yml' is assumed.
     * Loads the test configuration file.
     * Creates a list of standalone tuples, each representing one
       test case, using get_script_test_cases.
