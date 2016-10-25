@@ -58,4 +58,6 @@ script:
 # Copy matplotlib configuration so it does not try and plot to
 # screen. 
   - cp integration_test/packages/matplotlibrc .
-  - py.test -v integration_test
+# Run py.test with 'v' (verbose) to show test function names and 
+# 'rs' to show reasons for skipped tests
+  - py.test -v -rs integration_test
