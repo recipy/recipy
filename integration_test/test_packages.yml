@@ -4,9 +4,11 @@ libraries: [ pillow ]
 test_cases:
 - arguments: [ image_open ]
   inputs: [ data.png ]
+  skip: "Code to manage PIL in recipy currently commented-out"
 - arguments: [ image_save ]
   inputs: [ data.png ]
   outputs: [ out.png ]
+  skip: "Code to manage PIL in recipy currently commented-out"
 ---
 script: run_lxml.py
 libraries: [ lxml ]
