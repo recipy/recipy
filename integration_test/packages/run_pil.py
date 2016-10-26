@@ -4,6 +4,10 @@ Sample script that runs PIL/pillow functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -61,5 +65,4 @@ class PilSample(Base):
 
 
 if __name__ == "__main__":
-    pil_sample = PilSample()
-    pil_sample.invoke(sys.argv)
+    PilSample().invoke(sys.argv)

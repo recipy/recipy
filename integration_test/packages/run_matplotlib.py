@@ -4,6 +4,10 @@ Sample script that runs matplotlib.pyplot functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -46,5 +50,4 @@ class MatplotlibSample(Base):
         os.remove(file_name)
 
 if __name__ == "__main__":
-    matplotlib_sample = MatplotlibSample()
-    matplotlib_sample.invoke(sys.argv)
+    MatplotlibSample().invoke(sys.argv)

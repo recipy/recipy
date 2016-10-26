@@ -4,6 +4,10 @@ Sample script that runs skimage functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -125,5 +129,4 @@ class SkimageSample(Base):
 
 
 if __name__ == "__main__":
-    skimage_sample = SkimageSample()
-    skimage_sample.invoke(sys.argv)
+    SkimageSample().invoke(sys.argv)

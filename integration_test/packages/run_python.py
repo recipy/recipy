@@ -4,6 +4,10 @@ Sample script that runs Python functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -38,5 +42,4 @@ class PythonSample(Base):
 
 
 if __name__ == "__main__":
-    python_sample = PythonSample()
-    python_sample.invoke(sys.argv)
+    PythonSample().invoke(sys.argv)

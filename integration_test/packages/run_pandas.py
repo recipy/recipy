@@ -4,6 +4,10 @@ Sample script that runs pandas functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -348,5 +352,4 @@ class PandasSample(Base):
 
 
 if __name__ == "__main__":
-    pandas_sample = PandasSample()
-    pandas_sample.invoke(sys.argv)
+    PandasSample().invoke(sys.argv)

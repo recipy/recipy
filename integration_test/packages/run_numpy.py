@@ -4,6 +4,10 @@ Sample script that runs numpy functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -123,5 +127,4 @@ class NumpySample(Base):
         os.remove(file_name)
 
 if __name__ == "__main__":
-    numpy_sample = NumpySample()
-    numpy_sample.invoke(sys.argv)
+    NumpySample().invoke(sys.argv)

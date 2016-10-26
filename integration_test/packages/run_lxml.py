@@ -4,6 +4,9 @@ Sample script that runs lxml functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
 import recipy
 
 import os
@@ -57,5 +60,4 @@ class LxmlSample(Base):
                 print(("%5s, %4s, %s" % (event, element.tag, element.text)))
 
 if __name__ == "__main__":
-    lxml_sample = LxmlSample()
-    lxml_sample.invoke(sys.argv)
+    LxmlSample().invoke(sys.argv)

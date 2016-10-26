@@ -4,6 +4,10 @@ Sample script that runs nibabel functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -272,25 +276,27 @@ class NibabelSample(Base):
         * spm99_image.hdr + .img + .mat: SPM99 ANALYZE image
         """
         file_name = os.path.join(self.data_dir, "analyze_image")
-        img = nib.AnalyzeImage(self.get_data(), np.eye(4))
-        img.to_filename(file_name)
+        analyze_img = nib.AnalyzeImage(self.get_data(), np.eye(4))
+        analyze_img.to_filename(file_name)
         file_name = os.path.join(self.data_dir, "mgh_image")
-        img = nib.freesurfer.mghformat.MGHImage(self.get_data(), np.eye(4))
-        img.to_filename(file_name)
+        mgh_img = nib.freesurfer.mghformat.MGHImage(self.get_data(),
+                                                    np.eye(4))
+        mgh_img.to_filename(file_name)
         file_name = os.path.join(self.data_dir, "nifti1_image")
-        img = nib.Nifti1Image(self.get_data(), self.get_affine())
-        img.to_filename(file_name)
+        nifti1_img = nib.Nifti1Image(self.get_data(), self.get_affine())
+        nifti1_img.to_filename(file_name)
         file_name = os.path.join(self.data_dir, "nifti2_image")
-        img = nib.Nifti2Image(self.get_data(), self.get_affine())
-        img.to_filename(file_name)
+        nifti2_img = nib.Nifti2Image(self.get_data(), self.get_affine())
+        nifti2_img.to_filename(file_name)
         file_name = os.path.join(self.data_dir, "spm2_image")
-        img = nib.spm2analyze.Spm2AnalyzeImage(self.get_data(), np.eye(4))
-        img.to_filename(file_name)
+        spm2_img = nib.spm2analyze.Spm2AnalyzeImage(self.get_data(),
+                                                    np.eye(4))
+        spm2_img.to_filename(file_name)
         file_name = os.path.join(self.data_dir, "spm99_image")
-        img = nib.spm99analyze.Spm99AnalyzeImage(self.get_data(), np.eye(4))
-        img.to_filename(file_name)
+        spm99_img = nib.spm99analyze.Spm99AnalyzeImage(self.get_data(),
+                                                       np.eye(4))
+        spm99_img.to_filename(file_name)
 
 
 if __name__ == "__main__":
-    nibabel_sample = NibabelSample()
-    nibabel_sample.invoke(sys.argv)
+    NibabelSample().invoke(sys.argv)

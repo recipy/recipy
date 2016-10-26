@@ -4,6 +4,10 @@ Sample script that runs numpy functions logged by Beautiful Soup.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -46,5 +50,4 @@ class Bs4Sample(Base):
 
 
 if __name__ == "__main__":
-    bs4_sample = Bs4Sample()
-    bs4_sample.invoke(sys.argv)
+    Bs4Sample().invoke(sys.argv)

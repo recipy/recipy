@@ -4,6 +4,10 @@ Sample script that runs gdal functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import gdal
@@ -78,5 +82,4 @@ class GdalSample(Base):
 
 
 if __name__ == "__main__":
-    gdal_sample = GdalSample()
-    gdal_sample.invoke(sys.argv)
+    GdalSample().invoke(sys.argv)

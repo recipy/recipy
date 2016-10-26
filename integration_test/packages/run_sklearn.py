@@ -4,6 +4,10 @@ Sample script that runs sklearn functions logged by recipy.
 
 # Copyright (c) 2016 University of Edinburgh.
 
+from __future__ import (nested_scopes, generators, division,
+                        absolute_import, with_statement,
+                        print_function, unicode_literals)
+
 import recipy
 
 import os
@@ -81,5 +85,4 @@ class SklearnSample(Base):
 
 
 if __name__ == "__main__":
-    sklearn_sample = SklearnSample()
-    sklearn_sample.invoke(sys.argv)
+    SklearnSample().invoke(sys.argv)
