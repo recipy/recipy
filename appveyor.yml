@@ -55,6 +55,6 @@ test_script:
   # Run py.test with 'v' (verbose) to show test function names and  
   # 'rs' to show reasons for skipped tests
 #  - py.test -v -rs integration_test
-  - py.test -v -rs integration_test\test_m_recipy.py
+  - py.test -v -rs integration_test\test_m_flag.py
 #  - py.test -v -rs integration_test\test_recipyrc.py
 #  - py.test -v -rs integration_test\test_recipy.py
