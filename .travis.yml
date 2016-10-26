@@ -43,10 +43,7 @@ install:
   # virtualenv which can't use the Miniconda environment.
   - conda install pytest
   # Install packages needed for testing recipy.
-  - conda install python-dateutil pyyaml numpy
-  # conda can't find gitpython so pip install.
-  # - pip install gitpython
-  - conda install git
+  - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
   - conda install matplotlib
   - conda install pandas pytables xlrd xlwt
@@ -60,7 +57,7 @@ install:
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
-  # Dump the environment.
+  # Print the environment.
   - which python
   - which pip
   - which py.test
