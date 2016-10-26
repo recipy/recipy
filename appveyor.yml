@@ -62,3 +62,4 @@ test_script:
   - py.test -v -rs integration_test\test_m_flag.py
   - py.test -v -rs integration_test\test_recipyrc.py
 #  - py.test -v -rs integration_test\test_recipy.py
+#  - py.test -v -rs integration_test\test_packages.py
