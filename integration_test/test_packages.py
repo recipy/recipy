@@ -371,7 +371,6 @@ def run_test_case(script_path, command, test_case):
     # Miscellaneous
     assert environment.get_user() == log["author"], "Unexpected author"
     assert log["description"] == "", "Unexpected description"
-    assert [] == log["warnings"], "Unexpected warnings"
 
 
 def check_script(script, logged_script, arguments, logged_arguments):
