@@ -46,6 +46,7 @@ install:
   - conda install scikit-learn
   - conda install scikit-image
   - pip install nibabel
+  - conda install gdal
 # Install recipy.
   - python setup.py install
   - which python
