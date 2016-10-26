@@ -57,7 +57,7 @@ class GdalSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_image.tiff")
         image_format = "GTiff"
-        driver = gdal.GetDriverByName(image_format)
+        driver = gdal.GetDriverByName(str(image_format))
         data_source = driver.Create(file_name, 50, 50, 1, gdal.GDT_Byte)
         raster = np.ones((50, 50), dtype=np.uint8)
         raster[10:40, 10:40] = 0
@@ -75,7 +75,7 @@ class GdalSample(Base):
         out_file_name = os.path.join(self.data_dir, "out_image.tiff")
         data_source = gdal.Open(file_name)
         image_format = "GTiff"
-        driver = gdal.GetDriverByName(image_format)
+        driver = gdal.GetDriverByName(str(image_format))
         print(("Saving:", out_file_name))
         driver.CreateCopy(out_file_name, data_source, 0)
         os.remove(out_file_name)
