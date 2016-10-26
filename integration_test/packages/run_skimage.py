@@ -27,7 +27,6 @@ class SkimageSample(Base):
     This class assumes the existence of a data/skimage directory,
     co-located with this file, with the following content:
 
-    * image.png: PNG file
     * image.tiff: TIFF file
     * sift.key: SIFT file
     * image.surf: SURF file
@@ -61,20 +60,20 @@ class SkimageSample(Base):
 
     def io_imread(self):
         """
-        Use sklearn.io.imread to read image.png.
+        Use sklearn.io.imread to read image.tiff.
         """
-        file_name = os.path.join(self.data_dir, "image.png")
+        file_name = os.path.join(self.data_dir, "image.tiff")
         print(("Loading image:", file_name))
         data = io.imread(file_name)
         print(("Data:", data.shape))
 
     def io_imsave(self):
         """
-        Use sklearn.io.imread to read image.png and
-        sklearn.io.imsave to save out_image.png.
+        Use sklearn.io.imread to read image.tiff and
+        sklearn.io.imsave to save out_image.tiff.
         """
-        file_name = os.path.join(self.data_dir, "image.png")
-        out_file_name = os.path.join(self.data_dir, "out_image.png")
+        file_name = os.path.join(self.data_dir, "image.tiff")
+        out_file_name = os.path.join(self.data_dir, "out_image.tiff")
         print(("Loading image:", file_name))
         data = io.imread(file_name)
         data = transform.rotate(data, 90)
