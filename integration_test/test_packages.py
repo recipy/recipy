@@ -268,8 +268,6 @@ def get_script_test_cases(configurations, recipy_samples_directory):
     :type recipy_samples_directory: str or unicode
     :return: test cases
     :rtype: list of (str or unicode, str or unicode, dict)
-    :raises ConfigError: if there are no libraries specified for a
-    test case
     """
     test_cases = []
     for configuration in configurations:
@@ -298,9 +296,6 @@ def get_script_test_cases(configurations, recipy_samples_directory):
             else:
                 test_case[LIBRARIES] = common_libraries
             single_test_case = (script_path, command, test_case)
-            if test_case[LIBRARIES] == []:
-                raise ConfigError(("No libraries for test case",
-                                   single_test_case))
             if SKIP in test_case:
                 reason = get_test_case_function_name(single_test_case)
                 reason = reason + ": " + test_case[SKIP]
