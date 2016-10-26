@@ -1,4 +1,28 @@
 ---
+script: run_skimage.py
+libraries: [ skimage ]
+test_cases:
+- arguments: [ io_imread ]
+  inputs: [ image.png ]
+#  skip: "skimage code in recipy currently commented-out"
+- arguments: [ io_imsave ]
+  inputs: [ image.png ]
+  outputs: [ out_image.png ]
+#  skip: "skimage code in recipy currently commented-out"
+- arguments: [ io_load_sift ]
+  inputs: [ sift.key ]
+#  skip: "skimage.io.load_sift raises NotImplementedError"
+- arguments: [ io_load_surf ]
+  inputs: [ image.surf ]
+#  skip: "skimage.io.load_surf raises NotImplementedError"
+- arguments: [ external_tifffile_imread ]
+  inputs: [ image.tiff ]
+#  skip: "skimage code in recipy currently commented-out"
+- arguments: [ external_tifffile_imsave ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]
+#  skip: "skimage code in recipy currently commented-out"
+---
 script: run_nibabel.py
 libraries: [ nibabel ]
 test_cases:
