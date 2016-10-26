@@ -31,7 +31,7 @@ install:
   # Travis CI e.g. https://gist.github.com/dan-blanchard/7045057.
   # Miniconda is recommended as the way to install these. See also:
   # http://conda.pydata.org/docs/travis.html
-  # The following is adopts approaches suggested in the above links.
+  # The following adopts approaches suggested in the above links.
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   # recipy setup.py fails to install flask for as-yet-unknown reason,
