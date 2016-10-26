@@ -23,11 +23,11 @@ script: run_skimage.py
 libraries: [ skimage ]
 test_cases:
 - arguments: [ io_imread ]
-  inputs: [ image.png ]
+  inputs: [ image.tiff ]
   skip: "skimage code in recipy currently commented-out"
 - arguments: [ io_imsave ]
-  inputs: [ image.png ]
-  outputs: [ out_image.png ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]
   skip: "skimage code in recipy currently commented-out"
 - arguments: [ io_load_sift ]
   inputs: [ sift.key ]
