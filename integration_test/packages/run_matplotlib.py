@@ -14,12 +14,7 @@ import os
 import sys
 import warnings
 import matplotlib
-# Suppress 'Matplotlib is building the font cache using fc-list. This
-# may take a moment' warnings.
-# From https://github.com/matplotlib/matplotlib/issues/5836#issuecomment-179592427
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from integration_test.packages.base import Base
 
 
