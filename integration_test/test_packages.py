@@ -68,10 +68,6 @@ where each script to be tested is defined by:
   - 'skip': An optional value. If present this test case is marked as
     skipped. The value is the reason for skipping the test case.
 
-Note that every test case must have at least one library defined,
-either in the common 'libraries' list or in its test_case-specific
-'libraries' list.
-
 For example:
 
     ---
