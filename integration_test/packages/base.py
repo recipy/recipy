@@ -22,6 +22,16 @@ class Base:
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         print(("Current directory: ", self.current_dir))
 
+    def print_functions(self):
+        """
+        Print functions supported by this class.
+        """
+        sys.stderr.write("Functions:\n")
+        for value in dir(self):
+            if not value.startswith("__") and\
+                   isinstance(getattr(self, value), collections.Callable):
+                sys.stderr.write((value + "\n"))
+
     def invoke(self, arguments):
         """
         Invoke a function on a sub-class.
@@ -39,18 +49,15 @@ class Base:
         """
         print(("Arguments: ", arguments))
         if len(arguments) < 2:
-            sys.stderr.write("Missing function name")
+            sys.stderr.write("Missing function name\n")
+            self.print_functions()
             sys.exit(1)
         function_name = arguments[1]
         print(("Function: ", function_name))
         if not hasattr(self, function_name):
             sys.stderr.write((str(self.__class__.__name__) +
                               " has no function " + function_name + "\n"))
-            sys.stderr.write("Functions:\n")
-            for value in dir(self):
-                if not value.startswith("__") and\
-                  isinstance(getattr(self, value), collections.Callable):
-                    sys.stderr.write((value + "\n"))
+            self.print_functions()
             sys.exit(1)
         function = getattr(self, function_name)
         print(("Invoking: ", function))
