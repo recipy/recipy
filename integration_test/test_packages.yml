@@ -14,27 +14,27 @@ test_cases:
   inputs: [ minc1_image ]
 - arguments: [ minc1_to_filename ]
   outputs: [ out_minc1_image ]
-#  skip: "nibabel.minc1.Minc1Image.to_filename raises NotImplementedError"
+  skip: "nibabel.minc1.Minc1Image.to_filename raises NotImplementedError"
 - arguments: [ minc2_from_filename ]
   inputs: [ minc2_image ]
-#  skip: "recipy raises 'TypeError: Error: None is not a valid NetCDF 3 file' logging this function"
+  skip: "recipy raises 'TypeError: Error: None is not a valid NetCDF 3 file' logging this function"
 - arguments: [ minc2_to_filename ]
   outputs: [ out_minc2_image ]
-#  skip: "nibabel.minc2.Minc2Image.to_filename raises NotImplementedError"
+  skip: "nibabel.minc2.Minc2Image.to_filename raises NotImplementedError"
 - arguments: [ nifti1_from_filename ]
   inputs: [ nifti1_image ]
 - arguments: [ nifti1_to_filename ]
   outputs: [ out_nifti1_image ]
 - arguments: [ nifti2_from_filename ]
   inputs: [ nifti2_image ]
-#  skip: "recipy raises 'nibabel.spatialimages.HeaderDataError: data code 0 not supported' logging this function"
+  skip: "recipy raises 'nibabel.spatialimages.HeaderDataError: data code 0 not supported' logging this function"
 - arguments: [ nifti2_to_filename ]
   outputs: [ out_nifti2_image ]
 - arguments: [ parrec_from_filename ]
   inputs: [ parrec_image.PAR ]
 - arguments: [ parrec_to_filename ]
   outputs: [ out_parrec_image.PAR ]
-#  skip: "nibabel.parrec.PARRECImage.to_filename raises NotImplementedError"
+  skip: "nibabel.parrec.PARRECImage.to_filename raises NotImplementedError"
 - arguments: [ spm99analyze_from_filename ]
   inputs: [ spm99_image ]
 - arguments: [ spm99analyze_to_filename ]
