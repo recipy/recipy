@@ -188,7 +188,7 @@ class NibabelSample(Base):
         img.to_filename(file_name)
         os.remove(file_name + ".nii")
 
-    def parrecmage_from_filename(self):
+    def parrec_from_filename(self):
         """
         Use nibabel.parrec.PARRECImage.from_filename to load
         parrec_image.PAR + .REC.
