@@ -44,6 +44,7 @@ install:
   - conda install beautifulsoup4
   - conda install pillow
   - conda install scikit-learn
+  - pip install nibabel
 # Install recipy.
   - python setup.py install
   - which python
