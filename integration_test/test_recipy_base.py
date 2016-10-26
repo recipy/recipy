@@ -71,8 +71,12 @@ class TestRecipyBase(object):
         repository = git.Repo.init(self.directory)
         repository.index.add([TestRecipyBase.SCRIPT_NAME])
         repository.index.commit("Initial commit")
-        # Clear cache,
-        # See: https://github.com/gitpython-developers/GitPython/issues/508
+        # Clear cache.
+        # Deleting the repository directory on Windows can give rise
+        # to "PermissionError: The process cannot access the file
+        # because it is being used by another process". Clearing the
+        # cache is a workaround. See:
+        # https://github.com/gitpython-developers/GitPython/issues/508
         repository.git.clear_cache()
         # Purge recipy ready for testing.
         helpers.clean_recipy()
