@@ -84,6 +84,7 @@ test_cases:
 - arguments: [ spm99analyze_to_filename ]
   outputs: [ out_spm99_image ]
 - arguments: [ spm2analyze_from_filename ]
+# recipy logs the input file twice
   inputs: [ spm2_image, spm2_image ]
 - arguments: [ spm2analyze_to_filename ]
   outputs: [ out_spm2_image ]
@@ -93,10 +94,10 @@ libraries: [ sklearn ]
 test_cases:
 - arguments: [ load_svmlight_file ]
   inputs: [ data.svmlight ]
-  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' logging this function"
-- arguments: [ save_svmlight_file ]
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' under Python 3 and 'KeyError: 316' under Python 2 logging this function"
+- arguments: [ dump_svmlight_file ]
   outputs: [ out.svmlight ]
-  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' logging this function"
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' under Python 3 and 'KeyError: 316' under Python 2 logging this function"
 ---
 script: run_pil.py
 libraries: [ pillow ]
@@ -169,7 +170,7 @@ test_cases:
   inputs: [ dataframe.mpack ]
 - arguments: [ panel_to_excel ]
   outputs: [ out.xls ]
-  skip: "recipy raises 'TypeError: _getfullpathname: illegal type for path parameter' logging this function"
+  skip: "recipy raises 'AttributeError: '_XlwtWriter' object has no attribute 'startswith'' logging this function"
 - arguments: [ panel_to_hdf ]
   outputs: [ out.hdf ]
 - arguments: [ panel_to_msgpack ]
