@@ -36,15 +36,15 @@ install:
   # Install packages needed for testing recipy.
   - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
-#  - conda install matplotlib
-#  - conda install pandas pytables xlrd xlwt
-#  - conda install lxml
-#  - conda install beautifulsoup4
-#  - conda install pillow
-#  - conda install scikit-learn
-#  - conda install scikit-image
-#  - pip install nibabel
-#  - conda install gdal
+  - conda install matplotlib
+  - conda install pandas pytables xlrd xlwt
+  - conda install lxml
+  - conda install beautifulsoup4
+  - conda install pillow
+  - conda install scikit-learn
+  - conda install scikit-image
+  - pip install nibabel
+  - conda install gdal
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - copy integration_test\packages\matplotlibrc .
@@ -61,5 +61,5 @@ test_script:
 #  - py.test -v -rs integration_test
   - py.test -v -rs integration_test\test_m_flag.py
   - py.test -v -rs integration_test\test_recipyrc.py
-#  - py.test -v -rs integration_test\test_recipy.py
+  - py.test -v -rs integration_test\test_recipy.py
 #  - py.test -v -rs integration_test\test_packages.py
