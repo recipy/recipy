@@ -1,0 +1,13 @@
+---
+script: run_gdal.py
+# recipy logs version as 'gdal v?'
+# libraries: [ gdal ]
+libraries: [ ]
+test_cases:
+- arguments: [ open ]
+  inputs: [ image.tiff ]
+- arguments: [ driver_create ]
+  outputs: [ out_image.tiff ]
+- arguments: [ driver_createcopy ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]

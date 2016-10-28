@@ -64,6 +64,12 @@ class GdalSample(Base):
         raster = raster * 255
         print(("Saving:", file_name))
         data_source.GetRasterBand(1).WriteArray(raster)
+        # Avoid PermissionError on Windows when trying to delete
+        # file_name. From:
+        # http://stackoverflow.com/questions/22068148/extremely-frustrating-behavior-with-windowserror-error-32-to-remove-temporary
+        data_source.FlushCache()
+        driver = None
+        data_source = None
         os.remove(file_name)
 
     def driver_createcopy(self):
