@@ -266,6 +266,12 @@ def add_dict(field, dict_of_values):
 
 # atexit functions will run on script exit (even on exception)
 @atexit.register
+def log_flush():
+    log_exit()
+    hash_outputs()
+    output_file_diffs()
+
+
 def log_exit():
     # Update the record with the timestamp of the script's completion.
     # We don't save the duration because it's harder to serialize a timedelta.
@@ -277,7 +283,6 @@ def log_exit():
     db.close()
 
 
-@atexit.register
 def hash_outputs():
     # Writing to output files is complete; we can now compute hashes.
     if option_set('ignored metadata', 'output_hashes'):
@@ -291,7 +296,6 @@ def hash_outputs():
     db.close()
 
 
-@atexit.register
 def output_file_diffs():
     # Writing to output files is complete; we can now compute file diffs.
     if not option_set('data', 'file_diff_outputs'):
