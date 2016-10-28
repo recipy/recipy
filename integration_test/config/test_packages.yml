@@ -6,6 +6,14 @@ test_cases:
   outputs: [ out.txt ]
   skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
 ---
+script: run_numpy_as_opaque.py
+libraries: [ numpy ]
+test_cases:
+- arguments: [ opaque_savetxt ]
+  outputs: [ out.txt ]
+- arguments: [ cryptic ]
+  outputs: [ out.txt ]
+---
 script: run_gdal.py
 # recipy logs version as 'gdal v?'
 # libraries: [ gdal ]
