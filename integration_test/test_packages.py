@@ -382,11 +382,10 @@ def check_script(script, logged_script, arguments, logged_arguments):
     :param logged_arguments: Arguments logged by recipy
     :type logged_arguments: list
     """
-    # Rather than simple equality check, see if paths refer to the
-    # same file. Avoids problems with forward vs backslashes and
-    # inconsistent paths on Anaconda Python on Windows, for
-    # example.
-    assert os.path.samefile(script, logged_script)
+    # Use os.path.abspath as os.path.samefile is not supported in
+    # Python 2 on Windows.
+    assert os.path.abspath(script) == os.path.abspath(logged_script),\
+        "Unexpected script"
     assert " ".join(arguments) == logged_arguments, "Unexpected command_args"
 
 
