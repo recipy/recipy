@@ -1,10 +1,5 @@
 # recipy
 
-Integration test status: 
-
-* Travis CI: [![Integration test status image](https://travis-ci.org/mikej888/recipy.svg)](https://travis-ci.org/mikej888/recipy)
-* AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/onot0siknp4tks4q?svg=true)](https://ci.appveyor.com/project/mikej888/recipy)
-
 ## What is it and who cares?
 Imagine the situation: You’ve written some wonderful Python code which produces a beautiful graph as an output. You save that graph, naturally enough, as `graph.png`. You run the code a couple of times, each time making minor modifications. You come back to it the next week/month/year. Do you know how you created that graph? What input data? What version of your code? If you’re anything like me then the answer will often, frustratingly, be “no”. Of course, you then waste lots of time trying to work out how you created it, or even give up and never use it in that journal paper that will win you a Nobel Prize…
 
@@ -238,3 +233,12 @@ This table lists the modules recipy has patches for, and the input and output fu
 </table>
 
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
+
+## Test framework
+
+recipy's test framework is in `integration_test`. The test framework has been designed to run under both Python 2.7+ and Python 3+. For more information see [recipy test framework](./docs/TestFramework.md).
+
+The test framework is run on the following platforms:
+
+* Travis CI: [![Integration test status image](https://travis-ci.org/mikej888/recipy.svg)](https://travis-ci.org/mikej888/recipy)
+* AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/onot0siknp4tks4q?svg=true)](https://ci.appveyor.com/project/mikej888/recipy)
