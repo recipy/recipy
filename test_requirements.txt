@@ -1,1 +1,6 @@
 git+https://github.com/jmcgeheeiv/pyfakefs.git
+pyyaml
+python-dateutil
+gitpython
+pylint
+pep8
