@@ -11,7 +11,6 @@ from __future__ import (nested_scopes, generators, division,
 import recipy
 
 import os
-import string
 import sys
 import nibabel as nib
 import numpy as np
@@ -51,7 +50,6 @@ class NibabelSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "nibabel")
-        print(("Data directory: ", self.data_dir))
 
     def get_data(self):
         """
@@ -77,9 +75,7 @@ class NibabelSample(Base):
         load analyze_image.hdr + .img.
         """
         file_name = os.path.join(self.data_dir, "analyze_image")
-        print(("Loading data:", file_name))
-        data = nib.analyze.AnalyzeImage.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.analyze.AnalyzeImage.from_filename(file_name)
 
     def analyze_to_filename(self):
         """
@@ -88,7 +84,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_analyze_image")
         img = nib.AnalyzeImage(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".hdr")
         os.remove(file_name + ".img")
@@ -99,9 +94,7 @@ class NibabelSample(Base):
         load mgh_image.mgh.
         """
         file_name = os.path.join(self.data_dir, "mgh_image")
-        print(("Loading data:", file_name))
-        data = nib.freesurfer.mghformat.MGHImage.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.freesurfer.mghformat.MGHImage.from_filename(file_name)
 
     def mgh_to_filename(self):
         """
@@ -110,7 +103,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_mgh_image")
         img = nib.freesurfer.mghformat.MGHImage(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".mgh")
 
@@ -119,9 +111,7 @@ class NibabelSample(Base):
         Use nibabel.minc1.Minc1Image.from_filename to load minc1_image.mnc.
         """
         file_name = os.path.join(self.data_dir, "minc1_image")
-        print(("Loading data:", file_name))
-        data = nib.minc1.Minc1Image.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.minc1.Minc1Image.from_filename(file_name)
 
     def minc1_to_filename(self):
         """
@@ -130,7 +120,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_minc1_image")
         img = nib.minc1.Minc1Image(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".minc")
 
@@ -139,9 +128,7 @@ class NibabelSample(Base):
         Use nibabel.minc1.Minc2Image.from_filename to load minc2_image.mnc.
         """
         file_name = os.path.join(self.data_dir, "minc2_image")
-        print(("Loading data:", file_name))
-        data = nib.minc2.Minc2Image.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.minc2.Minc2Image.from_filename(file_name)
 
     def minc2_to_filename(self):
         """
@@ -150,7 +137,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_minc2_image")
         img = nib.minc2.Minc2Image(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".minc")
 
@@ -159,9 +145,7 @@ class NibabelSample(Base):
         Use nibabel.Nifti1Image.from_filename to load nifti1_image.nii.
         """
         file_name = os.path.join(self.data_dir, "nifti1_image")
-        print(("Loading data:", file_name))
-        data = nib.Nifti1Image.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.Nifti1Image.from_filename(file_name)
 
     def nifti1_to_filename(self):
         """
@@ -169,7 +153,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_nifti1_image")
         img = nib.Nifti1Image(self.get_data(), self.get_affine())
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".nii")
 
@@ -178,9 +161,7 @@ class NibabelSample(Base):
         Use nibabel.Nifti2Image.from_filename to load nifti2_image.nii.
         """
         file_name = os.path.join(self.data_dir, "nifti2_image")
-        print(("Loading data:", file_name))
-        data = nib.Nifti2Image.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.Nifti2Image.from_filename(file_name)
 
     def nifti2_to_filename(self):
         """
@@ -188,7 +169,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_nifti2_image")
         img = nib.Nifti2Image(self.get_data(), self.get_affine())
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".nii")
 
@@ -198,9 +178,7 @@ class NibabelSample(Base):
         parrec_image.PAR + .REC.
         """
         file_name = os.path.join(self.data_dir, "parrec_image.PAR")
-        print(("Loading data:", file_name))
-        data = nib.parrec.PARRECImage.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.parrec.PARRECImage.from_filename(file_name)
 
     def parrec_to_filename(self):
         """
@@ -213,7 +191,6 @@ class NibabelSample(Base):
         par_file_name = os.path.join(self.data_dir, "out_parrec_image.PAR")
         rec_file_name = os.path.join(self.data_dir, "out_parrec_image.REC")
         img = nib.parrec.PARRECImage.from_filename(file_name)
-        print(("Saving data:", par_file_name))
         img.to_filename(par_file_name)
         os.remove(par_file_name)
         os.remove(rec_file_name)
@@ -224,9 +201,7 @@ class NibabelSample(Base):
         load spm2_image.hdr + .img + .mat.
         """
         file_name = os.path.join(self.data_dir, "spm2_image")
-        print(("Loading data:", file_name))
-        data = nib.spm2analyze.Spm2AnalyzeImage.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.spm2analyze.Spm2AnalyzeImage.from_filename(file_name)
 
     def spm2analyze_to_filename(self):
         """
@@ -235,7 +210,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_spm2_image")
         img = nib.spm2analyze.Spm2AnalyzeImage(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".hdr")
         os.remove(file_name + ".img")
@@ -247,9 +221,7 @@ class NibabelSample(Base):
         load spm99_image.hdr + .img + .mat.
         """
         file_name = os.path.join(self.data_dir, "spm99_image")
-        print(("Loading data:", file_name))
-        data = nib.spm99analyze.Spm99AnalyzeImage.from_filename(file_name)
-        print(("Data:", data.shape))
+        nib.spm99analyze.Spm99AnalyzeImage.from_filename(file_name)
 
     def spm99analyze_to_filename(self):
         """
@@ -258,7 +230,6 @@ class NibabelSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out_spm99_image")
         img = nib.spm99analyze.Spm99AnalyzeImage(self.get_data(), np.eye(4))
-        print(("Saving data:", file_name))
         img.to_filename(file_name)
         os.remove(file_name + ".hdr")
         os.remove(file_name + ".img")

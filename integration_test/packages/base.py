@@ -20,7 +20,6 @@ class Base:
         in which this file lives.
         """
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
-        print(("Current directory: ", self.current_dir))
 
     def print_functions(self):
         """
@@ -47,18 +46,15 @@ class Base:
         :param arguments: Arguments, typically from command-line.
         :type arguments: list of str or unicode.
         """
-        print(("Arguments: ", arguments))
         if len(arguments) < 2:
             sys.stderr.write("Missing function name\n")
             self.print_functions()
             sys.exit(1)
         function_name = arguments[1]
-        print(("Function: ", function_name))
         if not hasattr(self, function_name):
             sys.stderr.write((str(self.__class__.__name__) +
                               " has no function " + function_name + "\n"))
             self.print_functions()
             sys.exit(1)
         function = getattr(self, function_name)
-        print(("Invoking: ", function))
         function()

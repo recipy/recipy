@@ -39,38 +39,28 @@ class NumpySample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "numpy")
-        print(("Data directory: ", self.data_dir))
 
     def loadtxt(self):
         """
         Use numpy.loadtxt to load data.csv.
         """
         file_name = os.path.join(self.data_dir, "data.csv")
-        print(("Loading data:", file_name))
-        data = np.loadtxt(file_name, delimiter=",")
-        print(("Data:", data.shape))
-        print(data)
+        np.loadtxt(file_name, delimiter=",")
 
     def fromfile(self):
         """
         Use numpy.fromfile to load data.csv.
         """
         file_name = os.path.join(self.data_dir, "data.csv")
-        print(("Loading data:", file_name))
-        data = np.fromfile(file_name, sep=",")
-        print(("Data:", data.shape))
-        print(data)
+        np.fromfile(file_name, sep=",")
 
     def genfromtxt(self):
         """
         Use numpy.genfromtxt to load data_incomplete.csv.
         """
         file_name = os.path.join(self.data_dir, "data_incomplete.csv")
-        print(("Loading data:", file_name))
-        data = np.genfromtxt(file_name, delimiter=",",
-                             missing_values="", filling_values=-1)
-        print(("Data:", data.shape))
-        print(data)
+        np.genfromtxt(file_name, delimiter=",",
+                      missing_values="", filling_values=-1)
 
     def save(self):
         """
@@ -78,9 +68,6 @@ class NumpySample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.npy")
         data = np.arange(10)
-        print(("Data:", data.shape))
-        print(data)
-        print(("Saving data:", file_name))
         np.save(file_name, data)
         os.remove(file_name)
 
@@ -91,11 +78,6 @@ class NumpySample(Base):
         file_name = os.path.join(self.data_dir, "out.npz")
         data1 = np.arange(5)
         data2 = np.arange(20, 30)
-        print(("Data:", data1.shape))
-        print(data1)
-        print(("Data:", data2.shape))
-        print(data2)
-        print(("Saving data:", file_name))
         np.savez(file_name, data1=data1, data2=data2)
         os.remove(file_name)
 
@@ -106,11 +88,6 @@ class NumpySample(Base):
         file_name = os.path.join(self.data_dir, "out.npz")
         data1 = np.arange(5)
         data2 = np.arange(20, 30)
-        print(("Data:", data1.shape))
-        print(data1)
-        print(("Data:", data2.shape))
-        print(data2)
-        print(("Saving data:", file_name))
         np.savez_compressed(file_name, data1=data1, data2=data2)
         os.remove(file_name)
 
@@ -120,9 +97,6 @@ class NumpySample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.txt")
         data = np.arange(10)
-        print(("Data:", data.shape))
-        print(data)
-        print(("Saving data:", file_name))
         np.savetxt(file_name, data)
         os.remove(file_name)
 

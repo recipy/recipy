@@ -35,7 +35,6 @@ class PythonSample(Base):
         Use recipy.open to save a file out.txt.
         """
         file_name = os.path.join(self.current_dir, "out.txt")
-        print(("Saving file:", file_name))
         with recipy.open('out.txt', 'w') as f:
             f.write("This is a test")
         os.remove(file_name)

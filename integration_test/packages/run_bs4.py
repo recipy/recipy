@@ -35,18 +35,15 @@ class Bs4Sample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "bs4")
-        print(("Data directory: ", self.data_dir))
 
     def beautifulsoup(self):
         """
         Use bs4.BeautifulSoup to load data.html.
         """
         file_name = os.path.join(self.data_dir, "data.html")
-        print(("Loading data:", file_name))
         with open(file_name, "r") as f:
             soup = BeautifulSoup(f, "lxml")
-            print("Pretty-printed data:")
-            print((soup.prettify()))
+            soup.prettify()
 
 
 if __name__ == "__main__":

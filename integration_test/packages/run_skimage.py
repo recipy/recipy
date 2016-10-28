@@ -56,16 +56,13 @@ class SkimageSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "skimage")
-        print(("Data directory: ", self.data_dir))
 
     def io_imread(self):
         """
         Use sklearn.io.imread to read image.tiff.
         """
         file_name = os.path.join(self.data_dir, "image.tiff")
-        print(("Loading image:", file_name))
-        data = io.imread(file_name)
-        print(("Data:", data.shape))
+        io.imread(file_name)
 
     def io_imsave(self):
         """
@@ -74,10 +71,8 @@ class SkimageSample(Base):
         """
         file_name = os.path.join(self.data_dir, "image.tiff")
         out_file_name = os.path.join(self.data_dir, "out_image.tiff")
-        print(("Loading image:", file_name))
         data = io.imread(file_name)
         data = transform.rotate(data, 90)
-        print(("Saving rotated image:", out_file_name))
         io.imsave(out_file_name, data)
         os.remove(out_file_name)
 
@@ -86,29 +81,21 @@ class SkimageSample(Base):
         Use sklearn.io.load_sift to read sift.key.
         """
         file_name = os.path.join(self.data_dir, "sift.key")
-        print(("Loading SIFT file:", file_name))
-        data = io.load_sift(file_name)
-        print(("Data:", data.shape))
-        print(("Arrays:", data.dtype.names))
+        io.load_sift(file_name)
 
     def io_load_surf(self):
         """
         Use sklearn.io.load_surf to read image.surf.
         """
         file_name = os.path.join(self.data_dir, "image.surf")
-        print(("Loading SURF file:", file_name))
-        data = io.load_surf(file_name)
-        print(("Data:", data.shape))
-        print(("Arrays:", data.dtype.names))
+        io.load_surf(file_name)
 
     def external_tifffile_imread(self):
         """
         Use sklearn.external.tifffile.imread to read image.tiff.
         """
         file_name = os.path.join(self.data_dir, "image.tiff")
-        print(("Loading image:", file_name))
-        data = external.tifffile.imread(file_name)
-        print(("Data:", data.shape))
+        external.tifffile.imread(file_name)
 
     def external_tifffile_imsave(self):
         """
@@ -117,12 +104,10 @@ class SkimageSample(Base):
         """
         file_name = os.path.join(self.data_dir, "image.tiff")
         out_file_name = os.path.join(self.data_dir, "out_image.tiff")
-        print(("Loading image:", file_name))
         data = external.tifffile.imread(file_name)
         data = transform.rotate(data, 90)
         data = 255 * data
         data = data.astype(dtype=np.uint8)
-        print(("Saving rotated image:", out_file_name))
         external.tifffile.imsave(out_file_name, data)
         os.remove(out_file_name)
 

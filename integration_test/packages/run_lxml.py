@@ -33,31 +33,23 @@ class LxmlSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "lxml")
-        print(("Data directory: ", self.data_dir))
 
     def parse(self):
         """
         Use lxml.etree.parse to parse data.xml.
         """
         file_name = os.path.join(self.data_dir, "data.xml")
-        print(("Parsing:", file_name))
         with open(file_name, "r") as f:
-            tree = etree.parse(f)
-            print("Tree:")
-            print((etree.tostring(tree)))
-            print("Tag:")
-            print((tree.getroot().tag))
+            etree.parse(f)
 
     def iterparse(self):
         """
         Use lxml.etree.iterparse to parse data.xml.
         """
         file_name = os.path.join(self.data_dir, "data.xml")
-        print(("Iteratively parsing:", file_name))
         with open(file_name, "r") as f:
-            for event, element in etree.iterparse(file_name,
-                                                  events=("start", "end")):
-                print(("%5s, %4s, %s" % (event, element.tag, element.text)))
+            etree.iterparse(file_name, events=("start", "end"))
+
 
 if __name__ == "__main__":
     LxmlSample().invoke(sys.argv)

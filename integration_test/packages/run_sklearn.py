@@ -41,32 +41,21 @@ class SklearnSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "sklearn")
-        print(("Data directory: ", self.data_dir))
 
     def load_svmlight_file(self):
         """
         Use sklearn.datasets.load_svmlight_file to load data.svmlight.
         """
         file_name = os.path.join(self.data_dir, "data.svmlight")
-        print(("Loading data:", file_name))
-        (x, y) = datasets.load_svmlight_file(file_name)
-        print("X:")
-        print((x))
-        print("Y:")
-        print((y))
+        datasets.load_svmlight_file(file_name)
 
     def dump_svmlight_file(self):
         """
         Use sklearn.datasets.dump_svmlight_file to save out.svmlight.
         """
         x = np.array([list(range(0, 5)), list(range(5, 10))])
-        print(("Data:", x.shape))
-        print((x))
         y = np.array([10, 20])
-        print(("Data:", y.shape))
-        print((y))
         file_name = os.path.join(self.data_dir, "out.svmlight")
-        print(("Saving data:", file_name))
         datasets.dump_svmlight_file(x, y, file_name,
                                     comment="Sample svmlight file")
         os.remove(file_name)

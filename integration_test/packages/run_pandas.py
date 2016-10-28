@@ -47,7 +47,6 @@ class PandasSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "pandas")
-        print(("Data directory: ", self.data_dir))
 
     def get_data(self, i, j, offset=0):
         """
@@ -120,70 +119,49 @@ class PandasSample(Base):
         Use pandas.read_csv to load dataframe.csv.
         """
         file_name = os.path.join(self.data_dir, "dataframe.csv")
-        print(("Loading data:", file_name))
-        data = pd.read_csv(file_name)
-        print("Data:")
-        print((data))
+        pd.read_csv(file_name)
 
     def read_table(self):
         """
         Use pandas.read_table to load dataframe.csv.
         """
         file_name = os.path.join(self.data_dir, "dataframe.csv")
-        print(("Loading data:", file_name))
-        data = pd.read_table(file_name)
-        print("Data:")
-        print((data))
+        pd.read_table(file_name)
 
     def read_excel(self):
         """
         Use pandas.read_excel to load dataframe.xls.
         """
         file_name = os.path.join(self.data_dir, "dataframe.xls")
-        print(("Loading data:", file_name))
-        data = pd.read_excel(file_name)
-        print("Data:")
-        print((data))
+        pd.read_excel(file_name)
 
     def read_hdf(self):
         """
         Use pandas.read_hdf to load dataframe.hdf.
         """
         file_name = os.path.join(self.data_dir, "dataframe.hdf")
-        print(("Loading data:", file_name))
-        data = pd.read_hdf(file_name)
-        print("Data:")
-        print((data))
+        pd.read_hdf(file_name)
 
     def read_pickle(self):
         """
         Use pandas.read_pickle to load dataframe.pickle.
         """
         file_name = os.path.join(self.data_dir, "dataframe.pickle")
-        print(("Loading data:", file_name))
-        data = pd.read_pickle(file_name)
-        print("Data:")
-        print((data))
+        pd.read_pickle(file_name)
 
     def read_stata(self):
         """
         Use pandas.read_stata to load dataframe.dta.
         """
         file_name = os.path.join(self.data_dir, "dataframe.dta")
-        print(("Loading data:", file_name))
-        data = pd.read_stata(file_name)
-        print("Data:")
-        print((data))
+        pd.read_stata(file_name)
 
     def read_msgpack(self):
         """
         Use pandas.read_msgpack to load dataframe.mpack.
         """
         file_name = os.path.join(self.data_dir, "dataframe.mpack")
-        print(("Loading data:", file_name))
-        data = pd.read_msgpack(file_name)
-        print("Data:")
-        print((data))
+        pd.read_msgpack(file_name)
 
     def panel_to_excel(self):
         """
@@ -191,7 +169,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.xls")
         panel = self.get_panel()
-        print(("Saving data:", file_name))
         panel.to_excel(file_name)
         os.remove(file_name)
 
@@ -201,7 +178,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.hdf")
         panel = self.get_panel()
-        print(("Saving data:", file_name))
         panel.to_hdf(file_name, key="Sample", mode="w")
         os.remove(file_name)
 
@@ -211,7 +187,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.mpack")
         panel = self.get_panel()
-        print(("Saving data:", file_name))
         panel.to_msgpack(file_name)
         os.remove(file_name)
 
@@ -221,7 +196,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.pickle")
         panel = self.get_panel()
-        print(("Saving data:", file_name))
         panel.to_pickle(file_name)
         os.remove(file_name)
 
@@ -231,7 +205,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.xls")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_excel(file_name, sheet_name="SampleSheet")
         os.remove(file_name)
 
@@ -241,7 +214,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.hdf")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_hdf(file_name, key="Sample", mode="w")
         os.remove(file_name)
 
@@ -251,7 +223,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.mpack")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_msgpack(file_name)
         os.remove(file_name)
 
@@ -261,7 +232,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.pickle")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_pickle(file_name)
         os.remove(file_name)
 
@@ -271,7 +241,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.csv")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_csv(file_name)
         os.remove(file_name)
 
@@ -281,7 +250,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.dta")
         dataframe = self.get_dataframe()
-        print(("Saving data:", file_name))
         dataframe.to_stata(file_name)
         os.remove(file_name)
 
@@ -291,7 +259,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.hdf")
         series = self.get_series(0, 4)
-        print(("Saving data:", file_name))
         series.to_hdf(file_name, key="Sample", mode="w")
         os.remove(file_name)
 
@@ -301,7 +268,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.mpack")
         series = self.get_series(0, 4)
-        print(("Saving data:", file_name))
         series.to_msgpack(file_name)
         os.remove(file_name)
 
@@ -311,7 +277,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.pickle")
         series = self.get_series(0, 4)
-        print(("Saving data:", file_name))
         series.to_pickle(file_name)
         os.remove(file_name)
 
@@ -321,7 +286,6 @@ class PandasSample(Base):
         """
         file_name = os.path.join(self.data_dir, "out.csv")
         series = self.get_series(0, 4)
-        print(("Saving data:", file_name))
         series.to_csv(file_name)
         os.remove(file_name)
 

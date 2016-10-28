@@ -37,16 +37,14 @@ class PilSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "pil")
-        print(("Data directory: ", self.data_dir))
 
     def image_open(self):
         """
         Use PIL.Image.open to load data.png.
         """
         file_name = os.path.join(self.data_dir, "data.png")
-        print(("Loading image:", file_name))
         with Image.open(file_name) as f:
-            print(("Size:", f.size))
+            _ = f.size
 
     def image_save(self):
         """
@@ -55,11 +53,8 @@ class PilSample(Base):
         """
         file_name = os.path.join(self.data_dir, "data.png")
         out_file_name = os.path.join(self.data_dir, "out.png")
-        print(("Loading image:", file_name))
         with Image.open(file_name) as f:
-            print(("Size:", f.size))
             out_image = f.rotate(90)
-            print(("Saving rotated image:", out_file_name))
             out_image.save(out_file_name)
         os.remove(out_file_name)
 

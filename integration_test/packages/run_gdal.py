@@ -38,18 +38,13 @@ class GdalSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "gdal")
-        print(("Data directory: ", self.data_dir))
 
     def open(self):
         """
         Use gdal.Open to load image.tiff.
         """
         file_name = os.path.join(self.data_dir, "image.tiff")
-        print(("Loading image:", file_name))
-        data_source = gdal.Open(file_name)
-        print(("Data:", data_source))
-        print(("X size:", data_source.RasterXSize))
-        print(("Y size:", data_source.RasterYSize))
+        gdal.Open(file_name)
 
     def driver_create(self):
         """
@@ -62,7 +57,6 @@ class GdalSample(Base):
         raster = np.ones((50, 50), dtype=np.uint8)
         raster[10:40, 10:40] = 0
         raster = raster * 255
-        print(("Saving:", file_name))
         data_source.GetRasterBand(1).WriteArray(raster)
         # Avoid PermissionError on Windows when trying to delete
         # file_name. From:
@@ -82,7 +76,6 @@ class GdalSample(Base):
         data_source = gdal.Open(file_name)
         image_format = "GTiff"
         driver = gdal.GetDriverByName(str(image_format))
-        print(("Saving:", out_file_name))
         driver.CreateCopy(out_file_name, data_source, 0)
         os.remove(out_file_name)
 
