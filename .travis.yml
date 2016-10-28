@@ -5,14 +5,6 @@ python:
 #  - "3.3"
   - "3.4"
 
-# install: "pip install -e . behave"
-
-# script: "cd test/ && behave"
-
-branches:
-  only:
-  - recipy_test
-
 before_install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -39,6 +31,8 @@ install:
   - conda install flask
   # Install recipy.
   - python setup.py install
+  # Install behave for unit tests
+  - pip install -e . behave
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
   - conda install pytest
@@ -65,6 +59,7 @@ install:
   - pip freeze
 
 script:
+  - cd test/ && behave
   # Run py.test with 'v' (verbose) to show test function names and  
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test
