@@ -45,17 +45,12 @@ where each script to be tested is defined by:
 * 'libraries': A list of zero or more libraries used by the script,
    which are expected to be logged by recipy when the script is
    run regardless of arguments (i.e. any libraries common to all test
-   cases). The list may contain either generic names e.g. 'numpy'
-   (compatible with any version of numpy) or version qualified names
-   e.g. 'numpy v1.11.1' (compatible with numpy v1.11.1+). If none,
-   then this can be omitted.
+   cases). If none, then this can be omitted.
 * One or more test cases, each of which defines:
   - 'libraries': A list of zero or more libraries used by the script,
     which are expected to be logged by recipy when the script is
-    run with the given arguments. The list may contain either generic
-    names e.g. 'numpy' (compatible with any version of numpy) or
-    version qualified names e.g. 'numpy v1.11.1' (compatible with
-    numpy v1.11.1+).
+    run with the given arguments.  If none, then this can be
+    omitted.
   - 'arguments': A list of arguments to be passed to the script. If
     none, then this can be omitted.
   - 'inputs': A list of zero or more input files which the script will

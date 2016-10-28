@@ -126,19 +126,14 @@ Each script to be tested is defined by:
 * `libraries`: A list of zero or more Python libraries used by the
   script, which are expected to be logged by recipy when the script
   is run regardless of arguments (i.e. any libraries common to all
-  test cases). The list may contain either generic names e.g. `numpy`
-  (compatible with any version of numpy) or version qualified names
-  e.g. `numpy v1.11.1` (compatible with numpy v1.11.1+). If none,
-  then this can be omitted.
+  test cases). If none, then this can be omitted.
 
 Each script also has one or more test cases, each of which defines:
 
 * `libraries`: A list of zero or more Python libraries used by the
   script, which are expected to be logged by recipy when the script
-  is run with the given arguments for this test case. The list may
-  contain either generic names e.g. `numpy` (compatible with any
-  version of numpy) or version qualified names e.g. `numpy v1.11.1`
-  (compatible with numpy v1.11.1+).
+  is run with the given arguments for this test case. If none, then
+  this can be omitted.
 * `arguments`: A list of arguments to be passed to the script. If
   none, then this can be omitted.
 * `inputs`: A list of zero or more input files which the script will
@@ -425,16 +420,27 @@ Note the escaped spaces in the path.
 
 ---
 
-## Testing across multiple versions of packages
+## Test framework limitations
 
-This framework does not support testing across multiple versions of
-packages, such as numpy or matplotlib. The test framework is designed
-to run tests within a single execution environment: a Python
-interpreter and a set of installed libraries.
+The test framework does not support filtering tests depending upon
+which versions of packages are being tested e.g. specific versions of
+numpy or matplotlib. The test framework is designed to run tests
+within a single execution environment: a Python interpreter and a set
+of installed libraries.
 
-Tests for multiple versions can either be done manually, or via
-another test framework (which sets up the execution environment, then
-runs this test framework).
+If wishing to test different versions of packages then this could be
+done by:
+
+* Writing a Python script that invokes input/output functions of that
+  package.
+* Writing a test configuration file that just runs that script.
+* Setting up a test environment (e.g. as part of a Travis CI or
+  AppVeyor configuration file) that installs the specific package and
+  runs `py.test integration_test/test_packages.py` using the 
+  test configuration file.
+
+`test_recipy.py` does not validate whether multiple test results are
+returned by `recipy search -i`.
 
 ---
 
