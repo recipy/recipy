@@ -28,7 +28,7 @@ def new_run():
     log_init()
 
 
-def log_init():
+def log_init(notebookName=None):
     """Do the initial logging for a new run.
 
     Works out what script has been run, creates a new unique run ID,
@@ -45,6 +45,9 @@ def log_init():
             return
         scriptpath = os.path.realpath(sys.argv[1])
         cmd_args = sys.argv[2:]
+    elif notebookName is not None:
+        scriptpath = notebookName
+        cmd_args = sys.argv[1:]
     else:
         scriptpath = os.path.realpath(sys.argv[0])
         cmd_args = sys.argv[1:]
