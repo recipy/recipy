@@ -16,7 +16,7 @@ import codecs
 from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
-from recipyCommon.config import option_set, get_db_path
+from recipyCommon.config import option_set, get_db_path, get_notebook_mode
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
 
@@ -36,18 +36,23 @@ def log_init(notebookName=None):
 
     This is called when running `import recipy`.
     """
+    notebookMode = get_notebook_mode()
+    if notebookMode and notebookName is None:
+        # Avoid first call without Notebook name
+        return
+
+    if notebookMode:
+        scriptpath = notebookName
+        cmd_args = sys.argv[1:]
     # Get the path of the script we're running
     # When running python -m recipy ..., during the recipy import argument 0
     # is -c (for Python 2) or -m (for Python 3) and the script is argument 1
-    if sys.argv[0] in ['-c', '-m']:
+    elif sys.argv[0] in ['-c', '-m']:
         # Has the user called python -m recipy without further arguments?
         if len(sys.argv) < 2:
             return
         scriptpath = os.path.realpath(sys.argv[1])
         cmd_args = sys.argv[2:]
-    elif notebookName is not None:
-        scriptpath = notebookName
-        cmd_args = sys.argv[1:]
     else:
         scriptpath = os.path.realpath(sys.argv[0])
         cmd_args = sys.argv[1:]
@@ -77,10 +82,10 @@ def log_init(notebookName=None):
         "custom_values": {}
     }
 
-    if not option_set('ignored metadata', 'git'):
+    if not notebookName and not option_set('ignored metadata', 'git'):
         add_git_info(run, scriptpath)
 
-    if not option_set('ignored metadata', 'svn'):
+    if not notebookName and not option_set('ignored metadata', 'svn'):
         add_svn_info(run, scriptpath)
 
 

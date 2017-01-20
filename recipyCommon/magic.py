@@ -2,6 +2,8 @@ from IPython.core.magic import (Magics, magics_class, line_magic,
                                 cell_magic, line_cell_magic)
 import time
 
+from recipyCommon.config import set_notebook_mode
+
 # The class MUST call this class decorator at creation time
 @magics_class
 class RecipyMagic(Magics):
@@ -20,8 +22,6 @@ console.log("Load notebook name...")
 kernel.execute(command);
 '''
         r = self.shell.run_cell(cell)
-        # x = 1/0
-        #return None
         return r
 
     def getNotebookName(self):
@@ -32,6 +32,7 @@ kernel.execute(command);
             else:
                 retries -= 1
                 time.sleep(1)
+
         return None
 
 
@@ -48,11 +49,14 @@ kernel.execute(command);
         "my line magic"
         # print("Full access to the main IPython object:", self.shell)
         # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
+        set_notebook_mode(True)
+
         notebookName = self.getNotebookName()
-        print("[RecipyMagic] this is when recipy should bet imported, not before...")
-        print("[RecipyMagic] notebookName: " + notebookName)
+        if notebookName is None:
+            print("[Recipy] Warning! Unable to get notebook name! Try running notebook step by step")
+            notebookName = "<unknown-notebook>"
         import recipy
-        recipy.log_init(notebookName='TestRecipyMagic.ipynb')
+        recipy.log_init(notebookName=notebookName)
         self.recipyModule = recipy
         return None
 

@@ -91,3 +91,12 @@ def get_gui_port():
         return int(conf.get('general', 'port'))
     except Error:
         return 9000
+
+_notebookMode = False
+
+def get_notebook_mode():
+    return _notebookMode
+
+def set_notebook_mode(mode):
+    global _notebookMode
+    _notebookMode = mode
