@@ -149,9 +149,10 @@ def log_input(filename, source):
     if option_set('general', 'debug'):
         print("Input from %s using %s" % (record, source))
     #Update object in DB
+    version = get_version(source)
     db = open_or_create_db()
     db.update(append("inputs", record, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 
@@ -169,7 +170,8 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-
+    
+    version = get_version(source)
     db = open_or_create_db()
 
     if option_set('data', 'file_diff_outputs') and os.path.isfile(filename) \
@@ -183,7 +185,7 @@ def log_output(filename, source):
     #Update object in DB
     # data hash will be hashed at script exit, if enabled
     db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 
