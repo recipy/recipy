@@ -188,6 +188,18 @@ def log_output(filename, source):
     db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
+    
+def log_library(source):
+    version = get_version(source)
+    db = open_or_create_db()
+    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
+    db.close()
+
+
+def log_libraries(source_list):
+    for source in source_list:
+        log_library(source)
+
 
 def log_exception(typ, value, traceback):
     if option_set('general', 'debug'):
