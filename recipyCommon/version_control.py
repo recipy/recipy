@@ -19,9 +19,12 @@ def hash_file(path):
         return None
 
 
-def get_origin(repo):
+def get_remotes(repo):
     try:
-        return repo.remotes.origin.url
+        names = [x.name for x in repo.remotes]
+        urls = [x.url for x in repo.remotes]
+        
+        return zip(names, urls)
     except:
         return None
 
@@ -32,7 +35,7 @@ def add_git_info(run, scriptpath):
         repo = Repo(scriptpath, search_parent_directories=True)
         run["gitrepo"] = repo.working_dir
         run["gitcommit"] = repo.head.commit.hexsha
-        run["gitorigin"] = get_origin(repo)
+        run["gitremotes"] = get_remotes(repo)
 
         if not option_set('ignored metadata', 'diff'):
             whole_diff = ''
