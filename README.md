@@ -87,8 +87,8 @@ There are other features in the command-line interface too: `recipy --help` to s
 
 	Usage:
 	  recipy search [options] <outputfile>
-	  recipy latest [options]
-	  recipy gui [options]
+	  recipy latest [--diff --json]
+	  recipy gui [--no-browser --debug]
 	  recipy annotate [<idvalue>]
 	  recipy (-h | --help)
 	  recipy --version
@@ -100,7 +100,6 @@ There are other features in the command-line interface too: `recipy --help` to s
 	  -f --fuzzy    Use fuzzy searching on filename
 	  -r --regex    Use regex searching on filename
 	  -i --id       Search based on (a fragment of) the run ID
-	  -v --verbose  Be verbose
 	  -d --diff     Show diff
 	  -j --json     Show output as JSON
 	  --no-browser  Do not open browser window
