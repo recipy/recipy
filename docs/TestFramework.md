@@ -216,6 +216,20 @@ example:
 
 ---
 
+## Issues
+
+The sample scripts in `integration_tests/packages` may fail to run
+with older versions of third-party packages. Known package versions
+that can cause failures are listed in [Package versioning
+problems](./PackageVersionFailures.md).
+
+Certain third-party packages gave rise to issues, when attempting to
+configure the test framework for these. The packages and issues, and
+how the test framework has been configured to currently skip these are 
+described in [recipy and third-party package issues](./Issues.md).
+
+---
+
 ## How the test framework uses test configuration files
 
 A test configuration file is used to auto-generate test functions for
