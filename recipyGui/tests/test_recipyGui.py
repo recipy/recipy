@@ -80,7 +80,43 @@ class TestRecipyGui(TestCase):
                 'script': 'C:\\Code\\test-recipy\\example_script2.py',
                 'unique_id': '6daab87a-8cf2-4e3d-afb9-1ee5b6b8ecdb'
             },
-            # Run with warnings
+            # SVN info present
+            {
+                'author': 'Robin',
+                'command': 'C:\\Anaconda3\\python.exe',
+                'date': '{TinyDate}:2015-08-22T08:42:59',
+                'description': '',
+                'diff': None,
+                'environment': ['Windows-7-6.1.7601-SP1', 'python 3.4.3 |Anaconda 2.2.0 (64-bit)| (default, Mar  6 2015, 12:06:10) [MSC v.1600 64 bit (AMD64)]'],
+                'svncommit': '43513',
+                'svnrepo' : "http://www.testrepo.org/repo",
+                'gitcommit' : None,
+                'gitorigin': None,
+                'gitrepo': None,
+                'inputs': [],
+                'outputs': ['C:\\Code\\test-recipy\\testNGCM_2.npy'],
+                'script': 'C:\\Code\\test-recipy\\example_script2.py',
+                'unique_id': '6daab87a-8cf2-4e3d-afb9-1ee5b6b8ecdb'
+            },
+            # SVN and git info both present
+            {
+                'author': 'Robin',
+                'command': 'C:\\Anaconda3\\python.exe',
+                'date': '{TinyDate}:2015-08-22T08:42:59',
+                'description': '',
+                'diff': None,
+                'environment': ['Windows-7-6.1.7601-SP1', 'python 3.4.3 |Anaconda 2.2.0 (64-bit)| (default, Mar  6 2015, 12:06:10) [MSC v.1600 64 bit (AMD64)]'],
+                'gitcommit': 'c681315966a9fca0662f57ac45191eb9fdc8cd9c',
+                'gitorigin': None,
+                'gitrepo': "/home/jvdzwaan/code/recipy-demo",
+                'svncommit': '43513',
+                'svnrepo' : "http://www.testrepo.org/repo", 
+                'inputs': [],
+                'outputs': ['C:\\Code\\test-recipy\\testNGCM_2.npy'],
+                'script': 'C:\\Code\\test-recipy\\example_script2.py',
+                'unique_id': '6daab87a-8cf2-4e3d-afb9-1ee5b6b8ecdb'
+            },
+           # Run with warnings
             {
                 "author": "jvdzwaan",
                 "command": "/home/jvdzwaan/.virtualenvs/recipy/bin/python",

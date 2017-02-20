@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 import datetime
 import sys
@@ -11,8 +12,10 @@ import shutil
 from tinydb import Query
 import difflib
 import warnings
+import codecs
+from binaryornot.check import is_binary
 
-from recipyCommon.version_control import add_git_info, hash_file
+from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
 from recipyCommon.config import option_set, get_db_path
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
@@ -67,11 +70,16 @@ def log_init():
         "date": datetime.datetime.utcnow(),
         "command_args": " ".join(cmd_args),
         "warnings": [],
-        "libraries": [get_version('recipy')]
+        "libraries": [get_version('recipy')],
+        "custom_values": {}
     }
 
     if not option_set('ignored metadata', 'git'):
         add_git_info(run, scriptpath)
+
+    if not option_set('ignored metadata', 'svn'):
+        add_svn_info(run, scriptpath)
+
 
     # Put basics into DB
     RUN_ID = db.insert(run)
@@ -93,6 +101,30 @@ def log_init():
 
     # Register exception hook so exceptions can be logged
     sys.excepthook = log_exception
+
+
+def log_values(custom_values=None, **kwargs):
+    """ Log a custom value-key pairs into the database
+    e.g,
+    >>> log_values(a=1, b=2)
+    >>> log_values({'c': 3, 'd': 4})
+    >>> log_values({'e': 5, 'f': 6}, g=7, h=8)
+    """
+
+    # create dictionary of custom values from arguments
+    custom_values = {} if custom_values is None else custom_values
+    assert isinstance(custom_values, dict), \
+        "custom_values must be a dict. type(custom_values) = %s" % type(custom_values)
+    custom_values.update(kwargs)
+
+    # debugging
+    if option_set('general', 'debug'):
+        print('Logging custom values: %s' % str(custom_values))
+
+    # Update object in DB
+    db = open_or_create_db()
+    db.update(add_dict("custom_values", custom_values), eids=[RUN_ID])
+    db.close()
 
 
 def log_input(filename, source):
@@ -117,9 +149,10 @@ def log_input(filename, source):
     if option_set('general', 'debug'):
         print("Input from %s using %s" % (record, source))
     #Update object in DB
+    version = get_version(source)
     db = open_or_create_db()
     db.update(append("inputs", record, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 
@@ -137,10 +170,12 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-
+    
+    version = get_version(source)
     db = open_or_create_db()
 
-    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename):
+    if option_set('data', 'file_diff_outputs') and os.path.isfile(filename) \
+       and not is_binary(filename):
         tf = tempfile.NamedTemporaryFile(delete=False)
         shutil.copy2(filename, tf.name)
         add_file_diff_to_db(filename, tf.name, db)
@@ -150,7 +185,7 @@ def log_output(filename, source):
     #Update object in DB
     # data hash will be hashed at script exit, if enabled
     db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", get_version(source), no_duplicates=True), eids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
     db.close()
 
 
@@ -219,6 +254,18 @@ def append(field, value, no_duplicates=False):
     return transform
 
 
+def add_dict(field, dict_of_values):
+    """
+    Add a given dict of values to a given array field.
+    """
+    def transform(element):
+        assert isinstance(element[field], dict), \
+            "add_dict called on a non-dict object. type(element[%s]) = %s" % (field, type(element[field]))
+        element[field].update(dict_of_values)
+
+    return transform
+
+
 # atexit functions will run on script exit (even on exception)
 @atexit.register
 def log_exit():
@@ -252,17 +299,44 @@ def output_file_diffs():
     if not option_set('data', 'file_diff_outputs'):
         return
 
-    db = open_or_create_db()
-    diffs_table = db.table('filediffs')
-    diffs = diffs_table.search(Query().run_id == RUN_ID)
+    encodings = ['utf-8', 'latin-1']
+
+    with open_or_create_db() as db:
+        diffs_table = db.table('filediffs')
+        diffs = diffs_table.search(Query().run_id == RUN_ID)
+
     for item in diffs:
-        diff = difflib.unified_diff(open(item['tempfilename']).readlines(),
-                                    open(item['filename']).readlines(),
-                                    fromfile='before this run',
-                                    tofile='after this run')
-        diffs_table.update({'diff': ''.join([l for l in diff])},
-                           eids=[item.eid])
+        if option_set('general', 'debug'):
+            print('Storing file diff for "%s"' % item['filename'])
+
+        lines1 = None
+        lines2 = None
+        for enc in encodings:
+            try:
+                with codecs.open(item['tempfilename'], encoding=enc) as f:
+                    lines1 = f.readlines()
+            except UnicodeDecodeError:
+                pass
+
+            try:
+                with codecs.open(item['filename'], encoding=enc) as f:
+                    lines2 = f.readlines()
+            except UnicodeDecodeError:
+                pass
+
+        if lines1 is not None and lines2 is not None:
+            diff = difflib.unified_diff(lines1,
+                                        lines2,
+                                        fromfile='before this run',
+                                        tofile='after this run')
+            with open_or_create_db() as db:
+                diffs_table.update({'diff': ''.join([l for l in diff])},
+                                   eids=[item.eid])
+        else:
+            msg = ('Unable to read file "{}" using supported encodings ({}). '
+                   'To be able to store file diffs, use one of the supported '
+                   'encodings to write the output file.')
+            warnings.warn(msg.format(item['filename'], ', '.join(encodings)))
 
         # delete temporary file
         os.remove(item['tempfilename'])
-    db.close()

@@ -1,6 +1,7 @@
 setuptools
 wrapt
 GitPython
+svn
 flask
 Flask-Script
 flask_bootstrap
@@ -12,3 +13,4 @@ flask-testing
 blinker
 six
 colorama
+binaryornot

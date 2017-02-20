@@ -5,7 +5,7 @@ Usage:
   recipy search [options] <outputfile>
   recipy latest [options]
   recipy gui [options]
-  recipy annotate [options]
+  recipy annotate [<idvalue>]
   recipy (-h | --help)
   recipy --version
 
@@ -26,6 +26,7 @@ Options:
 """
 import os
 import re
+import sys
 import tempfile
 
 from docopt import docopt
@@ -37,6 +38,7 @@ import six
 
 from . import __version__
 from recipyCommon import config, utils
+from recipyCommon.config import get_editor
 from recipyCommon.version_control import hash_file
 
 from colorama import init
@@ -52,6 +54,9 @@ Using command-line arguments: {{ command_args }}
 {% endif %}
 {% if gitcommit is defined %}
 \aGit:\b commit {{ gitcommit }}, in repo {{ gitrepo }}, with origin {{ gitorigin }}
+{% endif %}
+{% if svnrepo is defined %}
+\aSvn:\b commit {{ svncommit }}, in repo {{ svnrepo }}.
 {% endif %}
 \aEnvironment:\b {{ environment|join(", ") }}
 {% if libraries is defined %}
@@ -139,13 +144,17 @@ def main():
 
 
 def annotate(args):
-    # check that $EDITOR is defined
-    if os.environ.get('EDITOR') is None:
-        print('No environment variable $EDITOR defined, exiting.')
-        return
+    # get the text editor
+    editor = get_editor()
 
-    # Grab latest run from the DB
-    run = get_latest_run()
+    if args['<idvalue>']:
+        try:
+            run = db.search(where('unique_id') == args['<idvalue>'])[0]
+        except IndexError:
+            print('Could not find id %s' % args['<idvalue>'])
+            return
+    else:
+        run = get_latest_run()
 
     # Get temp filename
     f = tempfile.NamedTemporaryFile(delete=False, mode='w')
@@ -163,7 +172,7 @@ def annotate(args):
     f.close()
 
     # Open your editor
-    os.system('$EDITOR %s' % f.name)
+    os.system('%s %s' % (editor, f.name))
 
     # Grab the text
     annotation = ""

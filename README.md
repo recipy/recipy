@@ -89,7 +89,7 @@ There are other features in the command-line interface too: `recipy --help` to s
 	  recipy search [options] <outputfile>
 	  recipy latest [options]
 	  recipy gui [options]
-	  recipy annotate [options]
+	  recipy annotate [<idvalue>]
 	  recipy (-h | --help)
 	  recipy --version
 
@@ -121,6 +121,7 @@ This simply instructs recipy not to save `git diff` information when it records 
 
  * `[general]`
 	 * `debug` - print debug messages
+ 	 * `editor = vi` - Configure the default text editor that will be used when recipy needs you to type in a message. Use notepad if on Windows, for example
 	 * `quiet` - don't print any messages
 	 * `port` - specify port to use for the GUI
  *  `[data]`
