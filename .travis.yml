@@ -31,6 +31,9 @@ install:
   - conda install flask
   # Install recipy.
   - python setup.py install
+  # Install requirements not specified in setup.py but specified in
+  # requirements.txt
+  - pip install -r requirements.txt
   # Install behave for unit tests
   - pip install -e . behave
   # Install py.test explicitly else Travis CI will use the one in its
