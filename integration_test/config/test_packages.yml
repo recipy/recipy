@@ -1,0 +1,207 @@
+---
+script: run_python.py
+libraries: [ ]
+test_cases:
+- arguments: [ open ]
+  outputs: [ out.txt ]
+  skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
+---
+script: run_numpy_as_opaque.py
+libraries: [ numpy ]
+test_cases:
+- arguments: [ opaque_savetxt ]
+  outputs: [ out.txt ]
+- arguments: [ cryptic ]
+  outputs: [ out.txt ]
+---
+script: run_gdal.py
+# recipy logs version as 'gdal v?'
+# libraries: [ gdal ]
+libraries: [ ]
+test_cases:
+- arguments: [ open ]
+  inputs: [ image.tiff ]
+- arguments: [ driver_create ]
+  outputs: [ out_image.tiff ]
+- arguments: [ driver_createcopy ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]
+---
+script: run_skimage.py
+libraries: [ skimage ]
+test_cases:
+- arguments: [ io_imread ]
+  inputs: [ image.tiff ]
+  skip: "skimage code in recipy currently commented-out"
+- arguments: [ io_imsave ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]
+  skip: "skimage code in recipy currently commented-out"
+- arguments: [ io_load_sift ]
+  inputs: [ sift.key ]
+  skip: "skimage code in recipy currently commented-out"
+- arguments: [ io_load_surf ]
+  inputs: [ image.surf ]
+  skip: "skimage code in recipy currently commented-out"
+- arguments: [ external_tifffile_imread ]
+  inputs: [ image.tiff ]
+  skip: "skimage code in recipy currently commented-out"
+- arguments: [ external_tifffile_imsave ]
+  inputs: [ image.tiff ]
+  outputs: [ out_image.tiff ]
+  skip: "skimage code in recipy currently commented-out"
+---
+script: run_nibabel.py
+libraries: [ nibabel ]
+test_cases:
+- arguments: [ analyze_from_filename ]
+  inputs: [ analyze_image ]
+- arguments: [ analyze_to_filename ]
+  outputs: [ out_analyze_image ]
+- arguments: [ mgh_from_filename ]
+  inputs: [ mgh_image ]
+- arguments: [ mgh_to_filename ]
+  outputs: [ out_mgh_image ]
+- arguments: [ minc1_from_filename ]
+  inputs: [ minc1_image ]
+- arguments: [ minc1_to_filename ]
+  outputs: [ out_minc1_image ]
+  skip: "nibabel.minc1.Minc1Image.to_filename raises NotImplementedError"
+- arguments: [ minc2_from_filename ]
+  inputs: [ minc2_image ]
+  skip: "recipy raises 'TypeError: Error: None is not a valid NetCDF 3 file' logging this function"
+- arguments: [ minc2_to_filename ]
+  outputs: [ out_minc2_image ]
+  skip: "nibabel.minc2.Minc2Image.to_filename raises NotImplementedError"
+- arguments: [ nifti1_from_filename ]
+  inputs: [ nifti1_image ]
+- arguments: [ nifti1_to_filename ]
+  outputs: [ out_nifti1_image ]
+- arguments: [ nifti2_from_filename ]
+  inputs: [ nifti2_image ]
+  skip: "recipy raises 'nibabel.spatialimages.HeaderDataError: data code 0 not supported' logging this function"
+- arguments: [ nifti2_to_filename ]
+  outputs: [ out_nifti2_image ]
+- arguments: [ parrec_from_filename ]
+  inputs: [ parrec_image.PAR ]
+- arguments: [ parrec_to_filename ]
+  outputs: [ out_parrec_image.PAR ]
+  skip: "nibabel.parrec.PARRECImage.to_filename raises NotImplementedError"
+- arguments: [ spm99analyze_from_filename ]
+  inputs: [ spm99_image ]
+- arguments: [ spm99analyze_to_filename ]
+  outputs: [ out_spm99_image ]
+- arguments: [ spm2analyze_from_filename ]
+# recipy logs the input file twice
+  inputs: [ spm2_image, spm2_image ]
+- arguments: [ spm2analyze_to_filename ]
+  outputs: [ out_spm2_image ]
+---
+script: run_sklearn.py
+libraries: [ sklearn ]
+test_cases:
+- arguments: [ load_svmlight_file ]
+  inputs: [ data.svmlight ]
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' under Python 3 and 'KeyError: 316' under Python 2 logging this function"
+- arguments: [ dump_svmlight_file ]
+  outputs: [ out.svmlight ]
+  skip: "recipy raises 'AttributeError: module 'sklearn' has no attribute 'datasets'' under Python 3 and 'KeyError: 316' under Python 2 logging this function"
+---
+script: run_pil.py
+libraries: [ pillow ]
+test_cases:
+- arguments: [ image_open ]
+  inputs: [ data.png ]
+  skip: "PIL code in recipy currently commented-out"
+- arguments: [ image_save ]
+  inputs: [ data.png ]
+  outputs: [ out.png ]
+  skip: "PIL code in recipy currently commented-out"
+---
+script: run_lxml.py
+# recipy logs version as 'lxml v?'
+# libraries: [ lxml ]
+libraries: [ ]
+test_cases:
+- arguments: [ parse ]
+  inputs: [ data.xml ]
+- arguments: [ iterparse ]
+  inputs: [ data.xml ]
+---
+script: run_bs4.py
+libraries: [ bs4 ]
+test_cases:
+- arguments: [ beautifulsoup ]
+  inputs: [ data.html ]
+  skip: "recipy raises 'TypeError: must be type, not FunctionWrapper' logging this function"
+---
+script: run_numpy.py
+libraries: [ numpy ]
+test_cases:
+- arguments: [ loadtxt ]
+  inputs: [ data.csv ]
+- arguments: [ fromfile ]
+  inputs: [ data.csv ]
+- arguments: [ genfromtxt ]
+  inputs: [ data_incomplete.csv ]
+- arguments: [ save ]
+  outputs: [ out.npy ]
+- arguments: [ savez ]
+  outputs: [ out.npz ]
+- arguments: [ savez_compressed ]
+  outputs: [ out.npz ]
+- arguments: [ savetxt ]
+  outputs: [ out.txt ]
+---
+script: run_matplotlib.py
+test_cases:
+- arguments: [ savefig ]
+  libraries: [ matplotlib ]
+  outputs: [ out.png ]
+---
+script: run_pandas.py
+libraries: [ pandas ]
+test_cases:
+- arguments: [ read_csv ]
+  inputs: [ dataframe.csv ]
+- arguments: [ read_table ]
+  inputs: [ dataframe.csv ]
+- arguments: [ read_excel ]
+  inputs: [ dataframe.xls ]
+- arguments: [ read_hdf ]
+  inputs: [ dataframe.hdf ]
+- arguments: [ read_pickle ]
+  inputs: [ dataframe.pickle ]
+- arguments: [ read_stata ]
+  inputs: [ dataframe.dta ]
+- arguments: [ read_msgpack ]
+  inputs: [ dataframe.mpack ]
+- arguments: [ panel_to_excel ]
+  outputs: [ out.xls ]
+  skip: "recipy raises 'AttributeError: '_XlwtWriter' object has no attribute 'startswith'' logging this function"
+- arguments: [ panel_to_hdf ]
+  outputs: [ out.hdf ]
+- arguments: [ panel_to_msgpack ]
+  outputs: [ out.mpack ]
+- arguments: [ panel_to_pickle ]
+  outputs: [ out.pickle ]
+- arguments: [ dataframe_to_excel]
+  outputs: [ out.xls ]
+- arguments: [ dataframe_to_hdf ]
+  outputs: [ out.hdf ]
+- arguments: [ dataframe_to_msgpack ]
+  outputs: [ out.mpack ]
+- arguments: [ dataframe_to_pickle ]
+  outputs: [ out.pickle ]
+- arguments: [ dataframe_to_stata ]
+  outputs: [ out.dta ]
+- arguments: [ dataframe_to_csv ]
+  outputs: [ out.csv ]
+- arguments: [ series_to_hdf ]
+  outputs: [ out.hdf ]
+- arguments: [ series_to_msgpack ]
+  outputs: [ out.mpack ]
+- arguments: [ series_to_pickle ]
+  outputs: [ out.pickle ]
+- arguments: [ series_to_csv ]
+  outputs: [ out.csv ]

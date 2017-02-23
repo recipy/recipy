@@ -234,3 +234,13 @@ This table lists the modules recipy has patches for, and the input and output fu
 </table>
 
 However, the code example above shows how easy it is to write a class to wrap a new module - so please feel free to submit a Pull Request to make recipy work with your favourite scientific modules!
+
+## Test framework
+
+recipy's test framework is in `integration_test`. The test framework has been designed to run under both Python 2.7+ and Python 3+. For more information see [recipy test framework](./docs/TestFramework.md).
+
+The test framework is run on the following platforms:
+
+* Travis CI: [![Integration test status image](https://travis-ci.org/mikej888/recipy.svg)](https://travis-ci.org/mikej888/recipy)
+* AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/onot0siknp4tks4q?svg=true)](https://ci.appveyor.com/project/mikej888/recipy)
+
