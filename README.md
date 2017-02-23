@@ -242,5 +242,6 @@ recipy's test framework is in `integration_test`. The test framework has been de
 The test framework is run on the following platforms:
 
 * Travis CI: [![Integration test status image](https://travis-ci.org/recipy/recipy.svg)](https://travis-ci.org/recipy/recipy)
-* AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/onot0siknp4tks4q?svg=true)](https://ci.appveyor.com/project/recipy/recipy)
+* AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/irvathkx02yigjfn?svg=true
+)](https://ci.appveyor.com/project/recipy/recipy)
 
