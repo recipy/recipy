@@ -17,16 +17,16 @@ class PatchGDAL(PatchSimple):
     add_module_to_db(modulename, input_functions, output_functions)
 
 
-class PatchSKLearn(PatchSimple):
-    modulename = 'sklearn'
+# class PatchSKLearn(PatchSimple):
+#     modulename = 'sklearn'
 
-    input_functions = ['datasets.load_svmlight_file']
-    output_functions = ['datasets.dump_svmlight_file']
+#     input_functions = ['datasets.load_svmlight_file']
+#     output_functions = ['datasets.dump_svmlight_file']
 
-    input_wrapper = create_wrapper(log_input, 0, 'sklearn')
-    output_wrapper = create_wrapper(log_output, 0, 'sklearn')
+#     input_wrapper = create_wrapper(log_input, 0, 'sklearn')
+#     output_wrapper = create_wrapper(log_output, 0, 'sklearn')
 
-    add_module_to_db(modulename, input_functions, output_functions)
+#     add_module_to_db(modulename, input_functions, output_functions)
 
 # class PatchSKImage(PatchSimple):
 #     modulename = 'skimage'
@@ -81,6 +81,8 @@ class PatchImageio(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'imageio')
     output_wrapper = create_wrapper(log_output, 0, 'imageio')
 
-multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
-                                PatchNIBabel(), PatchTifffile(),
+multiple_insert(sys.meta_path, [PatchGDAL(), 
+#                                 PatchSKLearn(),
+                                PatchNIBabel(), 
+                                PatchTifffile(),
                                 PatchImageio()])
