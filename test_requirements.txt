@@ -4,3 +4,7 @@ python-dateutil
 gitpython
 pylint
 pep8
+tifffile
+imageio
+pytest
+numpy
