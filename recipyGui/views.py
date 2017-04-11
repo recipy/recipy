@@ -119,7 +119,7 @@ def runs2json():
     runs = [db.get(eid=run_id) for run_id in run_ids]
     db.close()
 
-    response = make_response(dumps(runs, indent=2, sort_keys=True))
+    response = make_response(dumps(runs, indent=2, sort_keys=True, default=unicode))
     response.headers['content-type'] = 'application/json'
     response.headers['Content-Disposition'] = 'attachment; filename=runs.json'
     return response
