@@ -9,4 +9,6 @@ from .utils import open
 
 __version__ = '0.3.0'
 
-log_init()
+
+if not detect_interactive():
+    log_init()

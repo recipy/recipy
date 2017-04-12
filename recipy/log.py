@@ -28,7 +28,19 @@ def new_run():
     log_init()
 
 
-def log_init():
+class log_it():
+    """A context manager to wrap things to log. You can pass an
+    extra context in the form of a dictionary."""
+    def __enter__(self, **context):
+        new_run()
+        log_values(**context)
+
+    def __exit__(self, type, value, traceback):
+        print("recipy run closed")
+        log_exit()
+
+
+def log_init(interactive=False):
     """Do the initial logging for a new run.
 
     Works out what script has been run, creates a new unique run ID,
@@ -36,10 +48,14 @@ def log_init():
 
     This is called when running `import recipy`.
     """
+    is_interactive = detect_interactive() or interactive
+    if is_interactive:
+        scriptpath = os.getcwd()
+        cmd_args = []
     # Get the path of the script we're running
     # When running python -m recipy ..., during the recipy import argument 0
     # is -c (for Python 2) or -m (for Python 3) and the script is argument 1
-    if sys.argv[0] in ['-c', '-m']:
+    elif sys.argv[0] in ['-c', '-m']:
         # Has the user called python -m recipy without further arguments?
         if len(sys.argv) < 2:
             return
@@ -80,6 +96,8 @@ def log_init():
     if not option_set('ignored metadata', 'svn'):
         add_svn_info(run, scriptpath)
 
+    if is_interactive:
+        run["custom_values"]["interactive"] = True
 
     # Put basics into DB
     RUN_ID = db.insert(run)
@@ -170,7 +188,7 @@ def log_output(filename, source):
         except:
             pass
     filename = os.path.abspath(filename)
-    
+
     version = get_version(source)
     db = open_or_create_db()
 
@@ -340,3 +358,15 @@ def output_file_diffs():
 
         # delete temporary file
         os.remove(item['tempfilename'])
+
+
+def detect_interactive():
+    """Try to import ipython-specific code. If it fails, we're either in_units
+    no interactive ipython mode or in regular python mode"""
+    try:
+        import __main__
+        __main__.__file__
+
+        return False
+    except (AttributeError):
+        return True
