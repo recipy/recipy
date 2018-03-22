@@ -16,7 +16,7 @@ import codecs
 from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
-from recipyCommon.config import option_set, get_db_path
+from recipyCommon.config import option_set, get_db_path, get_notebook_mode
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
 
@@ -28,7 +28,7 @@ def new_run():
     log_init()
 
 
-def log_init():
+def log_init(notebookName=None):
     """Do the initial logging for a new run.
 
     Works out what script has been run, creates a new unique run ID,
@@ -36,10 +36,18 @@ def log_init():
 
     This is called when running `import recipy`.
     """
+    notebookMode = get_notebook_mode()
+    if notebookMode and notebookName is None:
+        # Avoid first call without Notebook name
+        return
+
+    if notebookMode:
+        scriptpath = notebookName
+        cmd_args = sys.argv[1:]
     # Get the path of the script we're running
     # When running python -m recipy ..., during the recipy import argument 0
     # is -c (for Python 2) or -m (for Python 3) and the script is argument 1
-    if sys.argv[0] in ['-c', '-m']:
+    elif sys.argv[0] in ['-c', '-m']:
         # Has the user called python -m recipy without further arguments?
         if len(sys.argv) < 2:
             return
@@ -74,10 +82,10 @@ def log_init():
         "custom_values": {}
     }
 
-    if not option_set('ignored metadata', 'git'):
+    if not notebookName and not option_set('ignored metadata', 'git'):
         add_git_info(run, scriptpath)
 
-    if not option_set('ignored metadata', 'svn'):
+    if not notebookName and not option_set('ignored metadata', 'svn'):
         add_svn_info(run, scriptpath)
 
 
@@ -268,6 +276,12 @@ def add_dict(field, dict_of_values):
 
 # atexit functions will run on script exit (even on exception)
 @atexit.register
+def log_flush():
+    log_exit()
+    hash_outputs()
+    output_file_diffs()
+
+
 def log_exit():
     # Update the record with the timestamp of the script's completion.
     # We don't save the duration because it's harder to serialize a timedelta.
@@ -279,7 +293,6 @@ def log_exit():
     db.close()
 
 
-@atexit.register
 def hash_outputs():
     # Writing to output files is complete; we can now compute hashes.
     if option_set('ignored metadata', 'output_hashes'):
@@ -293,7 +306,6 @@ def hash_outputs():
     db.close()
 
 
-@atexit.register
 def output_file_diffs():
     # Writing to output files is complete; we can now compute file diffs.
     if not option_set('data', 'file_diff_outputs'):
