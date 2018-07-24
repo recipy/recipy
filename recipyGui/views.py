@@ -26,7 +26,8 @@ def index():
 
     query = request.args.get('query', '').strip()
 
-    # make sure chars like ':' and '\' are escaped properly before doing the search
+    # make sure chars like ':' and '\' are escaped properly before doing the
+    # search
     escaped_query = re.escape(query) if query else query
 
     db = utils.open_or_create_db()
@@ -44,7 +45,8 @@ def index():
 
     db.close()
 
-    return render_template('list.html', runs=runs, query=escaped_query, search_bar_query=query, form=form,
+    return render_template('list.html', runs=runs, query=escaped_query,
+                           search_bar_query=query, form=form,
                            run_ids=str(run_ids),
                            dbfile=recipyGui.config.get('tinydb'))
 
@@ -119,7 +121,8 @@ def runs2json():
     runs = [db.get(eid=run_id) for run_id in run_ids]
     db.close()
 
-    response = make_response(dumps(runs, indent=2, sort_keys=True, default=unicode))
+    response = make_response(dumps(runs, indent=2, sort_keys=True,
+                                   default=unicode))
     response.headers['content-type'] = 'application/json'
     response.headers['Content-Disposition'] = 'attachment; filename=runs.json'
     return response
