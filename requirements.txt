@@ -5,7 +5,7 @@ svn
 flask
 Flask-Script
 flask_bootstrap
-flask-wtf
+flask-wtf>=0.13
 tinydb
 tinydb-serialization
 docopt

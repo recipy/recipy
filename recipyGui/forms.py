@@ -1,11 +1,11 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, HiddenField
 
 
-class SearchForm(Form):
+class SearchForm(FlaskForm):
     query = StringField('query')
 
 
-class AnnotateRunForm(Form):
+class AnnotateRunForm(FlaskForm):
     notes = TextAreaField('notes')
     run_id = HiddenField('run_id')
