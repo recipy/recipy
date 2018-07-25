@@ -205,3 +205,20 @@ test_cases:
   outputs: [ out.pickle ]
 - arguments: [ series_to_csv ]
   outputs: [ out.csv ]
+---
+script: run_imageio.py
+libraries: [ imageio ]
+test_cases:
+- arguments: [ imread ]
+  inputs: [ image.tiff ]
+- arguments: [ imwrite ]
+  inputs: [ image.tiff ]
+  outputs: [ image.png ]
+---
+script: run_tifffile.py
+libraries: [ tifffile ]
+test_cases:
+- arguments: [ imread ]
+  inputs: [ image.tiff ]
+- arguments: [ imsave ]
+  outputs: [ image2.tiff ]
