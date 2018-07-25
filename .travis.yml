@@ -48,6 +48,8 @@ install:
   - conda install scikit-image
   - pip install nibabel
   - conda install gdal
+  - pip install imageio
+  - pip install tifffile
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
