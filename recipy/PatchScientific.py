@@ -31,7 +31,8 @@ class PatchSKLearn(PatchSimple):
 # class PatchSKImage(PatchSimple):
 #     modulename = 'skimage'
 
-#     input_functions = ['io.imread', 'io.load_sift', 'io.load_surf', 'external.tifffile.imread']
+#     input_functions = ['io.imread', 'io.load_sift', 'io.load_surf',
+#                        'external.tifffile.imread']
 #     output_functions = ['io.imsave', 'external.tifffile.imsave']
 
 #     input_wrapper = create_wrapper(log_input, 0, 'skimage')
@@ -50,9 +51,11 @@ class PatchSKLearn(PatchSimple):
 class PatchNIBabel(PatchSimple):
     modulename = 'nibabel'
 
-    images = ['nifti1.Nifti1Image', 'nifti2.Nifti2Image', 'freesurfer.mghformat.MGHImage',
-              'spm99analyze.Spm99AnalyzeImage', 'minc1.Minc1Image', 'minc2.Minc2Image',
-              'analyze.AnalyzeImage', 'parrec.PARRECImage', 'spm2analyze.Spm2AnalyzeImage']
+    images = ['nifti1.Nifti1Image', 'nifti2.Nifti2Image',
+              'freesurfer.mghformat.MGHImage',
+              'spm99analyze.Spm99AnalyzeImage', 'minc1.Minc1Image',
+              'minc2.Minc2Image', 'analyze.AnalyzeImage', 'parrec.PARRECImage',
+              'spm2analyze.Spm2AnalyzeImage']
 
     input_functions = [image_name + '.from_filename' for image_name in images]
     output_functions = [image_name + '.to_filename' for image_name in images]
@@ -73,6 +76,7 @@ class PatchTifffile(PatchSimple):
     output_wrapper = create_wrapper(log_output, 0, 'tifffile')
 
     add_module_to_db(modulename, input_functions, output_functions)
+
 
 class PatchImageio(PatchSimple):
     modulename = 'imageio'
