@@ -13,7 +13,7 @@ import getpass
 import os.path
 import platform
 import sys
-import pip
+import pkg_resources
 from dateutil.parser import parse
 
 
@@ -119,7 +119,7 @@ def get_packages():
     :return: installed packages and versions, keyed by package name
     :rtype: dict of str or unicode => str or unicode
     """
-    packages = pip.get_installed_distributions(local_only=False)
+    packages = pkg_resources.working_set
     packages_dict = {}
     for package in packages:
         packages_dict[package.key] = package.version
