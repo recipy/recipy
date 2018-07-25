@@ -1,40 +1,38 @@
-from nose.tools import assert_true, assert_false
+import pytest
 
 from recipyCommon.tinydb_utils import listsearch
 
 
-def test_listsearch_flat_list_match():
+@pytest.mark.parametrize('item', ['test', '/test/test.csv'])
+def test_listsearch_flat_list_match(item):
     q = 'test'
-    l = ['test', '/test/test.csv']
 
-    for item in l:
-        msg = 'listsearch({}, {}) does not return true'.format(q, item)
-        yield assert_true, listsearch(q, item), msg
+    msg = 'listsearch({}, {}) does not return true'.format(q, item)
+    assert listsearch(q, item), msg
 
 
-def test_listsearch_flat_list_no_match():
+@pytest.mark.parametrize('item', ['string', '/text/data.csv'])
+def test_listsearch_flat_list_no_match(item):
     q = 'test'
-    l = ['string', '/text/data.csv']
 
-    for item in l:
-        msg = 'listsearch({}, {}) does not return false'.format(q, item)
-        yield assert_false, listsearch(q, item), msg
+    msg = 'listsearch({}, {}) does not return false'.format(q, item)
+    assert not listsearch(q, item), msg
 
 
-def test_listsearch_list_of_lists_match():
+@pytest.mark.parametrize('item', [['string', 'hash-for-string'],
+                                  ['/text/string.csv', 'another-hash'],
+                                  ['blabla', 'string-in-hash']])
+def test_listsearch_list_of_lists_match(item):
     q = 'string'
-    l = [['string', 'hash-for-string'], ['/text/string.csv', 'another-hash'],
-         ['blabla', 'string-in-hash']]
 
-    for item in l:
-        msg = 'listsearch({}, {}) does not return true'.format(q, item)
-        yield assert_true, listsearch(q, item), msg
+    msg = 'listsearch({}, {}) does not return true'.format(q, item)
+    assert listsearch(q, item), msg
 
 
-def test_listsearch_list_of_lists_no_match():
+@pytest.mark.parametrize('item', [['string', 'hash-for-string'],
+                                  ['/text/data.csv', 'another-hash']])
+def test_listsearch_list_of_lists_no_match(item):
     q = 'test'
-    l = [['string', 'hash-for-string'], ['/text/data.csv', 'another-hash']]
 
-    for item in l:
-        msg = 'listsearch({}, {}) does not return false'.format(q, item)
-        yield assert_false, listsearch(q, item), msg
+    msg = 'listsearch({}, {}) does not return false'.format(q, item)
+    assert not listsearch(q, item), msg

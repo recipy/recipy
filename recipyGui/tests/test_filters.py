@@ -1,15 +1,15 @@
-from nose.tools import assert_equal
+import pytest
+
 from recipyGui import highlight
 
 
-def test_highlight():
+@pytest.mark.parametrize("c,expected", [
+    ({'txt': 'test', 'q': None}, 'test'),
+    ({'txt': 'test', 'q': 'test'},
+     '<mark class="no-side-padding">test</mark>'),
+    ({'txt': None, 'q': None}, 'None'),
+])
+def test_highlight(c, expected):
     """Test the highlight filter"""
-    cases = [
-        {'txt': 'test', 'q': None, 'out': 'test'},
-        {'txt': 'test', 'q': 'test',
-         'out': '<mark class="no-side-padding">test</mark>'},
-        {'txt': None, 'q': None, 'out': 'None'}
-    ]
 
-    for c in cases:
-        yield assert_equal, highlight(text=c['txt'], query=c['q']), c['out']
+    assert highlight(text=c['txt'], query=c['q']) == expected
