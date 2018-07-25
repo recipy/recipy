@@ -15,9 +15,7 @@ test_cases:
   outputs: [ out.txt ]
 ---
 script: run_gdal.py
-# recipy logs version as 'gdal v?'
-# libraries: [ gdal ]
-libraries: [ ]
+libraries: [ gdal ]
 test_cases:
 - arguments: [ open ]
   inputs: [ image.tiff ]
@@ -119,9 +117,7 @@ test_cases:
   skip: "PIL code in recipy currently commented-out"
 ---
 script: run_lxml.py
-# recipy logs version as 'lxml v?'
-# libraries: [ lxml ]
-libraries: [ ]
+libraries: [ lxml ]
 test_cases:
 - arguments: [ parse ]
   inputs: [ data.xml ]
