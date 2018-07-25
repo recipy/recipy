@@ -21,7 +21,7 @@ Created by ubuntu on 2016-10-26 11:59:04 UTC
 Ran /home/ubuntu/recipy/integration_test/packages/run_pil.py using /home/ubuntu/anaconda2/bin/python
 Using command-line arguments: image_open
 Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40) 
+Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40)
 Libraries: recipy v0.3.0
 Inputs: none
 Outputs: none
@@ -42,7 +42,7 @@ Created by ubuntu on 2016-10-26 11:57:07 UTC
 Ran /home/ubuntu/recipy/integration_test/packages/run_skimage.py using /home/ubuntu/anaconda2/bin/python
 Using command-line arguments: io_imread
 Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40) 
+Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40)
 Libraries: recipy v0.3.0
 Inputs: none
 Outputs: none
@@ -51,53 +51,6 @@ Outputs: none
 ---
 
 ## Inaccurate information logged by recipy
-
-### Version number `v?` recorded for `gdal`
-
-To replicate:
-
-```
-python -m integration_test.packages.run_gdal open
-recipy latest
-```
-```
-Run ID: 65147e09-ff0f-41f8-b14b-3631eeb517ec
-Created by ubuntu on 2016-10-26 12:03:29 UTC
-Ran /home/ubuntu/recipy/integration_test/packages/run_gdal.py using /home/ubuntu/anaconda2/bin/python
-Using command-line arguments: open
-Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40) 
-Libraries: recipy v0.3.0, gdal v?
-Inputs:
-/home/ubuntu/recipy/integration_test/packages/data/gdal/image.tiff (2ad9477aaee27917b88bcbaadf0800488ef46b0d)
-Outputs: none
-```
-
-Test configuration sets `libraries` to `[]` for now.
-
-### Version number `v?` recorded for `lxml`
-
-To replicate:
-
-```
-python -m integration_test.packages.run_lxml parse
-recipy latest
-```
-
-```
-Run ID: bec8f3a3-1611-4bec-9c27-f0da0b9a16cf
-Created by ubuntu on 2016-10-26 12:02:29 UTC
-Ran /home/ubuntu/recipy/integration_test/packages/run_lxml.py using /home/ubuntu/anaconda2/bin/python
-Using command-line arguments: parse
-Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40) 
-Libraries: recipy v0.3.0, lxml v?
-Inputs:
-/home/ubuntu/recipy/integration_test/packages/data/lxml/data.xml (cba2e575c253faab68f89fd7a9bc54a427b18d13)
-Outputs: none
-```
-
-Test configuration sets `libraries` to `[]` for now.
 
 ### Two inputs recorded for `nib.spm2analyze.Spm2AnalyzeImage.from_filename`
 
@@ -113,7 +66,7 @@ Created by ubuntu on 2016-10-26 12:10:00 UTC
 Ran /home/ubuntu/recipy/integration_test/packages/run_nibabel.py using /home/ubuntu/anaconda2/bin/python
 Using command-line arguments: spm2analyze_from_filename
 Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40) 
+Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40)
 Libraries: recipy v0.3.0, nibabel v2.0.2
 Inputs:
 /home/ubuntu/recipy/integration_test/packages/data/nibabel/spm2_image (None)
@@ -121,7 +74,7 @@ Inputs:
 Outputs: none
 ```
 
-There should only be one file name. 
+There should only be one file name.
 
 Test configuration sets expected `inputs` to be `[ spm2_image,
 spm2_image ]` for now.
@@ -227,7 +180,7 @@ TypeError: super() argument 1 must be type, not FunctionWrapper
 To replicate:
 
 ```
-python -m integration_test.packages.run_pandas panel_to_excel 
+python -m integration_test.packages.run_pandas panel_to_excel
 ```
 ```
 Traceback (most recent call last):
