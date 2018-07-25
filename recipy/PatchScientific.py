@@ -72,6 +72,8 @@ class PatchTifffile(PatchSimple):
     input_wrapper = create_wrapper(log_input, 0, 'tifffile')
     output_wrapper = create_wrapper(log_output, 0, 'tifffile')
 
+    add_module_to_db(modulename, input_functions, output_functions)
+
 class PatchImageio(PatchSimple):
     modulename = 'imageio'
 
@@ -80,6 +82,8 @@ class PatchImageio(PatchSimple):
 
     input_wrapper = create_wrapper(log_input, 0, 'imageio')
     output_wrapper = create_wrapper(log_output, 0, 'imageio')
+
+    add_module_to_db(modulename, input_functions, output_functions)
 
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
                                 PatchNIBabel(), PatchTifffile(),
