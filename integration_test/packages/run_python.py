@@ -2,7 +2,8 @@
 Sample script that runs Python functions logged by recipy.
 """
 
-# Copyright (c) 2016 University of Edinburgh.
+# Copyright (c) 2016, 2018 University of Edinburgh and Netherlands eScience
+# Center
 
 from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
