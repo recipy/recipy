@@ -122,7 +122,12 @@ def get_packages():
     packages = pkg_resources.working_set
     packages_dict = {}
     for package in packages:
+        # Some packages are imported using their `package.key` (keys do not
+        # contain capitals), e.g., gdal. Others are imported using their
+        # `package.project_name`, e.g., netCDF4. So, both the `key` and
+        # `project_name` are added to the `packages_dict`.
         packages_dict[package.key] = package.version
+        packages_dict[package.project_name] = package.version
     return packages_dict
 
 
