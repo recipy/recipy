@@ -12,6 +12,8 @@ import recipy
 
 import os
 import sys
+import warnings
+import pytest
 
 from integration_test.packages.base import Base
 
@@ -38,6 +40,19 @@ class PythonSample(Base):
         with recipy.open('out.txt', 'w') as f:
             f.write("This is a test")
         os.remove(file_name)
+
+    def warn(self):
+        """
+        Raise a warning.
+        """
+        warnings.warn('This is a warning.')
+
+    def error(self):
+        """
+        Raise an error.
+        """
+        with pytest.raises(ValueError):
+            raise ValueError('This is an error.')
 
 
 if __name__ == "__main__":

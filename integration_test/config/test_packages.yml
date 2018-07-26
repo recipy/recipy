@@ -5,6 +5,8 @@ test_cases:
 - arguments: [ open ]
   outputs: [ out.txt ]
   skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
+- arguments: [ warn ]
+- arguments: [ error ]
 ---
 script: run_numpy_as_opaque.py
 libraries: [ numpy ]
