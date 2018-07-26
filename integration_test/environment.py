@@ -2,8 +2,8 @@
 Functions to access information about the execution environment.
 """
 
-# Copyright (c) 2015-2016 University of Edinburgh and
-# University of Southampton.
+# Copyright (c) 2015-2016, 2018 University of Edinburgh,
+# University of Southampton and Netherlands eScience Center.
 
 from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
