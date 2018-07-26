@@ -211,7 +211,7 @@ def log_exception(typ, value, traceback):
     sys.__excepthook__(typ, value, traceback)
 
 
-def log_warning(msg, typ, script, lineno, file, line, **kwargs):
+def log_warning(msg, typ, script, lineno, file=None, line=None, **kwargs):
     if option_set('general', 'debug'):
         print('Logging warning "%s"' % str(msg))
 
@@ -228,7 +228,7 @@ def log_warning(msg, typ, script, lineno, file, line, **kwargs):
     db.close()
 
     # Done logging, print warning to stderr
-    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno, line))
+    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno, line=line))
 
 
 def add_module_to_db(modulename, input_functions, output_functions,
