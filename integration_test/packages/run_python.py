@@ -29,8 +29,9 @@ class PythonSample(Base):
         Constructor.
         """
         Base.__init__(self)
+        self.data_dir = os.path.join(self.current_dir, "data", "python")
 
-    def open(self):
+    def open_write_args(self):
         """
         Use recipy.open to save a file out.txt.
         """
@@ -39,6 +40,38 @@ class PythonSample(Base):
             f.write("This is a test")
         os.remove(file_name)
 
+    def open_write_kwargs(self):
+        """
+        Use recipy.open to save a file out.txt.
+        """
+        file_name = os.path.join(self.current_dir, "out.txt")
+        with recipy.open(file_name, mode='w') as f:
+            f.write("This is a test")
+        os.remove(file_name)
+
+    def open_read_args(self):
+        """
+        Use recipy.open to save a file out.txt.
+        """
+        file_name = os.path.join(self.data_dir, "in.txt")
+        with recipy.open(file_name, 'r') as f:
+            pass
+
+    def open_read_kwargs(self):
+        """
+        Use recipy.open to save a file out.txt.
+        """
+        file_name = os.path.join(self.data_dir, "in.txt")
+        with recipy.open(file_name, mode='r') as f:
+            pass
+
+    def open_default(self):
+        """
+        Use recipy.open to save a file out.txt.
+        """
+        file_name = os.path.join(self.data_dir, "in.txt")
+        with recipy.open(file_name) as f:
+            pass
 
 if __name__ == "__main__":
     PythonSample().invoke(sys.argv)

@@ -2,9 +2,17 @@
 script: run_python.py
 libraries: [ ]
 test_cases:
-- arguments: [ open ]
+- arguments: [ open_write_args ]
   outputs: [ out.txt ]
-  skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
+  #skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
+- arguments: [ open_write_kwargs ]
+  outputs: [ out.txt ]
+- arguments: [ open_read_args ]
+  inputs: [ in.txt ]
+- arguments: [ open_read_kwargs ]
+  inputs: [ in.txt ]
+- arguments: [ open_default ]
+  inputs: [ in.txt ]
 ---
 script: run_numpy_as_opaque.py
 libraries: [ numpy ]
