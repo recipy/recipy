@@ -1,8 +1,10 @@
 import sys
 from .PatchSimple import PatchSimple
+from .PatchFileOpenLike import PatchFileOpenLike
 
 from .log import log_input, log_output, add_module_to_db
-from recipyCommon.utils import create_wrapper, multiple_insert
+from recipyCommon.utils import create_wrapper, create_argument_wrapper, \
+                               multiple_insert
 
 
 class PatchGDAL(PatchSimple):
@@ -89,6 +91,18 @@ class PatchImageio(PatchSimple):
 
     add_module_to_db(modulename, input_functions, output_functions)
 
+
+class PatchNetCDF4(PatchFileOpenLike):
+    modulename = 'netCDF4'
+
+    functions = ['Dataset']
+
+    wrapper = create_argument_wrapper(log_input, log_output, 0, 'mode', 'ra',
+                                      'aw', 'r', 'netCDF4')
+
+    add_module_to_db(modulename, functions, functions)
+
+
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
                                 PatchNIBabel(), PatchTifffile(),
-                                PatchImageio()])
+                                PatchImageio(), PatchNetCDF4()])

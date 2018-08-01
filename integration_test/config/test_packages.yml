@@ -220,3 +220,14 @@ test_cases:
   inputs: [ image.tiff ]
 - arguments: [ imsave ]
   outputs: [ image2.tiff ]
+---
+script: run_netcdf4.py
+libraries: [ netCDF4 ]
+test_cases:
+- arguments: [ dataset_read ]
+  inputs: [ testrh.nc ]
+- arguments: [ dataset_write ]
+  outputs: [ data.nc ]
+- arguments: [ dataset_append ]
+  inputs: [ testrh.nc ]
+  outputs: [ testrh.nc ]

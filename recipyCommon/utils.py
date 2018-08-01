@@ -1,6 +1,7 @@
 import wrapt
 import imp
 import os
+import warnings
 from datetime import datetime
 
 from tinydb import TinyDB
@@ -88,6 +89,21 @@ def create_wrapper(function, arg_loc, source):
     @wrapt.decorator
     def f(self, wrapped, instance, args, kwargs):
         function(args[arg_loc], source)
+        return wrapped(*args, **kwargs)
+
+    return f
+
+
+def create_argument_wrapper(log_input_function, log_output_function, arg_loc,
+                            kwarg_name, input_values, output_values,
+                            default_value, source):
+    @wrapt.decorator
+    def f(self, wrapped, instance, args, kwargs):
+        val = kwargs.get(kwarg_name, default_value)
+        if val in input_values:
+            log_input_function(args[arg_loc], source)
+        if val in output_values:
+            log_output_function(args[arg_loc], source)
         return wrapped(*args, **kwargs)
 
     return f
