@@ -13,6 +13,7 @@ from tinydb import Query
 import difflib
 import warnings
 import codecs
+import six
 from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
@@ -143,7 +144,7 @@ def log_input(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if type(filename) is not str:
+    if not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
@@ -172,7 +173,7 @@ def log_output(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if type(filename) is not str:
+    if not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
