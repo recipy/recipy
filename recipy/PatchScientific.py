@@ -103,6 +103,21 @@ class PatchNetCDF4(PatchFileOpenLike):
     add_module_to_db(modulename, functions, functions)
 
 
+class PatchXarray(PatchSimple):
+    modulename = 'xarray'
+
+    # not patched: open_zarr, Dataset.to_zarr, save_mfdataset, Dataset.load,
+    # DataArray.load
+    input_functions = ['open_dataset', 'open_mfdataset', 'open_rasterio',
+                       'open_dataarray']
+    output_functions = ['Dataset.to_netcdf', 'DataArray.to_netcdf']
+
+    input_wrapper = create_wrapper(log_input, 0, modulename)
+    output_wrapper = create_wrapper(log_output, 0, modulename)
+
+    add_module_to_db(modulename, input_functions, output_functions)
+
+
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
                                 PatchNIBabel(), PatchTifffile(),
-                                PatchImageio(), PatchNetCDF4()])
+                                PatchImageio(), PatchNetCDF4(), PatchXarray()])

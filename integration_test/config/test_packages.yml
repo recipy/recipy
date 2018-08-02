@@ -231,3 +231,25 @@ test_cases:
 - arguments: [ dataset_append ]
   inputs: [ testrh.nc ]
   outputs: [ testrh.nc ]
+---
+script: run_xarray.py
+libraries: [ xarray ]
+test_cases:
+- arguments: [ open_dataset ]
+# recipy logs the input file twice
+  inputs: [ soilPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc ]
+- arguments: [ open_mfdataset_glob ]
+# recipy logs the input files in addition to the glob pattern
+  inputs: [ '*.nc', soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+- arguments: [ open_mfdataset_list ]
+# recipy logs the input files twice
+  inputs: [ soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+- arguments: [ open_rasterio ]
+  inputs: [ image.tiff ]
+- arguments: [ open_dataarray ]
+# recipy logs the input files twice
+  inputs: [ data_array.nc, data_array.nc ]
+- arguments: [ dataset_to_netcdf ]
+  outputs: [ data.nc ]
+- arguments: [ dataarray_to_netcdf ]
+  outputs: [ data.nc ]
