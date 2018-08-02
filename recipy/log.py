@@ -144,7 +144,12 @@ def log_input(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if not isinstance(filename, six.string_types):
+    # Some packages, e.g., xarray, accept a list of files as input argument
+    if isinstance(filename, list):
+        for f in filename:
+            log_input(f, source)
+        return
+    elif not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
