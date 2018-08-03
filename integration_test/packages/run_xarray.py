@@ -18,7 +18,7 @@ import numpy as np
 from integration_test.packages.base import Base
 
 
-class NetCDF4Sample(Base):
+class XarraySample(Base):
     """
     Sample script that runs xarray functions logged by recipy.
 
@@ -105,4 +105,4 @@ class NetCDF4Sample(Base):
 
 
 if __name__ == "__main__":
-    NetCDF4Sample().invoke(sys.argv)
+    XarraySample().invoke(sys.argv)
