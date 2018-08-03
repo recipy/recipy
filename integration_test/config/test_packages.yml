@@ -240,7 +240,7 @@ test_cases:
   inputs: [ soilPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc ]
 - arguments: [ open_mfdataset_glob ]
 # recipy logs the input files in addition to the glob pattern
-  inputs: [ '*.nc', soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+  inputs: [ '*PropertiesRhineMeuse30min.nc', soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
 - arguments: [ open_mfdataset_list ]
 # recipy logs the input files twice
   inputs: [ soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]

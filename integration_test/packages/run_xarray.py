@@ -58,7 +58,7 @@ class XarraySample(Base):
         Use xarray.open_mfdataset to read multiple netcdf files with a glob
         pattern.
         """
-        pattern = os.path.join(self.data_dir, "*.nc")
+        pattern = os.path.join(self.data_dir, "*PropertiesRhineMeuse30min.nc")
         xarray.open_mfdataset(pattern)
 
     def open_mfdataset_list(self):
