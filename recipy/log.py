@@ -178,7 +178,11 @@ def log_output(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if not isinstance(filename, six.string_types):
+    if isinstance(filename, list):
+        for f in filename:
+            log_output(f, source)
+        return
+    elif not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
