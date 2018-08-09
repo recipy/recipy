@@ -253,3 +253,5 @@ test_cases:
   outputs: [ data.nc ]
 - arguments: [ dataarray_to_netcdf ]
   outputs: [ data.nc ]
+- arguments: [ save_mfdataset ]
+  outputs: [ data1.nc, data2.nc ]

@@ -103,6 +103,24 @@ class XarraySample(Base):
         data.to_netcdf(file_name)
         os.remove(file_name)
 
+    def save_mfdataset(self):
+        """
+        Use xarray.save_mfdataset to write multiple netcdf files.
+        """
+        dar1 = xarray.DataArray(np.random.randn(2, 3))
+        dar2 = xarray.DataArray(np.random.randn(2, 3))
+
+        data1 = xarray.Dataset({'foo': dar1, 'bar': ('x', [1, 2])})
+        data2 = xarray.Dataset({'foo': dar2, 'bar': ('x', [1, 2])})
+
+        file_names = [os.path.join(self.data_dir, f)
+                      for f in ['data1.nc', 'data2.nc']]
+
+        xarray.save_mfdataset([data1, data2], file_names)
+
+        for f in file_names:
+            os.remove(f)
+
 
 if __name__ == "__main__":
     XarraySample().invoke(sys.argv)

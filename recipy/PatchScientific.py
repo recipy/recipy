@@ -1,7 +1,7 @@
 import sys
 from .PatchSimple import PatchSimple
 from .PatchFileOpenLike import PatchFileOpenLike
-
+from .PatchMultipleWrappers import PatchMultipleWrappers, WrapperList
 from .log import log_input, log_output, add_module_to_db
 from recipyCommon.utils import create_wrapper, create_argument_wrapper, \
                                multiple_insert
@@ -103,17 +103,19 @@ class PatchNetCDF4(PatchFileOpenLike):
     add_module_to_db(modulename, functions, functions)
 
 
-class PatchXarray(PatchSimple):
+class PatchXarray(PatchMultipleWrappers):
     modulename = 'xarray'
 
-    # not patched: open_zarr, Dataset.to_zarr, save_mfdataset, Dataset.load,
-    # DataArray.load
+    wrappers = WrapperList()
+
+    # not patched: open_zarr, Dataset.to_zarr, Dataset.load, DataArray.load
     input_functions = ['open_dataset', 'open_mfdataset', 'open_rasterio',
                        'open_dataarray']
     output_functions = ['Dataset.to_netcdf', 'DataArray.to_netcdf']
 
-    input_wrapper = create_wrapper(log_input, 0, modulename)
-    output_wrapper = create_wrapper(log_output, 0, modulename)
+    wrappers.add_inputs(input_functions, log_input, 0, modulename)
+    wrappers.add_outputs(output_functions, log_output, 0, modulename)
+    wrappers.add_outputs('save_mfdataset', log_output, 1, modulename)
 
     add_module_to_db(modulename, input_functions, output_functions)
 
