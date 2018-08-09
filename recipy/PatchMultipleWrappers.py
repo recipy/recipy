@@ -20,7 +20,6 @@ class PatchMultipleWrappers(PatchImporter):
         """Do the patching of `input_functions` and `output_functions`
         in `mod` using `input_wrapper` and `output_wrapper` respectively.
         """
-        print(self.__class__)
         for f in self.wrappers.functions:
             if not self._ignore(f):
                 if option_set('general', 'debug'):
