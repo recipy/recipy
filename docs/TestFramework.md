@@ -1,4 +1,4 @@
-# recipy test framework 
+# recipy test framework
 
 recipy's test framework is in `integration_test`. The test framework
 has been designed to run under both Python 2.7+ and Python 3+.
@@ -17,7 +17,7 @@ command-line options include:
 * `-rs`: show extra test summary information for tests that were
   skipped.
 * `--junit-xml=report.xml`: create a JUnit-style test report in the
-  file `report.xml`. 
+  file `report.xml`.
 
 ---
 
@@ -67,7 +67,7 @@ Package-specific tests use a test configuration file located in
 `integration_test/config/test_packages.yml`.
 
 You can specify a different test configuration file using a
-`RECIPY_TEST_CONFIG` environment variable. For example: 
+`RECIPY_TEST_CONFIG` environment variable. For example:
 
 ```
 RECIPY_TEST_CONFIG=test_my_package.yml py.test -v -rs \
@@ -108,7 +108,8 @@ test_cases:
   arguments: [..., ..., ...]
   inputs: [INPUT, INPUT, ...]
   outputs: [OUTPUT, OUTPUT, ...]
-  skip: "Known issue with recipy" 
+  skip: "Known issue with recipy"
+  skip_py_version: [3.4, ...]
 - etc
 ---
 script: SCRIPT
@@ -145,6 +146,10 @@ Each script also has one or more test cases, each of which defines:
   omitted.
 * `skip`: An optional value. If present this test case is marked as
   skipped. The value is the reason for skipping the test case.
+* `skip_py_version`: An optional value. If present this test case is marked
+   as skipped if the current Python version is in the list of values. Should
+   be used when a patched library does not support a Python version that is
+   supported by recipy.
 
 For example:
 
@@ -225,7 +230,7 @@ problems](./PackageVersionFailures.md).
 
 Certain third-party packages gave rise to issues, when attempting to
 configure the test framework for these. The packages and issues, and
-how the test framework has been configured to currently skip these are 
+how the test framework has been configured to currently skip these are
 described in [recipy and third-party package issues](./Issues.md).
 
 ---
@@ -408,8 +413,8 @@ The output might look like
 ============================= test session starts ==============================
 platform linux2 -- Python 2.7.12, pytest-2.9.2, py-1.4.31, pluggy-0.3.1 -- /home/ubuntu/anaconda2/bin/python
 cachedir: .cache
-rootdir: /home/ubuntu/recipy, inifile: 
-collected 1 items 
+rootdir: /home/ubuntu/recipy, inifile:
+collected 1 items
 
 integration_test/test_packages.py::test_scripts[run_numpy_py__home_ubuntu_data_data_csv__home_ubuntu_data_out_csv] PASSED
 
@@ -450,7 +455,7 @@ done by:
 * Writing a test configuration file that just runs that script.
 * Setting up a test environment (e.g. as part of a Travis CI or
   AppVeyor configuration file) that installs the specific package and
-  runs `py.test integration_test/test_packages.py` using the 
+  runs `py.test integration_test/test_packages.py` using the
   test configuration file.
 
 `test_recipy.py` does not validate whether multiple test results are
