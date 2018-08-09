@@ -288,6 +288,7 @@ def add_dict(field, dict_of_values):
 @atexit.register
 def log_flush():
     log_exit()
+    dedupe_inputs()
     hash_outputs()
     output_file_diffs()
 
@@ -362,3 +363,24 @@ def output_file_diffs():
 
         # delete temporary file
         os.remove(item['tempfilename'])
+
+
+def dedupe_inputs():
+    """Remove inputs that are logged muliple times.
+
+    Sometimes patched libraries use other patched libraries to open files.
+    E.g., xarray internally uses netCDF4 to open netcdf files. If this happens,
+    and recipy is configured to log file hashes, inputs are logged multiple
+    times. Hashed inputs are stored as a list in the database, and tinydb does
+    not automatically dedupe lists.
+
+    Outputs do not need to be deduped, because file hashed are added after the
+    run is finished, and tinydb can automatically dedupe strings.
+    """
+    if option_set('ignored metadata', 'input_hashes'):
+        return
+    db = open_or_create_db()
+    run = db.get(eid=RUN_ID)
+    new_inputs = list(set([tuple(inp) for inp in run['inputs']]))
+    db.update({'inputs': new_inputs}, eids=[RUN_ID])
+    db.close()

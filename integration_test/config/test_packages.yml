@@ -92,8 +92,7 @@ test_cases:
 - arguments: [ spm99analyze_to_filename ]
   outputs: [ out_spm99_image ]
 - arguments: [ spm2analyze_from_filename ]
-# recipy logs the input file twice
-  inputs: [ spm2_image, spm2_image ]
+  inputs: [ spm2_image ]
 - arguments: [ spm2analyze_to_filename ]
   outputs: [ out_spm2_image ]
 ---
@@ -236,19 +235,16 @@ script: run_xarray.py
 libraries: [ xarray ]
 test_cases:
 - arguments: [ open_dataset ]
-# recipy logs the input file twice
-  inputs: [ soilPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc ]
+  inputs: [ soilPropertiesRhineMeuse30min.nc ]
 - arguments: [ open_mfdataset_glob ]
 # recipy logs the input files in addition to the glob pattern
   inputs: [ '*PropertiesRhineMeuse30min.nc', soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
 - arguments: [ open_mfdataset_list ]
-# recipy logs the input files twice
-  inputs: [ soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc, soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+  inputs: [ soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
 - arguments: [ open_rasterio ]
   inputs: [ image.tiff ]
 - arguments: [ open_dataarray ]
-# recipy logs the input files twice
-  inputs: [ data_array.nc, data_array.nc ]
+  inputs: [ data_array.nc ]
 - arguments: [ dataset_to_netcdf ]
   outputs: [ data.nc ]
 - arguments: [ dataarray_to_netcdf ]
