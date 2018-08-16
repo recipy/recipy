@@ -120,6 +120,20 @@ class PatchXarray(PatchMultipleWrappers):
     add_module_to_db(modulename, input_functions, output_functions)
 
 
+class PatchIris(PatchSimple):
+    modulename = 'iris'
+
+    input_functions = ['iris.load', 'iris.load_cube', 'iris.load_cubes',
+                       'iris.load_raw']
+    output_functions = ['iris.save']
+
+    input_wrapper = create_wrapper(log_input, 0, modulename)
+    output_wrapper = create_wrapper(log_output, 1, modulename)
+
+    add_module_to_db(modulename, input_functions, output_functions)
+
+
 multiple_insert(sys.meta_path, [PatchGDAL(), PatchSKLearn(),
                                 PatchNIBabel(), PatchTifffile(),
-                                PatchImageio(), PatchNetCDF4(), PatchXarray()])
+                                PatchImageio(), PatchNetCDF4(), PatchXarray(),
+                                PatchIris()])
