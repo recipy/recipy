@@ -55,6 +55,7 @@ install:
   - pip install tifffile
   - conda install netCDF4
   - conda install xarray rasterio
+  - conda install -c conda-forge iris
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .

@@ -259,3 +259,23 @@ test_cases:
 - arguments: [ save_mfdataset ]
   outputs: [ data1.nc, data2.nc ]
   skip_py_version: [ 3.4 ]
+---
+script: run_iris.py
+# the test package can't detect the iris installation
+#libraries: [ iris ]
+test_cases:
+- arguments: [ load ]
+  inputs: ['cube1.nc']
+- arguments: [ load_list ]
+  inputs: ['cube1.nc', 'cube2.nc']
+- arguments: [ load_glob ]
+# recipy logs the input files in addition to the glob pattern
+  inputs: ['cube*.nc', 'cube1.nc', 'cube2.nc']
+- arguments: [ load_cube ]
+  inputs: [ cube1.nc ]
+- arguments: [ load_cubes ]
+  inputs: [ cube1.nc, cube2.nc ]
+- arguments: [ load_raw ]
+  inputs: [ cube1.nc ]
+- arguments: [ save ]
+  outputs: [ cube.nc ]
