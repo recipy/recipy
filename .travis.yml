@@ -72,3 +72,5 @@ script:
   # Run py.test with 'v' (verbose) to show test function names and
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test
+  # run the non-behave tests in the test directory
+  - py.test test
