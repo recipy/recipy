@@ -13,6 +13,9 @@ class RecipyMagic(Magics):
         self.recipyModule = None
         self.run_in_progress = False
 
+        import recipy
+        self.recipyModule = recipy
+
     def loadNotebookName_js(self):
         cell = '''
 %%javascript
@@ -57,10 +60,9 @@ kernel.execute(command);
         if notebookName is None:
             print("[Recipy] Warning! Unable to get notebook name! Try running notebook step by step")
             notebookName = "<unknown-notebook>"
-        import recipy
-        recipy.log_init(notebookName=notebookName)
+
+        self.recipyModule.log_init(notebookName=notebookName)
         self.run_in_progress = True
-        self.recipyModule = recipy
         return None
 
     @line_magic
