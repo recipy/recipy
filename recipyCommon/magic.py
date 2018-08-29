@@ -1,6 +1,7 @@
 from IPython.core.magic import (Magics, magics_class, line_magic,
                                 cell_magic, line_cell_magic)
 import time
+import warnings
 
 from recipyCommon.config import set_notebook_mode
 
@@ -10,6 +11,7 @@ class RecipyMagic(Magics):
     def __init__(self, shell):
         super(RecipyMagic, self).__init__(shell)
         self.recipyModule = None
+        self.run_in_progress = False
 
     def loadNotebookName_js(self):
         cell = '''
@@ -57,6 +59,7 @@ kernel.execute(command);
             notebookName = "<unknown-notebook>"
         import recipy
         recipy.log_init(notebookName=notebookName)
+        self.run_in_progress = True
         self.recipyModule = recipy
         return None
 
@@ -65,7 +68,12 @@ kernel.execute(command);
         "my line magic"
         # print("Full access to the main IPython object:", self.shell)
         # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
-        self.recipyModule.log_flush()
+        if self.run_in_progress:
+            self.recipyModule.log_flush()
+            self.run_in_progress = False
+        else:
+            warnings.warn('Please run %recipyOn before running %recipyOff.',
+                          RuntimeWarning)
         return None
 
 def load_ipython_extension(ipython):
