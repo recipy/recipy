@@ -11,6 +11,8 @@ def session_ip():
 @pytest.fixture(scope='function')
 def notebook(session_ip):
     session_ip.magic('load_ext recipyCommon.magic')
+    # Set notebook name to speed up running the tests
+    session_ip.run_cell(raw_cell='recipyNotebookName="test_notebook.ipynb"')
 
     yield session_ip
 
