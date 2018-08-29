@@ -92,11 +92,15 @@ def get_gui_port():
     except Error:
         return 9000
 
-_notebookMode = False
+_notebook_name = None
 
 def get_notebook_mode():
-    return _notebookMode
+    return _notebook_name is not None
 
-def set_notebook_mode(mode):
-    global _notebookMode
-    _notebookMode = mode
+def set_notebook_name(name):
+    global _notebook_name
+    _notebook_name = name
+
+
+def get_notebook_name():
+    return _notebook_name

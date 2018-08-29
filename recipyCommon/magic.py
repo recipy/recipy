@@ -1,8 +1,17 @@
 from IPython.core.magic import Magics, magics_class, line_magic
-import time
 import warnings
 
-from recipyCommon.config import set_notebook_mode
+import json
+import os.path
+import re
+import ipykernel
+import requests
+
+from requests.compat import urljoin
+
+from notebook.notebookapp import list_running_servers
+
+from recipyCommon.config import set_notebook_name
 
 
 @magics_class
@@ -13,39 +22,31 @@ class RecipyMagic(Magics):
         self.run_in_progress = False
         self.ran_recipyOn = False
 
+        set_notebook_name(self.get_notebook_name())
+
         import recipy
         self.recipyModule = recipy
 
-    def loadNotebookName_js(self):
-        cell = '''
-%%javascript
+    def get_notebook_name(self):
+        """
+        Return the full path of the jupyter notebook.
 
-var kernel = IPython.notebook.kernel;
-var attribs = document.body.attributes;
-var command = "recipyNotebookName = " + "'"+attribs['data-notebook-name'].value+"'";
-console.log("Load notebook name...")
-kernel.execute(command);
-'''
-        r = self.shell.run_cell(cell)
-        return r
-
-    def getNotebookName(self):
-        retries = 5
-        while retries > 0:
-            if 'recipyNotebookName' in self.shell.user_ns:
-                return self.shell.user_ns['recipyNotebookName']
-            else:
-                retries -= 1
-                time.sleep(1)
-
-        return None
-
-    @line_magic
-    def loadNotebookName(self, line):
-        "my line magic"
-        # print("Full access to the main IPython object:", self.shell)
-        # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
-        self.loadNotebookName_js()
+        Taken from https://github.com/jupyter/notebook/issues/1000
+        """
+        try:
+            connection_file = ipykernel.connect.get_connection_file()
+            kernel_id = re.search('kernel-(.*).json', connection_file).group(1)
+            servers = list_running_servers()
+            for ss in servers:
+                response = requests.get(urljoin(ss['url'], 'api/sessions'),
+                                        params={'token': ss.get('token', '')})
+                for nn in json.loads(response.text):
+                    if nn['kernel']['id'] == kernel_id:
+                        relative_path = nn['notebook']['path']
+                        return os.path.join(ss['notebook_dir'], relative_path)
+        except RuntimeError:
+            # We are probably running tests
+            return 'test_notebook.ipynb'
         return None
 
     @line_magic
@@ -53,7 +54,6 @@ kernel.execute(command);
         "my line magic"
         # print("Full access to the main IPython object:", self.shell)
         # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
-        set_notebook_mode(True)
 
         if self.run_in_progress:
             msg = 'Run in progress. Please run %recipyOff to finish the ' \
@@ -61,18 +61,13 @@ kernel.execute(command);
             warnings.warn(msg, RuntimeWarning)
             return
 
-        notebookName = self.getNotebookName()
-        if notebookName is None:
-            msg = 'Unable to get notebook name! Try running notebook step ' \
-                  'by step'
-            warnings.warn(msg, RuntimeWarning)
-            notebookName = "<unknown-notebook>"
+        set_notebook_name(self.get_notebook_name())
 
         # No need to do log_init() the first time recipyOn is run after loading
         # the extension (and importing recipy), because it is done when recipy
         # is imported.
         if self.ran_recipyOn:
-            self.recipyModule.log_init(notebookName=notebookName)
+            self.recipyModule.log_init()
         self.ran_recipyOn = True
         self.run_in_progress = True
         return None

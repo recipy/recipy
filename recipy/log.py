@@ -17,7 +17,8 @@ import six
 from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
-from recipyCommon.config import option_set, get_db_path, get_notebook_mode
+from recipyCommon.config import option_set, get_db_path, get_notebook_mode, \
+                                get_notebook_name
 from recipyCommon.utils import open_or_create_db
 from recipyCommon.libraryversions import get_version
 
@@ -29,7 +30,7 @@ def new_run():
     log_init()
 
 
-def log_init(notebookName=None):
+def log_init():
     """Do the initial logging for a new run.
 
     Works out what script has been run, creates a new unique run ID,
@@ -37,13 +38,9 @@ def log_init(notebookName=None):
 
     This is called when running `import recipy`.
     """
-    notebookMode = get_notebook_mode()
-    if notebookMode and notebookName is None:
-        # Avoid first call without Notebook name
-        return
-
-    if notebookMode:
-        scriptpath = notebookName
+    notebook_mode = get_notebook_mode()
+    if notebook_mode:
+        scriptpath = get_notebook_name()
         cmd_args = sys.argv[1:]
     # Get the path of the script we're running
     # When running python -m recipy ..., during the recipy import argument 0
@@ -83,10 +80,10 @@ def log_init(notebookName=None):
         "custom_values": {}
     }
 
-    if not notebookName and not option_set('ignored metadata', 'git'):
+    if not notebook_mode and not option_set('ignored metadata', 'git'):
         add_git_info(run, scriptpath)
 
-    if not notebookName and not option_set('ignored metadata', 'svn'):
+    if not notebook_mode and not option_set('ignored metadata', 'svn'):
         add_svn_info(run, scriptpath)
 
 

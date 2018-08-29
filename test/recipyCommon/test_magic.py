@@ -41,12 +41,3 @@ def test_magic_recipyoff_without_recipyon(notebook):
             notebook.run_line_magic(magic_name='recipyOff', line='')
     assert 'recipy run inserted, with ID' not in output.stdout
     assert 'recipy run complete' not in output.stdout
-
-
-def test_warn_when_notebook_name_cannot_be_found(notebook):
-    notebook.run_cell(raw_cell='del recipyNotebookName')
-    with pytest.warns(RuntimeWarning):
-        notebook.run_line_magic(magic_name='recipyOn', line='')
-        notebook.run_line_magic(magic_name='recipyOff', line='')
-    # set variable again, so the tests run after this one are fast again
-    notebook.run_cell(raw_cell='recipyNotebookName="test_notebook.ipynb"')
