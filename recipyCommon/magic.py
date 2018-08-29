@@ -63,7 +63,9 @@ kernel.execute(command);
 
         notebookName = self.getNotebookName()
         if notebookName is None:
-            print("[Recipy] Warning! Unable to get notebook name! Try running notebook step by step")
+            msg = 'Unable to get notebook name! Try running notebook step ' \
+                  'by step'
+            warnings.warn(msg, RuntimeWarning)
             notebookName = "<unknown-notebook>"
 
         # No need to do log_init() the first time recipyOn is run after loading
