@@ -36,5 +36,8 @@ def test_run_recipyon_twice_without_running_recipyoff(notebook):
 
 
 def test_magic_recipyoff_without_recipyon(notebook):
-    with pytest.warns(RuntimeWarning):
-        notebook.run_line_magic(magic_name='recipyOff', line='')
+    with capture_output() as output:
+        with pytest.warns(RuntimeWarning):
+            notebook.run_line_magic(magic_name='recipyOff', line='')
+    assert 'recipy run inserted, with ID' not in output.stdout
+    assert 'recipy run complete' not in output.stdout
