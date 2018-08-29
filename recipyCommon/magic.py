@@ -1,11 +1,10 @@
-from IPython.core.magic import (Magics, magics_class, line_magic,
-                                cell_magic, line_cell_magic)
+from IPython.core.magic import Magics, magics_class, line_magic
 import time
 import warnings
 
 from recipyCommon.config import set_notebook_mode
 
-# The class MUST call this class decorator at creation time
+
 @magics_class
 class RecipyMagic(Magics):
     def __init__(self, shell):
@@ -40,7 +39,6 @@ kernel.execute(command);
                 time.sleep(1)
 
         return None
-
 
     @line_magic
     def loadNotebookName(self, line):
@@ -90,11 +88,13 @@ kernel.execute(command);
                           RuntimeWarning)
         return None
 
+
 def load_ipython_extension(ipython):
     # The `ipython` argument is the currently active `InteractiveShell`
     # instance, which can be used in any way. This allows you to register
     # new magics or aliases, for example.
     ipython.register_magics(RecipyMagic)
+
 
 def unload_ipython_extension(ipython):
     # If you want your extension to be unloadable, put that logic here.
