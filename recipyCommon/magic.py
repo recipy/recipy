@@ -57,6 +57,12 @@ kernel.execute(command);
         # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
         set_notebook_mode(True)
 
+        if self.run_in_progress:
+            msg = 'Run in progress. Please run %recipyOff to finish the ' \
+                  'current run before starting a new one.'
+            warnings.warn(msg, RuntimeWarning)
+            return
+
         notebookName = self.getNotebookName()
         if notebookName is None:
             print("[Recipy] Warning! Unable to get notebook name! Try running notebook step by step")
