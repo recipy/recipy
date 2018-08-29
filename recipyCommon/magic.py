@@ -12,6 +12,7 @@ class RecipyMagic(Magics):
         super(RecipyMagic, self).__init__(shell)
         self.recipyModule = None
         self.run_in_progress = False
+        self.ran_recipyOn = False
 
         import recipy
         self.recipyModule = recipy
@@ -61,7 +62,12 @@ kernel.execute(command);
             print("[Recipy] Warning! Unable to get notebook name! Try running notebook step by step")
             notebookName = "<unknown-notebook>"
 
-        self.recipyModule.log_init(notebookName=notebookName)
+        # No need to do log_init() the first time recipyOn is run after loading
+        # the extension (and importing recipy), because it is done when recipy
+        # is imported.
+        if self.ran_recipyOn:
+            self.recipyModule.log_init(notebookName=notebookName)
+        self.ran_recipyOn = True
         self.run_in_progress = True
         return None
 
