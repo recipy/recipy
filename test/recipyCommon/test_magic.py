@@ -35,6 +35,6 @@ def test_run_recipyon_twice_without_running_recipyoff(notebook):
     assert 'recipy run complete' not in output.stdout
 
 
-def test_magic_recipyOff_without_recipyOn(notebook):
+def test_magic_recipyoff_without_recipyon(notebook):
     with pytest.warns(RuntimeWarning):
         notebook.run_line_magic(magic_name='recipyOff', line='')
