@@ -2,16 +2,23 @@ from IPython.core.magic import Magics, magics_class, line_magic
 import warnings
 
 import json
-import os.path
+import os
 import re
 import ipykernel
 import requests
+import tempfile
+import base64
 
 from requests.compat import urljoin
 
 from notebook.notebookapp import list_running_servers
 
+from recipy.log import log_output
 from recipyCommon.config import set_notebook_name
+
+
+embedded_image_types = ("<class 'IPython.core.display.Image'>")
+formats = ('image/png', 'image/jpeg')
 
 
 @magics_class
@@ -78,8 +85,42 @@ class RecipyMagic(Magics):
         # print("Full access to the main IPython object:", self.shell)
         # print("Variables in the user namespace:", list(self.shell.user_ns.keys()))
         if self.run_in_progress:
+            # Find embedded images
+            temp_files = []
+            hm = self.shell.history_manager
+            fmt = self.shell.display_formatter.format
+            for session, lineno, inp in hm.get_range(session=0):
+                try:
+                    obj = self.shell.user_ns['Out'][lineno]
+                    if str(obj.__class__) in embedded_image_types:
+                        # Save to temporary file
+                        fd, path = tempfile.mkstemp(prefix='embedded_image_')
+                        temp_files.append(path)
+
+                        formatted = fmt(obj, include=formats)
+
+                        for typ, data in formatted[0].items():
+                            # TODO: fix case when formatted[0] contains more
+                            # than one entry
+                            with open(path, 'wb') as f:
+                                f.write(base64.b64decode(data))
+
+                        # Log output
+                        # TODO: get the correct module
+                        # TODO: only log when file hashes are added, because
+                        # otherwise the only information that is logged is the
+                        # fact that there are embedded images
+                        log_output(path, 'recipy')
+
+                except KeyError:
+                    pass
+
             self.recipyModule.log_flush()
             self.run_in_progress = False
+
+            # Remove temporary file(s)
+            for fname in temp_files:
+                os.remove(fname)
         else:
             warnings.warn('Please run %recipyOn before running %recipyOff.',
                           RuntimeWarning)
