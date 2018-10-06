@@ -15,6 +15,7 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
+  - conda config --add channels conda-forge
   - conda update -q conda
   - conda info -a
 
@@ -46,10 +47,8 @@ install:
   - conda install pillow
   - conda install scikit-learn
   - conda install scikit-image
-  - pip install nibabel
-  - conda install gdal
-  - pip install imageio
-  - pip install tifffile
+  - conda install nibabel
+  - conda install gdal imageio tifffile
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
