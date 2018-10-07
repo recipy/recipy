@@ -6,9 +6,6 @@ matrix:
     - python: 3.4
     - python: 3.5
     - python: 3.6
-    - python: 3.7
-      dist: xenial
-      sudo: true
 
 before_install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -34,8 +31,7 @@ install:
   - source activate test-environment
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
-  - pip install pytest
-  - pip install behave
+  - conda install pytest behave
   # Install packages needed for testing recipy.
   - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
