@@ -59,6 +59,7 @@ install:
   - py.test --version
   - pip freeze
   - conda config --show
+  - python --version
   - python -c "import sys, pprint; pprint.pprint(sys.path)"
   - python -c "import tinydb"
 
