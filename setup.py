@@ -69,9 +69,10 @@ Please see https://github.com/recipy/recipy for further information.
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['wrapt', 'tinydb>=3.0.0', 'tinydb-serialization',
-                      'jinja2', 'docopt', 'GitPython', 'flask', 'colorama',
+                      'jinja2', 'docopt', 'GitPython', 'colorama',
                       'Flask-Script', 'flask_bootstrap', 'flask-wtf',
-                      'python-dateutil', 'six', "svn", "binaryornot"],
+                      'python-dateutil', 'six', "svn", "binaryornot",
+                      'flask'],
 
     entry_points={
         'console_scripts': [
