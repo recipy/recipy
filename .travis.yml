@@ -34,7 +34,8 @@ install:
   - source activate test-environment
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
-  - conda install pytest behave
+  - pip install pytest
+  - pip install behave
   # Install packages needed for testing recipy.
   - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
