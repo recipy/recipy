@@ -290,8 +290,8 @@ def get_script_test_cases(configurations, recipy_samples_directory):
             if SKIP in test_case:
                 reason = get_test_case_function_name(single_test_case)
                 reason = reason + ": " + test_case[SKIP]
-                single_test_case = pytest.mark.skip(
-                    reason=reason)((single_test_case))
+                single_test_case = pytest.param((script_path, command, test_case),
+                                                marks=pytest.mark.skip(reason=reason))
             test_cases.append(single_test_case)
     return test_cases
 
