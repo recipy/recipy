@@ -62,6 +62,8 @@ install:
   - py.test --version
   - pip freeze
   - conda config --show
+  - python -c "import tinydb"
+  - python -c "import sys, pprint; pprint.pprint(sys.path)"
 
 script:
   - cd test/ && behave
