@@ -36,3 +36,21 @@ def test_listsearch_list_of_lists_no_match(item):
 
     msg = 'listsearch({}, {}) does not return false'.format(q, item)
     assert not listsearch(q, item), msg
+
+
+def test_listsearch_empty_item():
+    item = []
+    q = 'test'
+
+    msg = 'listsearch fails when item=[]'
+
+    assert not listsearch(q, item), msg
+
+
+def test_listsearch_hash_is_none():
+    item = [u'test.csv', None]
+    q = 'test'
+
+    msg = 'listsearch fails when hash is None'
+
+    assert listsearch(q, item), msg

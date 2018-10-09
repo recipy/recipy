@@ -16,13 +16,10 @@ def open(*args, **kwargs):
     If python 2 is used, and an `encoding` parameter is passed to this
     function, `codecs` is used to open the file with proper encoding.
     """
-    if six.PY3:
-        mode = kwargs['mode']
-    else:
-        try:
-            mode = args[1]
-        except:
-            mode = 'r'
+    try:
+        mode = args[1]
+    except IndexError:
+        mode = kwargs.get('mode', 'r')
 
     # open file for reading?
     for c in 'r+':
