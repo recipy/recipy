@@ -82,6 +82,4 @@ Please see https://github.com/recipy/recipy for further information.
             'recipy=recipyCmd.recipycmd:main',
         ]
     }
-
-    #scripts=['recipy-cmd']
 )
