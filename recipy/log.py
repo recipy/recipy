@@ -221,7 +221,7 @@ def log_exception(typ, value, traceback):
     sys.__excepthook__(typ, value, traceback)
 
 
-def log_warning(msg, typ, script, lineno, file=None, line=None, **kwargs):
+def log_warning(msg, typ, script, lineno, file=None, line=None):
     if option_set('general', 'debug'):
         print('Logging warning "%s"' % str(msg))
 

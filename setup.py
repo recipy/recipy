@@ -68,10 +68,14 @@ Please see https://github.com/recipy/recipy for further information.
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
+    #
+    # Flask needs to be last here, or it screws up the installation in certain
+    # situations
     install_requires=['wrapt', 'tinydb>=3.0.0', 'tinydb-serialization',
-                      'jinja2', 'docopt', 'GitPython', 'Flask', 'colorama',
+                      'jinja2', 'docopt', 'GitPython', 'colorama',
                       'Flask-Script', 'flask_bootstrap', 'flask-wtf',
-                      'python-dateutil', 'six', "svn", "binaryornot"],
+                      'python-dateutil', 'six', "svn", "binaryornot",
+                      'flask'],
 
     entry_points={
         'console_scripts': [

@@ -1,12 +1,11 @@
 language: python
 
-python:
-  - "2.7"
-#  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-#  - "3.7"
+matrix:
+  include:
+    - python: 2.7
+    - python: 3.4
+    - python: 3.5
+    - python: 3.6
 
 before_install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -18,6 +17,7 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
+  - conda config --prepend channels conda-forge
   - conda update -q conda
   - conda info -a
 
@@ -29,16 +29,9 @@ install:
   # The following adopts approaches suggested in the above links.
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  # recipy setup.py fails to install flask for as-yet-unknown reason,
-  # and fails if it is not present, so install it explicitly.
-  - conda install flask
-  # Install recipy.
-  - python setup.py install
-  # Install behave for unit tests
-  - pip install -e . behave
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
-  - conda install pytest
+  - conda install pytest behave
   # Install packages needed for testing recipy.
   - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
@@ -49,22 +42,25 @@ install:
   - conda install pillow
   - conda install scikit-learn
   - conda install scikit-image
-  - pip install nibabel
-  - conda install gdal
-  - pip install imageio
-  - pip install tifffile
-  - conda install netCDF4
-  - conda install xarray rasterio
+  - conda install nibabel
+  - conda install gdal imageio tifffile xarray rasterio netCDF4
   - conda install -c conda-forge iris
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
+    # Install recipy.
+  - pip install .
   # Print the environment.
   - which python
   - which pip
   - which py.test
   - py.test --version
   - pip freeze
+  - conda config --show
+  - python --version
+  - python -c "import sys, pprint; pprint.pprint(sys.path)"
+  - python -c "import tinydb"
+
 
 script:
   - cd test/ && behave
