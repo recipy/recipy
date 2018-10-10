@@ -1,0 +1,77 @@
+{
+    "creators": [
+        {
+            "affiliation": "EPCC, University of Edinburgh",
+            "name": "Jackson, Michael"
+        },
+        {
+            "affiliation": "University of Southampton",
+            "name": "Wilson, Robin"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van der Zwaan, Janneke",
+            "orcid": "0000-0002-8329-7000"
+        },
+        {
+            "name": "Steinbrook, Daniel W."
+        },
+        {
+            "affiliation": "Google",
+            "name": "Rathgeber, Florian"
+        },
+        {
+            "affiliation": "University College London",
+            "name": "Alegre, Raquel"
+        },
+        {
+            "affiliation": "Imperial College London",
+            "name": "Edwards, Thomas"
+        },
+        {
+            "affiliation": "JHU/APL",
+            "name": "Costello, Cash"
+        },
+        {
+            "name": "Danny, Samuel"
+        },
+        {
+            "name": "Chwiejczak, Jan"
+        },
+        {
+            "affiliation": "FMRIB, University of Oxford",
+            "name": "Cottaar, Michiel"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Martinez-Ortiz, Carlos"
+        },
+        {
+            "affiliation": "University of Kansas",
+            "name": "Vieglais, Dave"
+        },
+        {
+            "affiliation": "Johns Hopkins; UPMC",
+            "name": "Kucharavy, Andrei"
+        },
+        {
+            "name": "Ruben, Gary"
+        },
+        {
+            "name": "Upadhyay, Utkarsh"
+        }
+    ],
+    "description": "\"Imagine the situation: You’ve written some wonderful Python code which produces a beautiful graph as an output. You save that graph, naturally enough, as graph.png. You run the code a couple of times, each time making minor modifications. You come back to it the next week/month/year. Do you know how you created that graph? What input data? What version of your code? If you’re anything like me then the answer will often, frustratingly, be “no”. Of course, you then waste lots of time trying to work out how you created it, or even give up and never use it in that journal paper that will win you a Nobel Prize...\nrecipy (from recipe and python) is a Python module that will save you from this situation! (Although it can’t guarantee that your resulting paper will win a Nobel Prize!) With the addition of a single line of code to the top of your Python files, recipy will log each run of your code to a database, keeping track of the input files, output files and the version of your code, and then let you query this database to find out how you actually did create graph.png.\"\n",
+    "keywords": [
+        "python",
+        "recipy",
+        "science",
+        "reproducible research",
+        "database",
+        "provenance"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "recipy"
+}
