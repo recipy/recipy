@@ -27,18 +27,18 @@ install:
   # Miniconda is recommended as the way to install these. See also:
   # http://conda.pydata.org/docs/travis.html
   # The following adopts approaches suggested in the above links.
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION \
-    pytest behave \
-    python-dateutil pyyaml numpy git \
-    matplotlib \
-    pandas pytables xlrd xlwt \
-    lxml \
-    beautifulsoup4 \
-    pillow \
-    scikit-learn \
-    scikit-image \
-    nibabel \
-    gdal imageio tifffile xarray rasterio netCDF4 \
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+    pytest behave
+    python-dateutil pyyaml numpy git
+    matplotlib
+    pandas pytables xlrd xlwt
+    lxml
+    beautifulsoup4
+    pillow
+    scikit-learn
+    scikit-image
+    nibabel
+    gdal imageio tifffile xarray rasterio netCDF4
     iris
   - source activate test-environment
   # Copy matplotlib configuration so it does not try and plot to
