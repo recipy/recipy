@@ -28,6 +28,7 @@ The test configuration file has format:
       inputs: [INPUT, INPUT, ...]
       outputs: [OUTPUT, OUTPUT, ...]
       [ skip: "Known issue with recipy" ]
+      [ skip_py_version: [3.4, ...] ]
     - ...
     ---
     script: SCRIPT
@@ -62,6 +63,10 @@ where each script to be tested is defined by:
     omitted.
   - 'skip': An optional value. If present this test case is marked as
     skipped. The value is the reason for skipping the test case.
+  - 'skip_py_version': An optional value. If present this test case is marked
+    as skipped if the current Python version is in the list of values. Should
+    be used when a patched library does not support a Python version that is
+    supported by recipy.
 
 For example:
 
@@ -96,6 +101,7 @@ The test configuration file is provided via an environment variable,
 
 import os
 import os.path
+import sys
 import pytest
 
 from integration_test.database import DatabaseError
@@ -126,6 +132,9 @@ OUTPUTS = "outputs"
 """ Test case configuration key. """
 
 SKIP = "skip"
+""" Test case configuration key. """
+
+SKIP_PY_VERSION = "skip_py_version"
 """ Test case configuration key. """
 
 TEST_CONFIG_ENV = "RECIPY_TEST_CONFIG"
@@ -290,8 +299,17 @@ def get_script_test_cases(configurations, recipy_samples_directory):
             if SKIP in test_case:
                 reason = get_test_case_function_name(single_test_case)
                 reason = reason + ": " + test_case[SKIP]
-                single_test_case = pytest.param((script_path, command, test_case),
-                                                marks=pytest.mark.skip(reason=reason))
+                single_test_case = pytest.mark.skip(
+                    reason=reason)((single_test_case))
+            if SKIP_PY_VERSION in test_case:
+                py_version = '{}.{}'.format(sys.version_info.major,
+                                            sys.version_info.minor)
+                to_skip = [str(num) for num in test_case[SKIP_PY_VERSION]]
+                reason = get_test_case_function_name(single_test_case)
+                reason = reason + ": unsupported Python version " + py_version
+                single_test_case = pytest.mark.skipif(
+                    py_version in to_skip,
+                    reason=reason)((single_test_case))
             test_cases.append(single_test_case)
     return test_cases
 

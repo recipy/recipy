@@ -2,8 +2,8 @@
 Functions to access information about the execution environment.
 """
 
-# Copyright (c) 2015-2016 University of Edinburgh and
-# University of Southampton.
+# Copyright (c) 2015-2016, 2018 University of Edinburgh,
+# University of Southampton and Netherlands eScience Center.
 
 from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
@@ -122,7 +122,13 @@ def get_packages():
     packages = pkg_resources.working_set
     packages_dict = {}
     for package in packages:
-        packages_dict[package.key] = package.version
+        # Some packages are imported using their `package.key` (keys do not
+        # contain capitals), e.g., gdal. Others are imported using their
+        # `package.project_name`, e.g., netCDF4. So, both the `key` and
+        # `project_name` are added to the `packages_dict`.
+        modules_from_package = package._get_metadata('top_level.txt')
+        for mod in modules_from_package:
+            packages_dict[mod] = package.version
     return packages_dict
 
 

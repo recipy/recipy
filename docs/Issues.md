@@ -52,35 +52,6 @@ Outputs: none
 
 ## Inaccurate information logged by recipy
 
-### Two inputs recorded for `nib.spm2analyze.Spm2AnalyzeImage.from_filename`
-
-To replicate:
-
-```
-python -m integration_test.packages.run_nibabel spm2analyze_from_filename
-recipy latest
-```
-```
-Run ID: 824dde96-8a4f-40cd-81d2-cba9a2443002
-Created by ubuntu on 2016-10-26 12:10:00 UTC
-Ran /home/ubuntu/recipy/integration_test/packages/run_nibabel.py using /home/ubuntu/anaconda2/bin/python
-Using command-line arguments: spm2analyze_from_filename
-Git: commit 5dc58a3cf3432441c83fd9899768eb9b63583208, in repo /home/ubuntu/recipy, with origin https://mikej888@github.com/mikej888/recipy
-Environment: Linux-3.19.0-25-generic-x86_64-with-debian-jessie-sid, python 2.7.12 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:42:40)
-Libraries: recipy v0.3.0, nibabel v2.0.2
-Inputs:
-/home/ubuntu/recipy/integration_test/packages/data/nibabel/spm2_image (None)
-/home/ubuntu/recipy/integration_test/packages/data/nibabel/spm2_image (None)
-Outputs: none
-```
-
-There should only be one file name.
-
-Test configuration sets expected `inputs` to be `[ spm2_image,
-spm2_image ]` for now.
-
----
-
 ## Bugs arising within recipy logging
 
 All these tests are marked as skipped.

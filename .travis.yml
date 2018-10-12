@@ -43,7 +43,8 @@ install:
   - conda install scikit-learn
   - conda install scikit-image
   - conda install nibabel
-  - conda install gdal imageio tifffile
+  - conda install gdal imageio tifffile xarray rasterio netCDF4
+  - conda install -c conda-forge iris
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .

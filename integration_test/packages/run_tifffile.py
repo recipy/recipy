@@ -1,5 +1,5 @@
 """
-Sample script that runs lxml functions logged by recipy.
+Sample script that runs tifffile functions logged by recipy.
 """
 
 # Copyright (c) 2016 University of Edinburgh.
