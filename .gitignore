@@ -3,7 +3,9 @@
 *.npy
 *.swp
 *.pdf
+# ignore all json files except .zenodo.json
 *.json
+!.zenodo.json
 test/.recipyrc
 
 .ipynb_checkpoints/

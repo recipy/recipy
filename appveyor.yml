@@ -7,6 +7,10 @@ environment:
       MINICONDA: C:\Miniconda
     - PYTHON_VERSION: 3.4
       MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
 
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
@@ -20,19 +24,15 @@ install:
   # The following adopts approaches suggested in the above links.
   - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
+  - conda config --prepend channels conda-forge
   - conda update -q conda
   - conda info -a
   - "conda create -q -n test-environment python=%PYTHON_VERSION%"
   - activate test-environment
-  # recipy setup.py fails to install flask for as-yet-unknown reason,
-  # and fails if it is not present, so install it explicitly.
-  - conda install flask
-  # Install recipy.
-  - python setup.py install
 
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
-  - conda install pytest
+  - conda install pytest behave
   # Install packages needed for testing recipy.
   - conda install python-dateutil pyyaml numpy git
   # Install packages that recipy can log.
@@ -48,6 +48,8 @@ install:
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - copy integration_test\packages\matplotlibrc .
+    # Install recipy.
+  - pip install .
   # Print the environment.
   - which python
   - which pip
