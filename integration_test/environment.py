@@ -126,8 +126,9 @@ def get_packages():
         # contain capitals), e.g., gdal. Others are imported using their
         # `package.project_name`, e.g., netCDF4. So, both the `key` and
         # `project_name` are added to the `packages_dict`.
-        packages_dict[package.key] = package.version
-        packages_dict[package.project_name] = package.version
+        modules_from_package = package._get_metadata('top_level.txt')
+        for mod in modules_from_package:
+            packages_dict[mod] = package.version
     return packages_dict
 
 

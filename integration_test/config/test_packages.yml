@@ -269,8 +269,7 @@ test_cases:
   skip_py_version: [ 3.4 ]
 ---
 script: run_iris.py
-# the test package can't detect the iris installation
-#libraries: [ iris ]
+libraries: [ iris ]
 test_cases:
 - arguments: [ load ]
   inputs: ['cube1.nc']
