@@ -13,7 +13,6 @@ import recipy
 import os
 import sys
 import iris
-import xarray
 import numpy as np
 
 from integration_test.packages.base import Base
