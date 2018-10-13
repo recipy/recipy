@@ -28,7 +28,7 @@ install:
   # http://conda.pydata.org/docs/travis.html
   # The following adopts approaches suggested in the above links.
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
-    pytest behave
+    pytest
     python-dateutil pyyaml numpy git
     matplotlib
     pandas pytables xlrd xlwt
@@ -59,8 +59,6 @@ install:
 
 
 script:
-  - cd test/ && behave
-  - cd ..
   # Run py.test with 'v' (verbose) to show test function names and
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test
