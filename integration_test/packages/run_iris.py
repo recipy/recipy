@@ -89,11 +89,10 @@ class IrisSample(Base):
         """
         Use iris.save to save data to a netcdf file.
         """
-        data = xarray.DataArray(np.random.randn(2, 3))
-        dt = data.to_iris()
+        cube = iris.cube.Cube(data=np.random.randn(2, 3))
 
         file_name = os.path.join(self.data_dir, "cube.nc")
-        iris.save(dt, file_name)
+        iris.save(cube, file_name)
 
         os.remove(file_name)
 
