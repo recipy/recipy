@@ -1,6 +1,7 @@
 import wrapt
 import imp
 import os
+import warnings
 from datetime import datetime
 
 from tinydb import TinyDB
@@ -88,6 +89,59 @@ def create_wrapper(function, arg_loc, source):
     @wrapt.decorator
     def f(self, wrapped, instance, args, kwargs):
         function(args[arg_loc], source)
+        return wrapped(*args, **kwargs)
+
+    return f
+
+
+def create_argument_wrapper(log_input_function, log_output_function, arg_loc,
+                            kwarg_name, input_values, output_values,
+                            default_value, source):
+    """Determines how an argument should be logged based on another argument.
+
+    Used in combination with PatchFileOpenLike.
+
+    For example, a netcdf file can be opened using:
+    `netCDF4.Dataset(file_name, mode='r')` and written using:
+    `netCDF4.Dataset(file_name, mode='w')`. The method named for opening and
+    saving are the same. So, this wrapper determines whether a file should be
+    logged as an input or as an output, based in the `mode` keyword argument.
+
+    Args:
+        log_input_function (function): Log function that should be called if
+            the file name refers to an input.
+        log_output_function (function): Log function that should be called if
+            the file name refers to an output.
+        arg_loc (int): index of the file name in the functions' argument list.
+        kwarg_name (str):key of the keyword argument that should be used to
+            determine whether the file is an input or an output.
+        input_values (str or list): values of `kwarg_name` for which the file
+            ame should be logged as an input.
+        output_values (string or list): values of `kwarg_name` for which the
+            file name should be logged as an output.
+        default_value (str): value for `kwarg_name` that should be used if
+            `kwarg_name` is not set.
+        source (str): name of the module that defines the function that is
+            wrapped (is currently not used).
+
+    The wrapper for netCDF4 looks like:
+
+    ```
+    wrapper = create_argument_wrapper(log_input, log_output, 0, 'mode', 'ra',
+                                      'aw', 'r', 'netCDF4')
+    ```
+
+    Returns:
+        function: wrapped function that logs inputs and outputs when it is
+            called.
+    """
+    @wrapt.decorator
+    def f(self, wrapped, instance, args, kwargs):
+        val = kwargs.get(kwarg_name, default_value)
+        if val in input_values:
+            log_input_function(args[arg_loc], source)
+        if val in output_values:
+            log_output_function(args[arg_loc], source)
         return wrapped(*args, **kwargs)
 
     return f

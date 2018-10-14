@@ -7,6 +7,8 @@ test_cases:
   #skip: "recipy raises 'KeyError: 'mode'' under Python 3 and 'ValueError: I/O operation on closed file' under Python 2 logging this function"
 - arguments: [ open_write_kwargs ]
   outputs: [ out.txt ]
+- arguments: [ warn ]
+- arguments: [ error ]
 - arguments: [ open_read_args ]
   inputs: [ in.txt ]
 - arguments: [ open_read_kwargs ]
@@ -23,9 +25,7 @@ test_cases:
   outputs: [ out.txt ]
 ---
 script: run_gdal.py
-# recipy logs version as 'gdal v?'
-# libraries: [ gdal ]
-libraries: [ ]
+libraries: [ gdal ]
 test_cases:
 - arguments: [ open ]
   inputs: [ image.tiff ]
@@ -100,8 +100,7 @@ test_cases:
 - arguments: [ spm99analyze_to_filename ]
   outputs: [ out_spm99_image ]
 - arguments: [ spm2analyze_from_filename ]
-# recipy logs the input file twice
-  inputs: [ spm2_image, spm2_image ]
+  inputs: [ spm2_image ]
 - arguments: [ spm2analyze_to_filename ]
   outputs: [ out_spm2_image ]
 ---
@@ -127,9 +126,7 @@ test_cases:
   skip: "PIL code in recipy currently commented-out"
 ---
 script: run_lxml.py
-# recipy logs version as 'lxml v?'
-# libraries: [ lxml ]
-libraries: [ ]
+libraries: [ lxml ]
 test_cases:
 - arguments: [ parse ]
   inputs: [ data.xml ]
@@ -230,3 +227,62 @@ test_cases:
   inputs: [ image.tiff ]
 - arguments: [ imsave ]
   outputs: [ image2.tiff ]
+---
+script: run_netcdf4.py
+libraries: [ netCDF4 ]
+test_cases:
+- arguments: [ dataset_read ]
+  inputs: [ testrh.nc ]
+- arguments: [ dataset_write ]
+  outputs: [ data.nc ]
+- arguments: [ dataset_append ]
+  inputs: [ testrh.nc ]
+  outputs: [ testrh.nc ]
+---
+script: run_xarray.py
+libraries: [ xarray ]
+test_cases:
+- arguments: [ open_dataset ]
+  inputs: [ soilPropertiesRhineMeuse30min.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ open_mfdataset_glob ]
+# recipy logs the input files in addition to the glob pattern
+  inputs: [ '*PropertiesRhineMeuse30min.nc', soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ open_mfdataset_list ]
+  inputs: [ soilPropertiesRhineMeuse30min.nc, topoPropertiesRhineMeuse30min.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ open_rasterio ]
+  inputs: [ image.tiff ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ open_dataarray ]
+  inputs: [ data_array.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ dataset_to_netcdf ]
+  outputs: [ data.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ dataarray_to_netcdf ]
+  outputs: [ data.nc ]
+  skip_py_version: [ 3.4 ]
+- arguments: [ save_mfdataset ]
+  outputs: [ data1.nc, data2.nc ]
+  skip_py_version: [ 3.4 ]
+---
+script: run_iris.py
+libraries: [ iris ]
+test_cases:
+- arguments: [ load ]
+  inputs: ['cube1.nc']
+- arguments: [ load_list ]
+  inputs: ['cube1.nc', 'cube2.nc']
+- arguments: [ load_glob ]
+# recipy logs the input files in addition to the glob pattern
+  inputs: ['cube*.nc', 'cube1.nc', 'cube2.nc']
+- arguments: [ load_cube ]
+  inputs: [ cube1.nc ]
+- arguments: [ load_cubes ]
+  inputs: [ cube1.nc, cube2.nc ]
+- arguments: [ load_raw ]
+  inputs: [ cube1.nc ]
+- arguments: [ save ]
+  outputs: [ cube.nc ]

@@ -1,0 +1,94 @@
+# YAML 1.2
+# This file was created using the cffinit web service: https://citation-file-format.github.io/cff-initializer-javascript/
+#
+# Use the data from this file to derive the Zenodo metadata automatically using
+# a tool called cffconvert (installable from PyPI):
+# pip install --user cffconvert
+#
+# validate the CITATION.cff file against the CFF schema:
+# cffconvert --validate
+#
+# convert to Zenodo metadata file
+# cffconvert -f zenodo --ignore-suspect-keys > .zenodo.json
+#
+---
+abstract: |
+    "Imagine the situation: You’ve written some wonderful Python code which produces a beautiful graph as an output. You save that graph, naturally enough, as graph.png. You run the code a couple of times, each time making minor modifications. You come back to it the next week/month/year. Do you know how you created that graph? What input data? What version of your code? If you’re anything like me then the answer will often, frustratingly, be “no”. Of course, you then waste lots of time trying to work out how you created it, or even give up and never use it in that journal paper that will win you a Nobel Prize...
+    recipy (from recipe and python) is a Python module that will save you from this situation! (Although it can’t guarantee that your resulting paper will win a Nobel Prize!) With the addition of a single line of code to the top of your Python files, recipy will log each run of your code to a database, keeping track of the input files, output files and the version of your code, and then let you query this database to find out how you actually did create graph.png."
+authors:
+  -
+    affiliation: "EPCC, University of Edinburgh"
+    family-names: Jackson
+    given-names: Michael
+  -
+    affiliation: "University of Southampton"
+    family-names: Wilson
+    given-names: Robin
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Zwaan
+    given-names: Janneke
+    name-particle: "van der"
+    orcid: "https://orcid.org/0000-0002-8329-7000"
+  -
+    family-names: Steinbrook
+    given-names: "Daniel W."
+  -
+    affiliation: Google
+    family-names: Rathgeber
+    given-names: Florian
+  -
+    affiliation: "University College London"
+    family-names: Alegre
+    given-names: Raquel
+  -
+    affiliation: "Imperial College London"
+    family-names: Edwards
+    given-names: Thomas
+  -
+    affiliation: "JHU/APL"
+    family-names: Costello
+    given-names: Cash
+  -
+    family-names: Danny
+    given-names: Samuel
+  -
+    family-names: Chwiejczak
+    given-names: Jan
+  -
+    affiliation: "FMRIB, University of Oxford"
+    family-names: Cottaar
+    given-names: Michiel
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: "Martinez-Ortiz"
+    given-names: Carlos
+  -
+    affiliation: "University of Kansas"
+    family-names: Vieglais
+    given-names: Dave
+  -
+    affiliation: "Johns Hopkins; UPMC"
+    family-names: Kucharavy
+    given-names: Andrei
+  -
+    family-names: Ruben
+    given-names: Gary
+  -
+    family-names: Upadhyay
+    given-names: Utkarsh
+cff-version: "1.0.3"
+date-released: 2018-10-12
+keywords:
+  - python
+  - recipy
+  - science
+  - "reproducible research"
+  - database
+  - provenance
+license: "Apache-2.0"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/recipy/recipy"
+title: recipy
+version: "v0.3.1"
+...

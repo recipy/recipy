@@ -39,8 +39,13 @@ def listsearch(query, item):
     """
     fh = ''
     if not isinstance(item, six.string_types):
-        fh = item[1]
-        item = item[0]
+        try:
+            fh = item[1]
+            item = item[0]
+        except IndexError:
+            item = ''
 
-    return bool(re.search(query, item) or
-                re.search(query, fh))
+    if fh is None:
+        fh = ''
+
+    return bool(re.search(query, item) or re.search(query, fh))

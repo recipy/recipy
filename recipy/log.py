@@ -13,6 +13,7 @@ from tinydb import Query
 import difflib
 import warnings
 import codecs
+import six
 from binaryornot.check import is_binary
 
 from recipyCommon.version_control import add_git_info, add_svn_info, hash_file
@@ -143,7 +144,12 @@ def log_input(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if type(filename) is not str:
+    # Some packages, e.g., xarray, accept a list of files as input argument
+    if isinstance(filename, list):
+        for f in filename:
+            log_input(f, source)
+        return
+    elif not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
@@ -172,13 +178,17 @@ def log_output(filename, source):
 
     Note: the source parameter is currently not stored in the database.
     """
-    if type(filename) is not str:
+    if isinstance(filename, list):
+        for f in filename:
+            log_output(f, source)
+        return
+    elif not isinstance(filename, six.string_types):
         try:
             filename = filename.name
         except:
             pass
     filename = os.path.abspath(filename)
-    
+
     version = get_version(source)
     db = open_or_create_db()
 
@@ -211,7 +221,7 @@ def log_exception(typ, value, traceback):
     sys.__excepthook__(typ, value, traceback)
 
 
-def log_warning(msg, typ, script, lineno, **kwargs):
+def log_warning(msg, typ, script, lineno, file=None, line=None):
     if option_set('general', 'debug'):
         print('Logging warning "%s"' % str(msg))
 
@@ -228,7 +238,7 @@ def log_warning(msg, typ, script, lineno, **kwargs):
     db.close()
 
     # Done logging, print warning to stderr
-    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno))
+    sys.stderr.write(warnings.formatwarning(msg, typ, script, lineno, line=line))
 
 
 def add_module_to_db(modulename, input_functions, output_functions,
@@ -278,6 +288,7 @@ def add_dict(field, dict_of_values):
 @atexit.register
 def log_flush():
     log_exit()
+    dedupe_inputs()
     hash_outputs()
     output_file_diffs()
 
@@ -352,3 +363,24 @@ def output_file_diffs():
 
         # delete temporary file
         os.remove(item['tempfilename'])
+
+
+def dedupe_inputs():
+    """Remove inputs that are logged muliple times.
+
+    Sometimes patched libraries use other patched libraries to open files.
+    E.g., xarray internally uses netCDF4 to open netcdf files. If this happens,
+    and recipy is configured to log file hashes, inputs are logged multiple
+    times. Hashed inputs are stored as a list in the database, and tinydb does
+    not automatically dedupe lists.
+
+    Outputs do not need to be deduped, because file hashed are added after the
+    run is finished, and tinydb can automatically dedupe strings.
+    """
+    if option_set('ignored metadata', 'input_hashes'):
+        return
+    db = open_or_create_db()
+    run = db.get(eid=RUN_ID)
+    new_inputs = list(set([tuple(inp) for inp in run['inputs']]))
+    db.update({'inputs': new_inputs}, eids=[RUN_ID])
+    db.close()

@@ -2,7 +2,8 @@
 Sample script that runs Python functions logged by recipy.
 """
 
-# Copyright (c) 2016 University of Edinburgh.
+# Copyright (c) 2016, 2018 University of Edinburgh and Netherlands eScience
+# Center
 
 from __future__ import (nested_scopes, generators, division,
                         absolute_import, with_statement,
@@ -12,6 +13,8 @@ import recipy
 
 import os
 import sys
+import warnings
+import pytest
 
 from integration_test.packages.base import Base
 
@@ -39,6 +42,19 @@ class PythonSample(Base):
         with recipy.open(file_name, 'w') as f:
             f.write("This is a test")
         os.remove(file_name)
+
+    def warn(self):
+        """
+        Raise a warning.
+        """
+        warnings.warn('This is a warning.')
+
+    def error(self):
+        """
+        Raise an error.
+        """
+        with pytest.raises(ValueError):
+            raise ValueError('This is an error.')
 
     def open_write_kwargs(self):
         """
