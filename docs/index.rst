@@ -10,6 +10,7 @@ Welcome to recipy's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    developer
 
 
