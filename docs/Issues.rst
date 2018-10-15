@@ -1,17 +1,17 @@
-
-recipy and third-party package issues
-=====================================
+****************************************
+Recipy and Third-Party Package Issues
+****************************************
 
 Issues encountered during test framework development and how the test
 framework has been configured to get round these issues.
 
 No information logged by recipy (recipy code is commented-out)
---------------------------------------------------------------
+================================================================
 
 All these tests are marked as skipped.
 
 ``PIL`` operations
-^^^^^^^^^^^^^^^^^^^^^^
+-------------------
 
 To replicate:
 
@@ -33,7 +33,7 @@ To replicate:
    Outputs: none
 
 ``skimage`` operations
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
 To replicate:
 
@@ -54,18 +54,18 @@ To replicate:
    Inputs: none
    Outputs: none
 
-----
+Inaccurate Information Logged by Recipy
+=========================================
 
-Inaccurate information logged by recipy
----------------------------------------
+None.
 
-Bugs arising within recipy logging
-----------------------------------
+Bugs Arising within Recipy Logging
+====================================
 
 All these tests are marked as skipped.
 
 ``recipy.open``
-^^^^^^^^^^^^^^^^^^^
+-----------------
 
 To replicate:
 
@@ -130,7 +130,7 @@ Under Python 2 this fails with:
    ValueError: I/O operation on closed file
 
 ``bs4.beautifulsoup.prettify``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------
 
 To replicate:
 
@@ -158,7 +158,7 @@ To replicate:
    TypeError: super() argument 1 must be type, not FunctionWrapper
 
 ``pandas.Panel.to_excel``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 To replicate:
 
@@ -194,7 +194,7 @@ To replicate:
    AttributeError: '_XlwtWriter' object has no attribute 'startswith'
 
 ``nibabel.minc2.Minc2Image.from_filename``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------
 
 To replicate:
 
@@ -230,7 +230,7 @@ To replicate:
    TypeError: Error: None is not a valid NetCDF 3 file
 
 ``nibabel.Nifti2Image.from_filename``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------------
 
 To replicate:
 
@@ -280,7 +280,7 @@ To replicate:
    nibabel.spatialimages.HeaderDataError: data code 0 not supported
 
 ``sklearn.load_svmlight_file`` and ``sklearn.dump_svmlight_file``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------------------------------
 
 To replicate:
 
@@ -392,15 +392,13 @@ Under Python 2 this fails with:
        lambda data, eid: data[eid].update(fields),
    KeyError: 316
 
-----
-
-Operations not implemented by packages
---------------------------------------
+Operations Not Implemented by Packages
+========================================
 
 All these tests are marked as skipped.
 
 ``nibabel.minc1.Minc1Image.to_filename``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------
 
 To replicate:
 
@@ -430,7 +428,7 @@ To replicate:
    NotImplementedError
 
 ``nibabel.minc2.Minc2Image.to_filename``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------
 
 To replicate:
 
@@ -462,7 +460,7 @@ To replicate:
    NotImplementedError
 
 ``nibabel.parrec.PARRECImage.to_filename``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------
 
 To replicate:
 
@@ -490,8 +488,6 @@ To replicate:
      File "/home/ubuntu/anaconda2/lib/python2.7/site-packages/nibabel/spatialimages.py", line 790, in to_file_map
        raise NotImplementedError
    NotImplementedError
-
-----
 
 Using py.test and recipy
 ------------------------

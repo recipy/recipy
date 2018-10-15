@@ -1,14 +1,12 @@
-
-recipy test framework
-=====================
+****************
+Test Framework
+****************
 
 recipy's test framework is in ``integration_test``. The test framework
 has been designed to run under both Python 2.7+ and Python 3+.
 
-----
-
-Running tests with py.test
---------------------------
+Running Tests with py.test
+==========================
 
 The tests use the `py.test <http://pytest.org>`_ test framework, and are
 run using its ``py.test`` command. Useful ``py.test`` flags and
@@ -23,10 +21,8 @@ command-line options include:
 * ``--junit-xml=report.xml``\ : create a JUnit-style test report in the
   file ``report.xml``.
 
-----
-
-Running general tests
----------------------
+Running General Tests
+=====================
 
 To run tests of recipy's command-line functions, run:
 
@@ -47,10 +43,8 @@ run:
 
    py.test -v integration_test/test_m_flag.py
 
-----
-
-Running package-specific tests
-------------------------------
+Running Package-Specific Tests
+==============================
 
 To run tests that check recipy logs information about packages it has
 been configured to log, run:
@@ -89,8 +83,8 @@ For Windows, run:
    set RECIPY_TEST_CONFIG=test_my_package.yml
    py.test -v -rs integration_test\test_packages.py
 
-Test configuration file
-^^^^^^^^^^^^^^^^^^^^^^^
+Test Configuration File
+-----------------------
 
 The test configuration file is written in `YAML <http://yaml.org/>`_
 (YAML Ain't Markup Language). YAML syntax is:
@@ -229,10 +223,8 @@ example:
 
    # This is a comment
 
-----
-
 Issues
-------
+======
 
 The sample scripts in ``integration_tests/packages`` may fail to run
 with older versions of third-party packages. Known package versions
@@ -244,10 +236,8 @@ configure the test framework for these. The packages and issues, and
 how the test framework has been configured to currently skip these are
 described in `recipy and third-party package issues <./Issues.md>`_.
 
-----
-
-How the test framework uses test configuration files
-----------------------------------------------------
+How the Test Framework uses Test Configuration Files
+====================================================
 
 A test configuration file is used to auto-generate test functions for
 each test case using py.test's support for
@@ -307,8 +297,8 @@ checks on the recipy database:
 * ``author`` holds the current user.
 * ``description`` is empty.
 
-recipy sample scripts
-^^^^^^^^^^^^^^^^^^^^^
+Recipy Sample Scripts
+---------------------
 
 ``integration_test/packages`` has a collection of package-specific
 scripts. Each script corresponds to one package logged by recipy. Each
@@ -387,10 +377,8 @@ For the technical detail of why this is so, please see `Execution of
 Python code with -m option or
 not <http://stackoverflow.com/questions/22241420/execution-of-python-code-with-m-option-or-not>`_.
 
-----
-
-Providing a test configuration for any script
----------------------------------------------
+Providing a Test Configuration for Any Script
+=============================================
 
 A recipy test configuration can be written for any script that uses
 recipy. For example, to test a script that uses ``numpy.loadtxt`` you
@@ -454,10 +442,8 @@ If using Anaconda and Git Bash on Windows, the file might look like:
 
 Note the escaped spaces in the path.
 
-----
-
-Test framework limitations
---------------------------
+Test Framework Limitations
+==========================
 
 The test framework does not support filtering tests depending upon
 which versions of packages are being tested e.g. specific versions of
@@ -480,13 +466,9 @@ done by:
 ``test_recipy.py`` does not validate whether multiple test results are
 returned by ``recipy search -i``.
 
-----
-
-recipy dependencies
--------------------
+Recipy Dependencies
+===================
 
 The test framework has no dependencies on any other part of the recipy
 repository: it uses recipy as if it were a stand-alone tool and
 queries the recipy database directly.
-
-----

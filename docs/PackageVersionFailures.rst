@@ -1,6 +1,6 @@
-
-Package versioning problems
-===========================
+******************************
+Package Versioning Problems
+******************************
 
 The sample scripts in ``integration_tests/packages`` may fail to run
 with older versions of third-party packages. Known package versions
@@ -11,7 +11,7 @@ their APIs) installed by ``conda``\ , ``pip``\ , ``easy_install`` or within
 Python-related packages installed via ``apt-get`` or ``yum`` under Linux.
 
 NiBabel ``AttributeError``
-------------------------------
+===========================
 
 .. code-block:: console
 
@@ -54,7 +54,7 @@ due to change in package API.
 Succeeds on 2.0.2.
 
 PIL ``AttributeError``
---------------------------
+========================
 
 .. code-block:: console
 
@@ -72,7 +72,7 @@ due to change in package API.
 Succeeds on 3.2.0+.
 
 pandas ``TypeError``
-------------------------
+======================
 
 .. code-block:: console
 
@@ -94,7 +94,7 @@ to change in package API.
 Succeeds on 0.18.1.
 
 pandas ``ImportError``
---------------------------
+========================
 
 .. code-block:: console
 
@@ -113,7 +113,7 @@ to change in package API.
 Succeeds on 0.18.1.
 
 pandas ``ValueError``
--------------------------
+========================
 
 .. code-block:: console
 
@@ -130,7 +130,7 @@ created by pandas 0.13.1.
 Succeeds on 0.18.1.
 
 skimage ``NameError``
--------------------------
+=======================
 
 .. code-block:: console
 
@@ -145,7 +145,7 @@ Integration_Test.Packages.3 (see
 `Builtins <https://docs.python.org/release/3.0/whatsnew/3.0.html#builtins>`_\ ).
 
 skimage ``ImportError``
----------------------------
+=========================
 
 ``run_skimage.py`` examples fail with:
 
