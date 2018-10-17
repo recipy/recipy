@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'recipy'
-copyright = '2018, Robin Wilson, Michael Jackson, and Janneke van der Zwaan'
-author = 'Robin Wilson, Michael Jackson, and Janneke van der Zwaan'
+copyright = '2018, the recipy team'
+author = 'the recipy team'
 
 # The short X.Y version
 version = ''
@@ -130,7 +130,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'recipy.tex', 'recipy Documentation',
-     'Robin Wilson, Michael Jackson, and Janneke van der Zwaan', 'manual'),
+     'the recipy team', 'manual'),
 ]
 
 
