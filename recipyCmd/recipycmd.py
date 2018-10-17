@@ -6,6 +6,7 @@ Usage:
   recipy latest [options]
   recipy gui [options]
   recipy annotate [<idvalue>]
+  recipy pm [--format=<rst|plain>]
   recipy (-h | --help)
   recipy --version
 
@@ -141,6 +142,8 @@ def main():
         gui(args)
     elif args['annotate']:
         annotate(args)
+    elif args['pm']:
+        patched_modules(args)
 
 
 def annotate(args):
@@ -427,6 +430,41 @@ def search_text(args):
 def _change_date(result):
     result['date'] = str(result['date']).replace('{TinyDate}:', '')
     return result
+
+
+def patched_modules(args):
+    modules = db.table('patches').all()
+    db.close()
+
+    fmt = args.get('--format', 'plain')
+    print(fmt)
+
+    try:
+        from tabulate import tabulate
+    except ImportError:
+        print('Please install tabulate for printing the patched modules.')
+        return
+
+    table = []
+    for m in modules:
+        t = {}
+        for k, v in m.items():
+            if isinstance(v, list):
+                if len(v) > 0:
+                    if fmt == 'rst':
+                        t[k] = '``{}``'.format('``,\n``'.join(v))
+                    else:
+                        t[k] = '{}'.format('\n'.join(v))
+                else:
+                    t[k] = ''
+            else:
+                if fmt == 'rst':
+                    t[k] = '``{}``'.format(v)
+                else:
+                    t[k] = v
+        table.append(t)
+    print(tabulate(table, headers='keys', tablefmt='rst'))
+
 
 if __name__ == '__main__':
     main()
