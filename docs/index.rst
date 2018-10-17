@@ -11,6 +11,7 @@ Welcome to recipy's documentation!
    :caption: Contents:
 
    installation
+   user_manual
    developer
 
 
