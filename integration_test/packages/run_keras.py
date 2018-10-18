@@ -13,6 +13,7 @@ import sys
 import numpy as np
 import keras
 import imageio
+import joblib
 
 from integration_test.packages.base import Base
 
@@ -53,23 +54,6 @@ class KerasSample(Base):
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "keras")
 
-    def load_svmlight_file(self):
-        """
-        Use sklearn.datasets.load_svmlight_file to load data.svmlight.
-        """
-        file_name = os.path.join(self.data_dir, "data.svmlight")
-        datasets.load_svmlight_file(file_name)
-
-    def dump_svmlight_file(self):
-        """
-        Use sklearn.datasets.dump_svmlight_file to save out.svmlight.
-        """
-        x = np.array([list(range(0, 5)), list(range(5, 10))])
-        y = np.array([10, 20])
-        file_name = os.path.join(self.data_dir, "out.svmlight")
-        datasets.dump_svmlight_file(x, y, file_name,
-                                    comment="Sample svmlight file")
-        os.remove(file_name)
 
     def create_sample_data(self):
         """
@@ -85,7 +69,7 @@ class KerasSample(Base):
             * mnist08.jpg
             * mnist09.jpg
             * mnist10.jpg
-            * mnist.jbl (use X_train, y_train = joblib.load('mnist.jbl'))
+            * mnist.jbl
         """
         (X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
 
@@ -102,15 +86,10 @@ class KerasSample(Base):
         
         for i, (x, y) in enumerate(zip(X_train, y_train)):
             img_name = 'mnist{:0>2d}.jpg'.format(i+1)
-            fol = os.path.join(self.data_dir, 'class{}'.format(cla))
-            imageio.imwrite(os.path.join(fol, img_name))
+            fol = os.path.join(self.data_dir, 'class{}'.format(y))
+            imageio.imwrite(os.path.join(fol, img_name), x)
 
-
-
-        file_name = os.path.join(self.data_dir, "data.svmlight")
-        datasets.dump_svmlight_file(x, y, file_name,
-                                    comment="Sample svmlight file")
-
+        joblib.dump((X_train, y_train), 'mnist.jbl')
 
 if __name__ == "__main__":
     KerasSample().invoke(sys.argv)
