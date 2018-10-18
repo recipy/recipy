@@ -28,23 +28,19 @@ install:
   # http://conda.pydata.org/docs/travis.html
   # The following adopts approaches suggested in the above links.
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+    pytest
+    python-dateutil pyyaml numpy git
+    matplotlib
+    pandas pytables xlrd xlwt
+    lxml
+    beautifulsoup4
+    pillow
+    scikit-learn
+    scikit-image
+    nibabel
+    gdal imageio tifffile xarray rasterio netCDF4
+    iris
   - source activate test-environment
-  # Install py.test explicitly else Travis CI will use the one in its
-  # virtualenv which can't use the Miniconda environment.
-  - conda install pytest behave
-  # Install packages needed for testing recipy.
-  - conda install python-dateutil pyyaml numpy git
-  # Install packages that recipy can log.
-  - conda install matplotlib
-  - conda install pandas pytables xlrd xlwt
-  - conda install lxml
-  - conda install beautifulsoup4
-  - conda install pillow
-  - conda install scikit-learn
-  - conda install scikit-image
-  - conda install nibabel
-  - conda install gdal imageio tifffile xarray rasterio netCDF4
-  - conda install -c conda-forge iris
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
@@ -63,8 +59,6 @@ install:
 
 
 script:
-  - cd test/ && behave
-  - cd ..
   # Run py.test with 'v' (verbose) to show test function names and
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test

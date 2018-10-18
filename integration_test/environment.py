@@ -129,6 +129,9 @@ def get_packages():
         modules_from_package = package._get_metadata('top_level.txt')
         for mod in modules_from_package:
             packages_dict[mod] = package.version
+
+        packages_dict[package.key] = package.version
+        packages_dict[package.project_name] = package.version
     return packages_dict
 
 
