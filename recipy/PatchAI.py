@@ -19,7 +19,7 @@ class PatchKeras(PatchMultipleWrappers):
     input_functions += ['utils.HDF5Matrix', 'utils.get_file']
 
     output_functions = ['Model.save_weights', 'Model.save']
-    output_functions += ['callbacks.ModelCheckpoint', 'callbacks.CSVLogger']
+    output_functions += ['callbacks.CSVLogger']
 
     wrappers.add_inputs(input_functions, log_input, 0, modulename)
     wrappers.add_outputs(output_functions, log_output, 0, modulename)
