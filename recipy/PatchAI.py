@@ -6,18 +6,15 @@ from .PatchMultipleWrappers import PatchMultipleWrappers, WrapperList
 from .log import log_input, log_output, add_module_to_db
 from recipyCommon.utils import create_wrapper, multiple_insert
 
-class PatchKeras(PatchSimple):
+class PatchKeras(PatchMultipleWrappers):
     modulename = 'keras'
 
     wrappers = WrapperList()
 
-    datasets = ['datasets.imdb', 'datasets.reuters', 'datasets.mnist', 'datasets.boston_housing']
+    input_functions = ['preprocessing.image.load_img',
+                       'preprocessing.image.ImageDataGenerator.flow_from_directory']
 
-    input_functions = [ds + '.load_data' for ds in datasets]
-
-    input_functions += ['Model.load_weights', 'ImageDataGenerator.flow_from_directory']
-
-    input_functions += ['preprocessing.image.load_img']
+    input_functions += ['Model.load_weights']
 
     input_functions += ['utils.HDF5Matrix', 'utils.get_file']
 
