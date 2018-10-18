@@ -49,14 +49,17 @@ install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       conda install tensorflow;
       conda install keras;
+      conda install joblib;
     fi
   - if [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then
       conda install tensorflow;
       conda install keras;
+      conda install joblib;
     fi
   - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
       conda install tensorflow;
       conda install keras;
+      conda install joblib;
     fi
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.

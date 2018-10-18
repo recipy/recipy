@@ -89,7 +89,7 @@ class KerasSample(Base):
             fol = os.path.join(self.data_dir, 'class{}'.format(y))
             imageio.imwrite(os.path.join(fol, img_name), x)
 
-        joblib.dump((X_train, y_train), 'mnist.jbl')
+        joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
 
 if __name__ == "__main__":
     KerasSample().invoke(sys.argv)
