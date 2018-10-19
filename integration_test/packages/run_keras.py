@@ -16,7 +16,11 @@ import imageio
 import joblib
 
 from integration_test.packages.base import Base
-
+from keras.models import Model
+from keras.applications.imagenet_utils import _obtain_input_shape
+from keras.backend import image_data_format, is_keras_tensor
+from keras import layers
+from keras.callbacks import ModelCheckpoint
 
 class KerasSample(Base):
     """
@@ -55,7 +59,7 @@ class KerasSample(Base):
         self.data_dir = os.path.join(self.current_dir, "data", "keras")
 
 
-    def create_sample_data(self):
+    def create_sample_image_data(self):
         """
         Create sample data files. The files created are:
 
@@ -73,8 +77,8 @@ class KerasSample(Base):
         """
         (X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
 
-        X_train = X_train[:10, :, :]
-        y_train = y_train[:10]
+        X_train = X_train[:20, :, :]
+        y_train = y_train[:20]
 
         # Create a list of class folders to create
         classes = np.unique(y_train)
@@ -90,6 +94,113 @@ class KerasSample(Base):
             imageio.imwrite(os.path.join(fol, img_name), x)
 
         joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
+
+    def create_sample_model_data(self, training_data, epochs):
+        """
+        Create sample trained model file. The files created are:
+
+            * Model.h5
+        
+        This function assumes that the image data to train on has
+        been created.
+        """
+        (X_train, y_train) = training_data
+
+        model = self.SimpleNet()
+
+        fit_dict, compile_dict = model_dicts(epochs)
+
+        model.compile(**compile_dict)
+
+        model.fit(**fit_dict)
+
+        model.save(os.path.join('Model.h5'))
+
+    def model_dicts(epochs, checkpoint=False):
+        """
+        Creates the fit and model dicts with the checkpoint callback if
+        necessary.
+        """
+        fit_dict = {'epochs': epochs,
+                    'verbose': 1}
+        
+        if checkpoint:
+            fit_dict['callbacks'] = ModelCheckpoint(os.path.join(self.data_dir,
+                                                                 'model_{epoch:02d}.hdf5'))
+
+        compile_dict = {loss: 'categorical_crossentropy',
+                        optimizer: 'sgd',
+                        metrics: ['accuracy']}
+
+        return fit_dict, compile_dict
+
+    def train_checkpoint_epoch_model(self, training_data, epochs):
+        pass
+
+    def SimpleNet(self,
+                  input_tensor=None,
+                  input_shape=(28, 28, 1),
+                  weights=None,
+                  classes=10):
+        """
+        Creates a simple convolutional model for the mnist training data.
+        This model has one convolutional layer (7, 7) with relu activation,
+        a global average pooling layer and a softmax fully-connected layer of
+        10 classes.
+
+        Inputs
+        ------
+        input_tensor: a keras Input instance
+        input_shape: tuple (default: (28, 28, 1))
+            The sizes of the image dimensions, must include channels=1
+            for mnist
+        weights: None or path to weights file
+        classes: int
+            The number of classes to be represented in the softmax
+
+        """  
+        input_shape = _obtain_input_shape(input_shape,
+                                          default_size=28,
+                                          min_size=14,
+                                          data_format=image_data_format(),
+                                          require_flatten=True,
+                                          weights=weights)
+
+        if input_tensor is None:
+            img_input = layers.Input(shape=input_shape)
+        else:
+            if not is_keras_tensor(input_tensor):
+                img_input = layers.Input(tensor=input_tensor, shape=input_shape)
+            else:
+                img_input = input_tensor
+
+        x = layers.ZeroPadding2D(padding=((3, 3), (3, 3)))(img_input)
+        x = layers.Conv2D(32, 7, strides=2, use_bias=False, name='conv1/conv')(x)
+        x = layers.Activation('relu', name='conv1/relu')(x)
+        x = layers.ZeroPadding2D(padding=((1, 1), (1, 1)))(x)
+        x = layers.GlobalAveragePooling2D(name='avg_pool')(x)
+        x = layers.Flatten()(x)
+        x = layers.Dense(classes, activation='softmax', name='fc10')(x)
+
+        # Ensure that the model takes into account
+        # any potential predecessors of `input_tensor`.
+        if input_tensor is not None:
+            if hasattr(keras.utils, 'get_source_inputs'):
+                get_source_inputs = keras.utils.get_source_inputs
+            else:
+                from keras import engine
+                get_source_inputs = engine.get_source_inputs
+            inputs = get_source_inputs(input_tensor)
+        else:
+            inputs = img_input
+
+        model = Model(inputs, x, name='simplenet')
+
+        if weights is not None:
+            model.load_weights(weights)
+    
+        return model
+
 
 if __name__ == "__main__":
     KerasSample().invoke(sys.argv)
