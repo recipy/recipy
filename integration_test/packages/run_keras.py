@@ -85,7 +85,7 @@ class KerasSample(Base):
 
         for cla in classes:
             # Check that the folder exists
-            if not os.path.exists(os.path.join(self.data_dir, 'class{}')):
+            if not os.path.exists(os.path.join(self.data_dir, 'class{}'.format(cla))):
                 os.mkdir(os.path.join(self.data_dir, 'class{}'.format(cla)))
         
         for i, (x, y) in enumerate(zip(X_train, y_train)):
@@ -118,7 +118,8 @@ class KerasSample(Base):
 
         model.save(os.path.join('Model.h5'))
 
-    def create_sample_data(self, epochs):
+    def create_sample_data(self):
+        epochs = 2
         training_data = self.create_sample_image_data()
         self.create_sample_model(training_data, epochs)
 
@@ -209,4 +210,5 @@ class KerasSample(Base):
 
 
 if __name__ == "__main__":
+    print(sys.argv)
     KerasSample().invoke(sys.argv)
