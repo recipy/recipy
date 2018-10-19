@@ -108,7 +108,7 @@ class KerasSample(Base):
 
         model = self.SimpleNet()
 
-        fit_dict, compile_dict = model_dicts(epochs)
+        fit_dict, compile_dict = self.model_dicts(epochs)
 
         model.compile(**compile_dict)
 

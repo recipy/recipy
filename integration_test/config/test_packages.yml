@@ -29,11 +29,14 @@ libraries: [ gdal ]
 test_cases:
 - arguments: [ open ]
   inputs: [ image.tiff ]
+  skip_py_version: [ 3.4 ]
 - arguments: [ driver_create ]
   outputs: [ out_image.tiff ]
+  skip_py_version: [ 3.4 ]
 - arguments: [ driver_createcopy ]
   inputs: [ image.tiff ]
   outputs: [ out_image.tiff ]
+  skip_py_version: [ 3.4 ]
 ---
 script: run_skimage.py
 libraries: [ skimage ]
@@ -130,8 +133,10 @@ libraries: [ lxml ]
 test_cases:
 - arguments: [ parse ]
   inputs: [ data.xml ]
+  skip_py_version: [ 3.4 ]
 - arguments: [ iterparse ]
   inputs: [ data.xml ]
+  skip_py_version: [ 3.4 ]
 ---
 script: run_bs4.py
 libraries: [ bs4 ]

@@ -28,6 +28,18 @@ install:
   # http://conda.pydata.org/docs/travis.html
   # The following adopts approaches suggested in the above links.
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+    pytest
+    python-dateutil pyyaml numpy git
+    matplotlib
+    pandas pytables xlrd xlwt
+    lxml
+    beautifulsoup4
+    pillow
+    scikit-learn
+    scikit-image
+    nibabel
+    gdal imageio tifffile xarray rasterio netCDF4
+    iris
   - source activate test-environment
   # Install py.test explicitly else Travis CI will use the one in its
   # virtualenv which can't use the Miniconda environment.
@@ -79,8 +91,6 @@ install:
 
 
 script:
-  - cd test/ && behave
-  - cd ..
   # Run py.test with 'v' (verbose) to show test function names and
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test

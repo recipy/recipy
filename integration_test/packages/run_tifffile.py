@@ -46,11 +46,10 @@ class TifffileSample(Base):
         """
         Use tifffile.imsave to write image2.tiff.
         """
-        #file_name_in = os.path.join(self.data_dir, "image.tiff")
         file_name = os.path.join(self.data_dir, "image2.tiff")
 
-        data = numpy.array([1, 2, 3])
-        #im = tifffile.imread(file_name_in)
+        data = numpy.array([[1, 2, 3],
+                            [4, 5, 6]])
 
         tifffile.imsave(file_name, data)
         os.remove(file_name)
