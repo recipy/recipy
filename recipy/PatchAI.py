@@ -11,8 +11,7 @@ class PatchKeras(PatchMultipleWrappers):
 
     wrappers = WrapperList()
 
-    input_functions = ['preprocessing.image.load_img',
-                       'preprocessing.image.ImageDataGenerator.flow_from_directory']
+    input_functions = ['preprocessing.image.ImageDataGenerator.flow_from_directory']
 
     input_functions += ['Model.load_weights']
 
