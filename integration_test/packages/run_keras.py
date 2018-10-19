@@ -63,16 +63,26 @@ class KerasSample(Base):
         """
         Create sample data files. The files created are:
 
-            * mnist01.jpg
-            * mnist02.jpg
-            * mnist03.jpg
-            * mnist04.jpg
-            * mnist05.jpg
-            * mnist06.jpg
-            * mnist07.jpg
-            * mnist08.jpg
-            * mnist09.jpg
-            * mnist10.jpg
+            * class5/mnist01.jpg
+            * class0/mnist02.jpg
+            * class4/mnist03.jpg
+            * class1/mnist04.jpg
+            * class9/mnist05.jpg
+            * class2/mnist06.jpg
+            * class1/mnist07.jpg
+            * class3/mnist08.jpg
+            * class1/mnist09.jpg
+            * class4/mnist10.jpg
+            * class3/mnist11.jpg
+            * class5/mnist12.jpg
+            * class3/mnist13.jpg
+            * class6/mnist14.jpg
+            * class1/mnist15.jpg
+            * class7/mnist16.jpg
+            * class2/mnist17.jpg
+            * class8/mnist18.jpg
+            * class6/mnist19.jpg
+            * class9/mnist20.jpg
             * mnist.jbl
         """
         (X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
@@ -84,9 +94,10 @@ class KerasSample(Base):
         classes = np.unique(y_train)
 
         for cla in classes:
+            class_fol = os.path.join(self.data_dir, 'class{}'.format(cla))
             # Check that the folder exists
-            if not os.path.exists(os.path.join(self.data_dir, 'class{}'.format(cla))):
-                os.mkdir(os.path.join(self.data_dir, 'class{}'.format(cla)))
+            if not os.path.exists(class_fol):
+                os.makedirs(class_fol)
         
         for i, (x, y) in enumerate(zip(X_train, y_train)):
             img_name = 'mnist{:0>2d}.jpg'.format(i+1)
@@ -114,7 +125,9 @@ class KerasSample(Base):
 
         model.compile(**compile_dict)
 
-        model.fit(**fit_dict)
+        X_train = np.expand_dims(X_train, axis=-1)
+
+        model.fit(X_train, y_train, **fit_dict)
 
         model.save(os.path.join('Model.h5'))
 
@@ -129,15 +142,17 @@ class KerasSample(Base):
         necessary.
         """
         fit_dict = {'epochs': epochs,
-                    'verbose': 1}
+                    'verbose': 1,
+                    'steps_per_epoch': 5,
+                    'batch_size': 4}
         
         if checkpoint:
             fit_dict['callbacks'] = ModelCheckpoint(os.path.join(self.data_dir,
                                                                  'model_{epoch:02d}.hdf5'))
 
-        compile_dict = {loss: 'categorical_crossentropy',
-                        optimizer: 'sgd',
-                        metrics: ['accuracy']}
+        compile_dict = {'loss': 'categorical_crossentropy',
+                        'optimizer': 'sgd',
+                        'metrics': ['accuracy']}
 
         return fit_dict, compile_dict
 
@@ -184,8 +199,6 @@ class KerasSample(Base):
         x = layers.ZeroPadding2D(padding=((3, 3), (3, 3)))(img_input)
         x = layers.Conv2D(32, 7, strides=2, use_bias=False, name='conv1/conv')(x)
         x = layers.Activation('relu', name='conv1/relu')(x)
-        x = layers.ZeroPadding2D(padding=((1, 1), (1, 1)))(x)
-        x = layers.GlobalAveragePooling2D(name='avg_pool')(x)
         x = layers.Flatten()(x)
         x = layers.Dense(classes, activation='softmax', name='fc10')(x)
 
@@ -210,5 +223,4 @@ class KerasSample(Base):
 
 
 if __name__ == "__main__":
-    print(sys.argv)
     KerasSample().invoke(sys.argv)
