@@ -21,6 +21,7 @@ from keras.applications.imagenet_utils import _obtain_input_shape
 from keras.backend import image_data_format, is_keras_tensor
 from keras import layers
 from keras.callbacks import ModelCheckpoint
+from keras.utils import to_categorical
 
 class KerasSample(Base):
     """
@@ -85,10 +86,10 @@ class KerasSample(Base):
             * class9/mnist20.jpg
             * mnist.jbl
         """
-        (X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
+        (X_train, y_train), _ = keras.datasets.mnist.load_data()
 
-        X_train = X_train[:20, :, :]
-        y_train = y_train[:20]
+        X_train = X_train[:32, :, :]
+        y_train = y_train[:32,]
 
         # Create a list of class folders to create
         classes = np.unique(y_train)
@@ -103,6 +104,12 @@ class KerasSample(Base):
             img_name = 'mnist{:0>2d}.jpg'.format(i+1)
             fol = os.path.join(self.data_dir, 'class{}'.format(y))
             imageio.imwrite(os.path.join(fol, img_name), x)
+
+        # Create it so the data is in a format to be put into a model        
+        # Error with dense layer saying that it was meant to have 10 fields:
+        # this means it needs a one-hot-encoding.
+        y_train = to_categorical(y_train, num_classes=10)
+        X_train = np.expand_dims(X_train, axis=-1)
 
         joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
 
@@ -125,11 +132,9 @@ class KerasSample(Base):
 
         model.compile(**compile_dict)
 
-        X_train = np.expand_dims(X_train, axis=-1)
-
         model.fit(X_train, y_train, **fit_dict)
 
-        model.save(os.path.join('Model.h5'))
+        model.save(os.path.join(self.data_dir, 'Model.h5'))
 
     def create_sample_data(self):
         epochs = 2
@@ -143,8 +148,7 @@ class KerasSample(Base):
         """
         fit_dict = {'epochs': epochs,
                     'verbose': 1,
-                    'steps_per_epoch': 5,
-                    'batch_size': 4}
+                    'batch_size': 32}
         
         if checkpoint:
             fit_dict['callbacks'] = ModelCheckpoint(os.path.join(self.data_dir,
