@@ -95,7 +95,9 @@ class KerasSample(Base):
 
         joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
 
-    def create_sample_model_data(self, training_data, epochs):
+        return (X_train, y_train)
+
+    def create_sample_model(self, training_data, epochs):
         """
         Create sample trained model file. The files created are:
 
@@ -116,7 +118,11 @@ class KerasSample(Base):
 
         model.save(os.path.join('Model.h5'))
 
-    def model_dicts(epochs, checkpoint=False):
+    def create_sample_data(self, epochs):
+        training_data = self.create_sample_image_data()
+        self.create_sample_model(training_data, epochs)
+
+    def model_dicts(self, epochs, checkpoint=False):
         """
         Creates the fit and model dicts with the checkpoint callback if
         necessary.
