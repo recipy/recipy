@@ -38,6 +38,7 @@ install:
     scikit-learn
     scikit-image
     nibabel
+    glob
     gdal imageio tifffile xarray rasterio netCDF4
     iris
   - source activate test-environment

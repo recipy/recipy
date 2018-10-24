@@ -79,7 +79,10 @@ class KerasSample(Base):
 
         model.fit(X, y, **fit_dict)
 
-        model.save_weights(os.path.join(self.data_dir, 'Model_Weights.h5'))
+        filepath = os.path.join(self.data_dir, 'Model_Weights.h5')
+
+        model.save_weights(filepath)
+        os.remove(filepath)
 
     def savemodel(self):
         """ Tests saving out whole model.
@@ -102,7 +105,10 @@ class KerasSample(Base):
 
         model.fit(X, y, **fit_dict)
 
-        model.save(os.path.join(self.data_dir, 'Whole_Model.h5'))
+        filepath = os.path.join(self.data_dir, 'Whole_Model.h5')
+
+        model.save(filepath)
+        os.remove(filepath)
 
     def callback_saveweights(self):
         """
@@ -122,6 +128,12 @@ class KerasSample(Base):
         model.compile(**compile_dict)
 
         model.fit(X, y, **fit_dict)
+
+        from glob import glob
+        checkpoints = glob(os.path.join(self.data_dir, '*.hdf5'))
+
+        for cp in checkpoints:
+            os.remove(cp)
 
     def loadweights(self):
         model = self.SimpleNet()
