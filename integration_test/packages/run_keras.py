@@ -17,7 +17,7 @@ import joblib
 
 from integration_test.packages.base import Base
 
-from keras import applications, backend, layers, utils
+from keras import applications, backend, layers, models, utils
 
 class KerasSample(Base):
     """
@@ -79,7 +79,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory('data/keras',
+        train_generator = datagen.flow_from_directory(self.data_dir,
                                                       target_size=(28, 28),
                                                       batch_size=32)
 
@@ -105,7 +105,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory('data/keras',
+        train_generator = datagen.flow_from_directory(self.data_dir,
                                                       target_size=(28, 28),
                                                       batch_size=32)
 
@@ -130,7 +130,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory('data/keras',
+        train_generator = datagen.flow_from_directory(self.data_dir,
                                                       target_size=(28, 28),
                                                       batch_size=32)
 
@@ -143,7 +143,12 @@ class KerasSample(Base):
         model.fit_generator(train_generator, **fit_dict)
 
     def loadweights(self):
-        pass
+        model = self.SimpleNet()
+
+        model.load_weights(os.path.join(self.data_dir, 'Model.h5'))
+
+    def loadmodel(self):
+        model = models.load_model(os.path.join(self.data_dir, 'Model.h5'))
 
     def create_sample_image_data(self):
         """

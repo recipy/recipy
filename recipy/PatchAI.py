@@ -11,7 +11,7 @@ class PatchKeras(PatchMultipleWrappers):
 
     wrappers = WrapperList()
 
-    input_functions = ['Model.load_weights']
+    input_functions = ['Model.load_weights', 'models.load_model']
 
     input_functions += ['utils.HDF5Matrix', 'utils.get_file']
 
