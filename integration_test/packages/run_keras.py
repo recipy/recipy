@@ -68,7 +68,82 @@ class KerasSample(Base):
                                                       batch_size=32)
 
     def saveweights(self):
-        
+        """ Tests saving out just weights.
+        Creates model, loads data into data generator, compiles and fits
+        model to generator. Then saves weights.
+        """
+        datagen = keras.preprocessing.image.ImageDataGenerator()
+
+        epochs = 2
+
+        # Only way to test data generator is to flow_from_directory and train
+        # simplenet.
+
+        train_generator = datagen.flow_from_directory('data/keras',
+                                                      target_size=(28, 28),
+                                                      batch_size=32)
+
+        model = self.SimpleNet()
+
+        fit_dict, compile_dict = self.model_dicts(epochs)
+
+        model.compile(**compile_dict)
+
+        model.fit_generator(train_generator, **fit_dict)
+
+        model.save_weights(os.path.join(self.data_dir, 'Model_Weights.h5'))
+
+    def savemodel(self):
+        """ Tests saving out whole model.
+        Creates model, loads data into data generator, compiles and fits
+        model to generator. Then saves model.
+        """
+        datagen = keras.preprocessing.image.ImageDataGenerator()
+
+        epochs = 2
+
+        # Only way to test data generator is to flow_from_directory and train
+        # simplenet.
+
+        train_generator = datagen.flow_from_directory('data/keras',
+                                                      target_size=(28, 28),
+                                                      batch_size=32)
+
+        model = self.SimpleNet()
+
+        fit_dict, compile_dict = self.model_dicts(epochs)
+
+        model.compile(**compile_dict)
+
+        model.fit_generator(train_generator, **fit_dict)
+
+        model.save(os.path.join(self.data_dir, 'Whole_Model.h5'))
+
+    def callback_saveweights(self):
+        """
+        Test saving within a callback works the same as after training.
+        """
+        datagen = keras.preprocessing.image.ImageDataGenerator()
+
+        epochs = 2
+
+        # Only way to test data generator is to flow_from_directory and train
+        # simplenet.
+
+        train_generator = datagen.flow_from_directory('data/keras',
+                                                      target_size=(28, 28),
+                                                      batch_size=32)
+
+        model = self.SimpleNet()
+
+        fit_dict, compile_dict = self.model_dicts(epochs, checkpoint=True)
+
+        model.compile(**compile_dict)
+
+        model.fit_generator(train_generator, **fit_dict)
+
+    def loadweights(self):
+        pass
 
     def create_sample_image_data(self):
         """
@@ -161,8 +236,8 @@ class KerasSample(Base):
                                 ".keras",
                                 "datasets",
                                 "mnist.npz")
-
-        os.remove(filepath)
+        if os.path.exists(filepath)
+            os.remove(filepath)
 
 
     def model_dicts(self, epochs, checkpoint=False):
