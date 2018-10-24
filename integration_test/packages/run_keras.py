@@ -16,12 +16,8 @@ import imageio
 import joblib
 
 from integration_test.packages.base import Base
-from keras.models import Model
-from keras.applications.imagenet_utils import _obtain_input_shape
-from keras.backend import image_data_format, is_keras_tensor
-from keras import layers
-from keras.callbacks import ModelCheckpoint
-from keras.utils import to_categorical
+
+from keras import applications, backend, layers, utils
 
 class KerasSample(Base):
     """
@@ -59,6 +55,20 @@ class KerasSample(Base):
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "keras")
 
+    def datagenerator_flowdirectory(self):
+        datagen = keras.preprocessing.image.ImageDataGenerator()
+
+        epochs = 2
+
+        # Only way to test data generator is to flow_from_directory and train
+        # simplenet.
+
+        train_generator = datagen.flow_from_directory('data/keras',
+                                                      target_size=(28, 28),
+                                                      batch_size=32)
+
+    def saveweights(self):
+        
 
     def create_sample_image_data(self):
         """
@@ -84,7 +94,6 @@ class KerasSample(Base):
             * class8/mnist18.jpg
             * class6/mnist19.jpg
             * class9/mnist20.jpg
-            * mnist.jbl
         """
         (X_train, y_train), _ = keras.datasets.mnist.load_data()
 
@@ -108,7 +117,7 @@ class KerasSample(Base):
         # Create it so the data is in a format to be put into a model        
         # Error with dense layer saying that it was meant to have 10 fields:
         # this means it needs a one-hot-encoding.
-        y_train = to_categorical(y_train, num_classes=10)
+        y_train = utils.to_categorical(y_train, num_classes=10)
         X_train = np.expand_dims(X_train, axis=-1)
 
         joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
@@ -140,6 +149,21 @@ class KerasSample(Base):
         epochs = 2
         training_data = self.create_sample_image_data()
         self.create_sample_model(training_data, epochs)
+        self.delete_mnist()
+    
+    def delete_mnist(self):
+        """ 
+        Deletes the mnist dataset to keep the installation clean.
+        Assumes that it is located in "user/.keras/datasets" called
+        mnist.npz
+        """
+        filepath = os.path.join(os.path.expanduser("~"),
+                                ".keras",
+                                "datasets",
+                                "mnist.npz")
+
+        os.remove(filepath)
+
 
     def model_dicts(self, epochs, checkpoint=False):
         """
@@ -151,7 +175,7 @@ class KerasSample(Base):
                     'batch_size': 32}
         
         if checkpoint:
-            fit_dict['callbacks'] = ModelCheckpoint(os.path.join(self.data_dir,
+            fit_dict['callbacks'] = callbacks.ModelCheckpoint(os.path.join(self.data_dir,
                                                                  'model_{epoch:02d}.hdf5'))
 
         compile_dict = {'loss': 'categorical_crossentropy',
@@ -185,17 +209,17 @@ class KerasSample(Base):
             The number of classes to be represented in the softmax
 
         """  
-        input_shape = _obtain_input_shape(input_shape,
+        input_shape = applications.imagenet_utils._obtain_input_shape(input_shape,
                                           default_size=28,
                                           min_size=14,
-                                          data_format=image_data_format(),
+                                          data_format=backend.image_data_format(),
                                           require_flatten=True,
                                           weights=weights)
 
         if input_tensor is None:
             img_input = layers.Input(shape=input_shape)
         else:
-            if not is_keras_tensor(input_tensor):
+            if not backend.is_keras_tensor(input_tensor):
                 img_input = layers.Input(tensor=input_tensor, shape=input_shape)
             else:
                 img_input = input_tensor
@@ -218,7 +242,7 @@ class KerasSample(Base):
         else:
             inputs = img_input
 
-        model = Model(inputs, x, name='simplenet')
+        model = keras.Model(inputs, x, name='simplenet')
 
         if weights is not None:
             model.load_weights(weights)
