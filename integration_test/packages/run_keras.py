@@ -17,7 +17,8 @@ import joblib
 
 from integration_test.packages.base import Base
 
-from keras import applications, backend, layers, models, utils
+from keras import applications, backend, callbacks, layers, models, utils
+from keras.preprocessing import image
 
 class KerasSample(Base):
     """
@@ -26,16 +27,7 @@ class KerasSample(Base):
     This class assumes the existence of a data/keras directory,
     co-located with this file, with the following content:
 
-    * mnist01.jpg
-    * mnist02.jpg
-    * mnist03.jpg
-    * mnist04.jpg
-    * mnist05.jpg
-    * mnist06.jpg
-    * mnist07.jpg
-    * mnist08.jpg
-    * mnist09.jpg
-    * mnist10.jpg
+    * mnist01.jpg - mnist32.jpg
     * mnist.jbl (use X_train, y_train = joblib.load('mnist.jbl'))
     * Model.hdf5
 
@@ -56,7 +48,7 @@ class KerasSample(Base):
         self.data_dir = os.path.join(self.current_dir, "data", "keras")
 
     def datagenerator_flowdirectory(self):
-        datagen = keras.preprocessing.image.ImageDataGenerator()
+        datagen = image.ImageDataGenerator()
 
         epochs = 2
 
@@ -72,16 +64,12 @@ class KerasSample(Base):
         Creates model, loads data into data generator, compiles and fits
         model to generator. Then saves weights.
         """
-        datagen = keras.preprocessing.image.ImageDataGenerator()
-
         epochs = 2
 
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory(self.data_dir,
-                                                      target_size=(28, 28),
-                                                      batch_size=32)
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
 
         model = self.SimpleNet()
 
@@ -89,7 +77,7 @@ class KerasSample(Base):
 
         model.compile(**compile_dict)
 
-        model.fit_generator(train_generator, **fit_dict)
+        model.fit(X, y, **fit_dict)
 
         model.save_weights(os.path.join(self.data_dir, 'Model_Weights.h5'))
 
@@ -98,16 +86,13 @@ class KerasSample(Base):
         Creates model, loads data into data generator, compiles and fits
         model to generator. Then saves model.
         """
-        datagen = keras.preprocessing.image.ImageDataGenerator()
 
         epochs = 2
 
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory(self.data_dir,
-                                                      target_size=(28, 28),
-                                                      batch_size=32)
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
 
         model = self.SimpleNet()
 
@@ -115,7 +100,7 @@ class KerasSample(Base):
 
         model.compile(**compile_dict)
 
-        model.fit_generator(train_generator, **fit_dict)
+        model.fit(X, y, **fit_dict)
 
         model.save(os.path.join(self.data_dir, 'Whole_Model.h5'))
 
@@ -123,16 +108,12 @@ class KerasSample(Base):
         """
         Test saving within a callback works the same as after training.
         """
-        datagen = keras.preprocessing.image.ImageDataGenerator()
-
         epochs = 2
 
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory(self.data_dir,
-                                                      target_size=(28, 28),
-                                                      batch_size=32)
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
 
         model = self.SimpleNet()
 
@@ -140,7 +121,7 @@ class KerasSample(Base):
 
         model.compile(**compile_dict)
 
-        model.fit_generator(train_generator, **fit_dict)
+        model.fit(X, y, **fit_dict)
 
     def loadweights(self):
         model = self.SimpleNet()
@@ -174,6 +155,18 @@ class KerasSample(Base):
             * class8/mnist18.jpg
             * class6/mnist19.jpg
             * class9/mnist20.jpg
+            * class4/mnist21.jpg
+            * class0/mnist22.jpg
+            * class9/mnist23.jpg
+            * class1/mnist24.jpg
+            * class1/mnist25.jpg
+            * class2/mnist26.jpg
+            * class4/mnist27.jpg
+            * class3/mnist28.jpg
+            * class2/mnist29.jpg
+            * class7/mnist30.jpg
+            * class3/mnist31.jpg
+            * class8/mnist32.jpg
         """
         (X_train, y_train), _ = keras.datasets.mnist.load_data()
 
@@ -241,7 +234,7 @@ class KerasSample(Base):
                                 ".keras",
                                 "datasets",
                                 "mnist.npz")
-        if os.path.exists(filepath)
+        if os.path.exists(filepath):
             os.remove(filepath)
 
 
@@ -255,17 +248,14 @@ class KerasSample(Base):
                     'batch_size': 32}
         
         if checkpoint:
-            fit_dict['callbacks'] = callbacks.ModelCheckpoint(os.path.join(self.data_dir,
-                                                                 'model_{epoch:02d}.hdf5'))
+            fit_dict['callbacks'] = [callbacks.ModelCheckpoint(os.path.join(self.data_dir,
+                                                                 'model_{epoch:02d}.hdf5'))]
 
         compile_dict = {'loss': 'categorical_crossentropy',
                         'optimizer': 'sgd',
                         'metrics': ['accuracy']}
 
         return fit_dict, compile_dict
-
-    def train_checkpoint_epoch_model(self, training_data, epochs):
-        pass
 
     def SimpleNet(self,
                   input_tensor=None,
