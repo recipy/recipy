@@ -41,22 +41,6 @@ install:
     gdal imageio tifffile xarray rasterio netCDF4
     iris
   - source activate test-environment
-  # Install py.test explicitly else Travis CI will use the one in its
-  # virtualenv which can't use the Miniconda environment.
-  - conda install pytest behave
-  # Install packages needed for testing recipy.
-  - conda install python-dateutil pyyaml numpy git
-  # Install packages that recipy can log.
-  - conda install matplotlib
-  - conda install pandas pytables xlrd xlwt
-  - conda install lxml
-  - conda install beautifulsoup4
-  - conda install pillow
-  - conda install scikit-learn
-  - conda install scikit-image
-  - conda install nibabel
-  - conda install gdal imageio tifffile xarray rasterio netCDF4
-  - conda install -c conda-forge iris
   # Install packages conditionally depending on python version
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       conda install tensorflow;
@@ -88,7 +72,6 @@ install:
   - python --version
   - python -c "import sys, pprint; pprint.pprint(sys.path)"
   - python -c "import tinydb"
-
 
 script:
   # Run py.test with 'v' (verbose) to show test function names and
