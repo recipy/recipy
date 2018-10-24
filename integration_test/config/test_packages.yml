@@ -291,3 +291,10 @@ test_cases:
   inputs: [ cube1.nc ]
 - arguments: [ save ]
   outputs: [ cube.nc ]
+---
+script: run_keras.py
+libraries: [ keras ]
+test_cases:
+- arguments: [ datagenerator_flowdirectory ]
+  inputs: [ image.tiff ]
+  skip_py_version: [ 3.4 ]
