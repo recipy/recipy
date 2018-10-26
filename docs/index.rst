@@ -12,6 +12,7 @@ Welcome to recipy's documentation!
 
    installation
    user_manual
+   patched_modules
    developer
 
 
