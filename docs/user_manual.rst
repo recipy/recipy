@@ -171,14 +171,14 @@ patched). At the moment, the only possible options are:
 
   * ``debug`` - print debug messages
   * ``editor = vi`` - Configure the default text editor that will be used when
-  recipy needs you to type in a message. Use notepad if on Windows, for example
+    recipy needs you to type in a message. Use notepad if on Windows, for example
   * ``quiet`` - don't print any messages
   * ``port`` - specify port to use for the GUI
 
 * ``[data]``
 
   * ``file_diff_outputs`` - store diff between the old output and new output
-  file, if the output file exists before the script is executed
+    file, if the output file exists before the script is executed
 
 * ``[database]``
 
@@ -187,21 +187,21 @@ patched). At the moment, the only possible options are:
 * ``[ignored metadata]``
 
   * ``diff`` - don't store the output of ``git diff`` in the metadata for a
-  recipy run
+    recipy run
   * ``git`` - don't store anything relating to git (origin, commit, repo etc)
-  in the metadata for a recipy run
+    in the metadata for a recipy run
   * ``input_hashes`` - don't compute and store SHA-1 hashes of input files
   * ``output_hashes`` - don't compute and store SHA-1 hashes of output files
 
 * ``[ignored inputs]``
 
   * List any module here (eg. ``numpy``\ ) to instruct recipy *not* to record
-  inputs from this module, or ``all`` to ignore inputs from all modules
+    inputs from this module, or ``all`` to ignore inputs from all modules
 
 * ``[ignored outputs]``
 
   * List any module here (eg. ``numpy``\ ) to instruct recipy *not* to record
-  outputs from this module, or ``all`` to ignore outputs from all modules
+    outputs from this module, or ``all`` to ignore outputs from all modules
 
 By default all metadata is stored (ie. no metadata is ignored) and debug messages
 are not shown. A ``.recipyrc`` file in the current directory takes precedence over
