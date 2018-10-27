@@ -6,6 +6,7 @@ For Developers
    :maxdepth: 2
    :caption: Contents:
 
+   creating_patches
    databaseSchema
    TestFramework
    Issues
