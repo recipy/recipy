@@ -109,6 +109,17 @@ searching for runs.
 Saving Custom Values
 ====================
 
+In your script, you can also add custom key-value pairs to the run:
+
+.. code-block:: python
+
+   recipy.log_values(key='value')
+   recipy.log_values({'key': 'value'})
+
+
+Please note that, at the moment, `these values are not displayed in the CLI or
+in the GUI <https://github.com/recipy/recipy/issues/202>`_.
+
 Command Line Interface
 ======================
 
