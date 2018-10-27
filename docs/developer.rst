@@ -9,5 +9,3 @@ For Developers
    creating_patches
    databaseSchema
    TestFramework
-   Issues
-   PackageVersionFailures

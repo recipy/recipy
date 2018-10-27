@@ -14,6 +14,7 @@ Welcome to recipy's documentation!
    user_manual
    patched_modules
    developer
+   known_problems
 
 
 
