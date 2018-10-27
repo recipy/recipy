@@ -136,22 +136,23 @@ with a given name, search based on ids, show the latest entry and more:
      recipy latest [options]
      recipy gui [options]
      recipy annotate [<idvalue>]
+     recipy pm [--format <rst|plain>]
      recipy (-h | --help)
      recipy --version
 
    Options:
-     -h --help     Show this screen
-     --version     Show version
-     -a --all      Show all results (otherwise just latest result given)
-     -f --fuzzy    Use fuzzy searching on filename
-     -r --regex    Use regex searching on filename
-     -i --id       Search based on (a fragment of) the run ID
-     -v --verbose  Be verbose
-     -d --diff     Show diff
-     -j --json     Show output as JSON
-     --no-browser  Do not open browser window
-     --debug       Turn on debugging mode
-
+     -h --help        Show this screen
+     --version        Show version
+     -p --filepath    Search based on filepath rather than hash
+     -f --fuzzy       Use fuzzy searching on filename
+     -r --regex       Use regex searching on filename
+     -i --id          Search based on (a fragment of) the run ID
+     -a --all         Show all results (otherwise just latest result given)
+     -v --verbose     Be verbose
+     -d --diff        Show diff
+     -j --json        Show output as JSON
+     --no-browser     Do not open browser window
+     --debug          Turn on debugging mode
 
 Configuration
 =============
