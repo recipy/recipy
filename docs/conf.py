@@ -12,10 +12,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
@@ -28,6 +27,43 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = ''
 
+# -- Automatically generate API documentation --------------------------------
+
+import sphinx.apidoc
+
+def run_apidoc(_):
+    ignore_paths = [
+        'integration_test',
+        'setup.py',
+        'process_changelog.py',
+        os.path.join('recipyGui', 'tests'),
+        os.path.join('recipyCommon', 'tests'),
+        os.path.join('recipy', 'tests'),
+    ]
+
+    argv = [
+        "-f",
+        "-l",
+        "-e",
+        "-M",
+        "-o", os.path.join("docs", "_apidoc"),
+        ".",
+    ] + ignore_paths
+
+    print(' '.join(argv))
+
+    try:
+        # Sphinx 1.7+
+        from sphinx.ext import apidoc
+        apidoc.main(argv)
+    except ImportError:
+        # Sphinx 1.6 (and earlier)
+        from sphinx import apidoc
+        argv.insert(0, apidoc.__file__)
+        apidoc.main(argv)
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
 
 # -- General configuration ---------------------------------------------------
 
