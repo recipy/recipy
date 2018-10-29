@@ -41,12 +41,11 @@ install:
     glob
     gdal imageio tifffile xarray rasterio netCDF4
     iris
+    joblib
   - source activate test-environment
   # Install packages conditionally depending on python version
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ] || [ "$TRAVIS_PYTHON_VERSION" == "3.5" ] || [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-      conda install tensorflow;
-      conda install keras;
-      conda install joblib;
+      conda install tensorflow keras;
     fi
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
