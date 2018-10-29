@@ -55,7 +55,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        train_generator = datagen.flow_from_directory('data/keras',
+        train_generator = datagen.flow_from_directory(self.data_dir,
                                                       target_size=(28, 28),
                                                       batch_size=32)
 

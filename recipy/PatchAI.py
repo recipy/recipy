@@ -14,6 +14,7 @@ class PatchKeras(PatchMultipleWrappers):
     input_functions = ['Model.load_weights', 'models.load_model']
 
     input_functions += ['utils.HDF5Matrix', 'utils.get_file']
+    input_functions += ['preprocessing.image.ImageDataGenerator.flow_from_directory']
 
     output_functions = ['Model.save_weights', 'Model.save']
     output_functions += ['callbacks.CSVLogger']

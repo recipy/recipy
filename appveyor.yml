@@ -41,6 +41,8 @@ install:
     gdal imageio tifffile xarray rasterio netCDF4
     iris"
   - activate test-environment
+  # Install dependencies for keras if the python version allows it
+  
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - copy integration_test\packages\matplotlibrc .
