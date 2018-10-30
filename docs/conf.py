@@ -32,6 +32,9 @@ release = ''
 import sphinx.apidoc
 
 def run_apidoc(_):
+    here = os.path.realpath(__file__)
+    recipy_dir = os.path.join(os.path.dirname(here), '..')
+
     ignore_paths = [
         'integration_test',
         'setup.py',
@@ -47,7 +50,7 @@ def run_apidoc(_):
         "-e",
         "-M",
         "-o", os.path.join("docs", "_apidoc"),
-        "..",
+        recipy_dir,
     ] + ignore_paths
 
     print(' '.join(argv))
