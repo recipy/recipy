@@ -14,7 +14,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
+
+here = os.path.dirname(__file__)
+sys.path.insert(0, os.path.abspath(os.path.join(here, '..')))
 
 # -- Project information -----------------------------------------------------
 
@@ -32,8 +34,9 @@ release = ''
 import sphinx.apidoc
 
 def run_apidoc(_):
-    here = os.path.realpath(__file__)
-    recipy_dir = os.path.join(os.path.dirname(here), '..')
+    here = os.path.dirname(__file__)
+    out = os.path.abspath(os.path.join(here, '_apidocs'))
+    src = os.path.abspath(os.path.join(here, '..'))
 
     ignore_paths = [
         'integration_test',
@@ -49,8 +52,8 @@ def run_apidoc(_):
         "-l",
         "-e",
         "-M",
-        "-o", os.path.join("docs", "_apidoc"),
-        recipy_dir,
+        "-o", out,
+        src,
     ] + ignore_paths
 
     print(' '.join(argv))
