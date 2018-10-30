@@ -69,7 +69,14 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
+        # On travis it also installs the system on 2.7. This means we need to
+        # have mnist2 and mnist3 .jbls
+        if sys.version < 3:
+            name = '2'
+        else:
+            name = '3'
+        
+        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
 
         model = self.SimpleNet()
 
@@ -95,7 +102,12 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
+        if sys.version < 3:
+            name = '2'
+        else:
+            name = '3'
+        
+        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
 
         model = self.SimpleNet()
 
@@ -119,7 +131,12 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist.jbl'))
+        if sys.version < 3:
+            name = '2'
+        else:
+            name = '3'
+        
+        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
 
         model = self.SimpleNet()
 
@@ -205,7 +222,14 @@ class KerasSample(Base):
         y_train = utils.to_categorical(y_train, num_classes=10)
         X_train = np.expand_dims(X_train, axis=-1)
 
-        joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist.jbl'))
+        # create different files based on python version. Need to run on both
+        # 2 and 3
+        if sys.version >= 3:
+            name = '3'
+        else:
+            name = '2'
+
+        joblib.dump((X_train, y_train), os.path.join(self.data_dir, f'mnist{name}.jbl'))
 
         return (X_train, y_train)
 
