@@ -14,6 +14,7 @@ import numpy as np
 import keras
 import imageio
 import joblib
+import platform
 
 from integration_test.packages.base import Base
 
@@ -71,10 +72,10 @@ class KerasSample(Base):
 
         # On travis it also installs the system on 2.7. This means we need to
         # have mnist2 and mnist3 .jbls
-        if sys.version < 3:
-            name = '2'
-        else:
+        if platform.python_version_tuple()[0] == '3':
             name = '3'
+        else:
+            name = '2'
         
         X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
@@ -102,10 +103,10 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        if sys.version < 3:
-            name = '2'
-        else:
+        if platform.python_version_tuple()[0] == '3':
             name = '3'
+        else:
+            name = '2'
         
         X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
@@ -131,10 +132,10 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        if sys.version < 3:
-            name = '2'
-        else:
+        if platform.python_version_tuple()[0] == '3':
             name = '3'
+        else:
+            name = '2'
         
         X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
@@ -224,7 +225,7 @@ class KerasSample(Base):
 
         # create different files based on python version. Need to run on both
         # 2 and 3
-        if sys.version >= 3:
+        if platform.python_version_tuple()[0] == '3':
             name = '3'
         else:
             name = '2'
