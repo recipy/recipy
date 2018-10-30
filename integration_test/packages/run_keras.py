@@ -76,7 +76,7 @@ class KerasSample(Base):
         else:
             name = '3'
         
-        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
         model = self.SimpleNet()
 
@@ -107,7 +107,7 @@ class KerasSample(Base):
         else:
             name = '3'
         
-        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
         model = self.SimpleNet()
 
@@ -136,7 +136,7 @@ class KerasSample(Base):
         else:
             name = '3'
         
-        X, y = joblib.load(os.path.join(self.data_dir, f'mnist{name}.jbl'))
+        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
         model = self.SimpleNet()
 
@@ -229,7 +229,7 @@ class KerasSample(Base):
         else:
             name = '2'
 
-        joblib.dump((X_train, y_train), os.path.join(self.data_dir, f'mnist{name}.jbl'))
+        joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
 
         return (X_train, y_train)
 

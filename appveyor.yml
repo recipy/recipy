@@ -44,7 +44,6 @@ install:
   - activate test-environment
   # Install dependencies for keras if the python version allows it
   - set TEMP_VAR=
-  - IF %PYTHON_VERSION%==2.7 set TEMP_VAR=1
   - IF %PYTHON_VERSION%==3.5 set TEMP_VAR=1
   - IF %PYTHON_VERSION%==3.6 set TEMP_VAR=1
   - IF %TEMP_VAR% EQU 1 (conda install tensorflow keras)
