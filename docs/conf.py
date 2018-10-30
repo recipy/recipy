@@ -47,7 +47,7 @@ def run_apidoc(_):
         "-e",
         "-M",
         "-o", os.path.join("docs", "_apidoc"),
-        ".",
+        "..",
     ] + ignore_paths
 
     print(' '.join(argv))
