@@ -46,7 +46,7 @@ install:
   - set TEMP_VAR=
   - IF %PYTHON_VERSION%==3.5 set TEMP_VAR=1
   - IF %PYTHON_VERSION%==3.6 set TEMP_VAR=1
-  - IF %TEMP_VAR% EQU 1 (conda install tensorflow keras)
+  - IF %TEMP_VAR% EQU 1 (conda install tensorflow keras>=2.2)
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - copy integration_test\packages\matplotlibrc .
