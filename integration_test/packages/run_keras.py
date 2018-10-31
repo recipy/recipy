@@ -18,7 +18,8 @@ import platform
 
 from integration_test.packages.base import Base
 
-from keras import applications, backend, callbacks, layers, models, utils
+from keras import backend, callbacks, layers, models, utils
+from keras.applications import imagenet_utils
 from keras.preprocessing import image
 
 class KerasSample(Base):
@@ -47,6 +48,8 @@ class KerasSample(Base):
         """
         Base.__init__(self)
         self.data_dir = os.path.join(self.current_dir, "data", "keras")
+
+        # Write warning if keras version less than 2.2
 
     def datagenerator_flowdirectory(self):
         datagen = image.ImageDataGenerator()
@@ -316,7 +319,7 @@ class KerasSample(Base):
             The number of classes to be represented in the softmax
 
         """  
-        input_shape = applications.imagenet_utils._obtain_input_shape(input_shape,
+        input_shape = imagenet_utils._obtain_input_shape(input_shape,
                                           default_size=28,
                                           min_size=14,
                                           data_format=backend.image_data_format(),
