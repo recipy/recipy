@@ -35,16 +35,16 @@ import sphinx.apidoc
 
 def run_apidoc(_):
     here = os.path.dirname(__file__)
-    out = os.path.abspath(os.path.join(here, '_apidocs'))
+    out = os.path.abspath(os.path.join(here, '_apidoc'))
     src = os.path.abspath(os.path.join(here, '..'))
 
     ignore_paths = [
-        'integration_test',
-        'setup.py',
-        'process_changelog.py',
-        os.path.join('recipyGui', 'tests'),
-        os.path.join('recipyCommon', 'tests'),
-        os.path.join('recipy', 'tests'),
+        os.path.join(src, 'integration_test'),
+        os.path.join(src, 'setup.py'),
+        os.path.join(src, 'process_changelog.py'),
+        os.path.join(src, 'recipyGui', 'tests'),
+        os.path.join(src, 'recipyCommon', 'tests'),
+        os.path.join(src, 'recipy', 'tests'),
     ]
 
     argv = [
