@@ -81,9 +81,9 @@ class KerasSample(Base):
 
         model.fit(X, y, **fit_dict)
 
-        filepath = os.path.join(self.data_dir, 'Model_Weights.h5')
+        filepath = str(os.path.join(self.data_dir, 'Model_Weights_test.h5'))
 
-        model.save_weights(str(filepath))
+        model.save_weights(filepath)
         os.remove(filepath)
 
     def savemodel(self):
@@ -107,9 +107,9 @@ class KerasSample(Base):
 
         model.fit(X, y, **fit_dict)
 
-        filepath = os.path.join(self.data_dir, 'Whole_Model.h5')
+        filepath = str(os.path.join(self.data_dir, 'Whole_Model_test.h5'))
 
-        model.save(str(filepath))
+        model.save(filepath)
         os.remove(filepath)
 
     def callback_saveweights(self):
@@ -135,18 +135,19 @@ class KerasSample(Base):
         checkpoints = glob(os.path.join(self.data_dir, '*.hdf5'))
 
         for cp in checkpoints:
-            os.remove(cp)
+            os.remove(str(cp))
 
     def loadweights(self):
         model = self.SimpleNet()
-
-        model.load_weights(os.path.join(self.data_dir, 'Model.h5'))
+        path = str(os.path.join(self.data_dir, 'Model_Weights.h5'))
+        model.load_weights(path)
 
     def loadmodel(self):
-        model = models.load_model(os.path.join(self.data_dir, 'Whole_Model.h5'))
+        path = str(os.path.join(self.data_dir, 'Whole_Model.h5'))
+        model = models.load_model(path)
 
     def load_data(self):
-        npzfile = np.load(os.path.join(self.data_dir, 'mnist.npz'))
+        npzfile = np.load(str(os.path.join(self.data_dir, 'mnist.npz')))
         X = npzfile['X']
         y = npzfile['y']
         return X, y
@@ -197,7 +198,7 @@ class KerasSample(Base):
         classes = np.unique(y_train)
 
         for cla in classes:
-            class_fol = os.path.join(self.data_dir, 'class{}'.format(cla))
+            class_fol = str(os.path.join(self.data_dir, 'class{}'.format(cla)))
             # Check that the folder exists
             if not os.path.exists(class_fol):
                 os.makedirs(class_fol)
@@ -205,7 +206,7 @@ class KerasSample(Base):
         for i, (x, y) in enumerate(zip(X_train, y_train)):
             img_name = 'mnist{:0>2d}.jpg'.format(i+1)
             fol = os.path.join(self.data_dir, 'class{}'.format(y))
-            imageio.imwrite(os.path.join(fol, img_name), x)
+            imageio.imwrite(str(os.path.join(fol, img_name)), x)
 
         # Create it so the data is in a format to be put into a model        
         # Error with dense layer saying that it was meant to have 10 fields:
@@ -216,7 +217,7 @@ class KerasSample(Base):
         # Instead of using joblib, using numpy as we can properly
         # wrap the input using recipy. This fixes the issue with the tests
         # failing as we can be explicit about inputs
-        path = os.path.join(self.data_dir, 'mnist.npz')
+        path = str(os.path.join(self.data_dir, 'mnist.npz'))
         np.savez(path, X=X_train, y=y_train)
 
         return (X_train, y_train)
@@ -240,7 +241,10 @@ class KerasSample(Base):
 
         model.fit(X_train, y_train, **fit_dict)
 
-        model.save(str(os.path.join(self.data_dir, 'Model.h5')))
+        filepath = str(os.path.join(self.data_dir, 'Whole_Model.h5'))
+        weights_filepath = str(os.path.join(self.data_dir, 'Model_Weights.h5'))
+        model.save(filepath)
+        model.save_weights(weights_filepath)
 
     def create_sample_data(self):
         epochs = 2
