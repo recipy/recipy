@@ -62,6 +62,13 @@ class NumpySample(Base):
         np.genfromtxt(file_name, delimiter=",",
                       missing_values="", filling_values=-1)
 
+    def load(self):
+        """
+        Use numpy.load to load out.npy.
+        """
+        file_name = os.path.join(self.data_dir, "out.npy")
+        np.load(file_name)
+
     def save(self):
         """
         Use numpy.savetxt to save a file out.npy.

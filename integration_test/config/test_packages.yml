@@ -154,6 +154,8 @@ test_cases:
   inputs: [ data.csv ]
 - arguments: [ genfromtxt ]
   inputs: [ data_incomplete.csv ]
+- arguments: [ load ]
+  inputs: [ out.npy ]
 - arguments: [ save ]
   outputs: [ out.npy ]
 - arguments: [ savez ]
