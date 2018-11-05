@@ -83,7 +83,7 @@ class KerasSample(Base):
 
         filepath = os.path.join(self.data_dir, 'Model_Weights.h5')
 
-        model.save_weights(filepath)
+        model.save_weights(str(filepath))
         os.remove(filepath)
 
     def savemodel(self):
@@ -109,7 +109,7 @@ class KerasSample(Base):
 
         filepath = os.path.join(self.data_dir, 'Whole_Model.h5')
 
-        model.save(filepath)
+        model.save(str(filepath))
         os.remove(filepath)
 
     def callback_saveweights(self):
@@ -240,7 +240,7 @@ class KerasSample(Base):
 
         model.fit(X_train, y_train, **fit_dict)
 
-        model.save(os.path.join(self.data_dir, 'Model.h5'))
+        model.save(str(os.path.join(self.data_dir, 'Model.h5')))
 
     def create_sample_data(self):
         epochs = 2
@@ -272,8 +272,8 @@ class KerasSample(Base):
                     'batch_size': 32}
         
         if checkpoint:
-            fit_dict['callbacks'] = [callbacks.ModelCheckpoint(os.path.join(self.data_dir,
-                                                                 'model_{epoch:02d}.hdf5'))]
+            fit_dict['callbacks'] = [callbacks.ModelCheckpoint(str(os.path.join(self.data_dir,
+                                                                 'model_{epoch:02d}.hdf5')))]
 
         compile_dict = {'loss': 'categorical_crossentropy',
                         'optimizer': 'sgd',
@@ -303,7 +303,7 @@ class KerasSample(Base):
             The number of classes to be represented in the softmax
 
         """  
-        input_shape = imagenet_utils._obtain_input_shape(input_shape,
+        input_shape = imagenet_utils.imagenet_utils._obtain_input_shape(input_shape,
                                           default_size=28,
                                           min_size=14,
                                           data_format=backend.image_data_format(),
