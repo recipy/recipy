@@ -43,7 +43,7 @@ class PatchNumpy(PatchSimple):
     # The `load` function is *deliberately* not included here
     # as it calls fromfile internally, and then we get two duplicate
     # entries recorded in the log
-    input_functions = ['genfromtxt', 'loadtxt', 'fromfile']
+    input_functions = ['genfromtxt', 'loadtxt', 'fromfile', 'load']
     output_functions = ['save', 'savez', 'savez_compressed', 'savetxt']
 
     input_wrapper = create_wrapper(log_input, 0, 'numpy')
