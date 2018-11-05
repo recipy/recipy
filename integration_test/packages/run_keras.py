@@ -13,8 +13,6 @@ import sys
 import numpy as np
 import keras
 import imageio
-import joblib
-import platform
 
 from integration_test.packages.base import Base
 
@@ -73,14 +71,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        # On travis it also installs the system on 2.7. This means we need to
-        # have mnist2 and mnist3 .jbls
-        if platform.python_version_tuple()[0] == '3':
-            name = '3'
-        else:
-            name = '2'
-        
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
+        X, y = self.load_data()
 
         model = self.SimpleNet()
 
@@ -106,12 +97,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        if platform.python_version_tuple()[0] == '3':
-            name = '3'
-        else:
-            name = '2'
-        
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
+        X, y = self.load_data()
 
         model = self.SimpleNet()
 
@@ -135,12 +121,7 @@ class KerasSample(Base):
         # Only way to test data generator is to flow_from_directory and train
         # simplenet.
 
-        if platform.python_version_tuple()[0] == '3':
-            name = '3'
-        else:
-            name = '2'
-        
-        X, y = joblib.load(os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
+        X, y = self.load_data()
 
         model = self.SimpleNet()
 
@@ -162,7 +143,13 @@ class KerasSample(Base):
         model.load_weights(os.path.join(self.data_dir, 'Model.h5'))
 
     def loadmodel(self):
-        model = models.load_model(os.path.join(self.data_dir, 'Model.h5'))
+        model = models.load_model(os.path.join(self.data_dir, 'Whole_Model.h5'))
+
+    def load_data(self):
+        npzfile = np.load(os.path.join(self.data_dir, 'mnist.npz'))
+        X = npzfile['X']
+        y = npzfile['y']
+        return X, y
 
     def create_sample_image_data(self):
         """
@@ -226,14 +213,11 @@ class KerasSample(Base):
         y_train = utils.to_categorical(y_train, num_classes=10)
         X_train = np.expand_dims(X_train, axis=-1)
 
-        # create different files based on python version. Need to run on both
-        # 2 and 3
-        if platform.python_version_tuple()[0] == '3':
-            name = '3'
-        else:
-            name = '2'
-
-        joblib.dump((X_train, y_train), os.path.join(self.data_dir, 'mnist{}.jbl'.format(name)))
+        # Instead of using joblib, using numpy as we can properly
+        # wrap the input using recipy. This fixes the issue with the tests
+        # failing as we can be explicit about inputs
+        path = os.path.join(self.data_dir, 'mnist.npz')
+        np.savez(path, X=X_train, y=y_train)
 
         return (X_train, y_train)
 
