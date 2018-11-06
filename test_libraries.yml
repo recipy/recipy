@@ -22,8 +22,8 @@ dependencies:
   - joblib
   - tensorflow
   - keras=2.2.4
+  - iris
   - pip:
     - git+https://github.com/jmcgeheeiv/pyfakefs.git
     - tifffile
-    - iris
     - nibabel
