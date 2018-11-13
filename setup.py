@@ -78,7 +78,8 @@ Please see https://github.com/recipy/recipy for further information.
                       'flask',
                       # dependencies for `python setup.py build_sphinx`
                       'sphinx',
-                      'recommonmark'],
+                      'recommonmark',
+                      'sphinx_rtd_theme'],
 
     entry_points={
         'console_scripts': [
