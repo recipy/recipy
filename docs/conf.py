@@ -89,7 +89,9 @@ extensions = [
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None)
+    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+    # 'netcdf4': ('http://unidata.github.io/netcdf4-python/', None),
+    'xarray': ('http://xarray.pydata.org/en/stable/', None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
