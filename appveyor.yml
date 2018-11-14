@@ -13,7 +13,6 @@ environment:
 
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   # Issues have been encountered with installing numpy and scipy on
@@ -72,3 +71,6 @@ test_script:
   # Run py.test with 'v' (verbose) to show test function names and  
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
