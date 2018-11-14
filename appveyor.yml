@@ -1,7 +1,7 @@
 build: false
 
 environment:
-
+  APPVEYOR_RDP_PASSWORD: recipyappveyor
   matrix:
     - PYTHON_VERSION: 2.7
       MINICONDA: C:\Miniconda-x64
@@ -14,6 +14,7 @@ environment:
 
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   # Issues have been encountered with installing numpy and scipy on
@@ -46,11 +47,11 @@ install:
   # If statement error suggests that python version and temp var might be
   # empty - this checks that it isn't
   - ECHO %PYTHON_VERSION%
-  - set "TEMP_VAR="
-  - IF %PYTHON_VERSION%=="3.5" set TEMP_VAR="1"
-  - IF %PYTHON_VERSION%=="3.6" set TEMP_VAR="1"
+  - set TEMP_VAR=0
+  - IF %PYTHON_VERSION%==3.5 set TEMP_VAR=1
+  - IF %PYTHON_VERSION%==3.6 set TEMP_VAR=1
   - ECHO %TEMP_VAR%
-  - IF "%TEMP_VAR%"=="1" (
+  - IF %TEMP_VAR%==1 (
       conda install tensorflow keras>=2.2.4 pytables
       ) else (
         ECHO Not installing keras.
