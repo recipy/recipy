@@ -87,7 +87,7 @@ This workaround is required, because many libraries use built-in open internally
 and you only want to record the files you explicitly opened yourself.
 
 If you use Python 2, you can pass an ``encoding`` parameter to ``recipy.open``.
-In this case ``codecs`` is used to open the file with proper encoding.
+In this case :mod:`codecs` is used to open the file with proper encoding.
 
 Annotating Runs
 ===============
