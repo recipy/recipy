@@ -75,7 +75,11 @@ Please see https://github.com/recipy/recipy for further information.
                       'jinja2', 'docopt', 'GitPython', 'colorama',
                       'Flask-Script', 'flask_bootstrap', 'flask-wtf',
                       'python-dateutil', 'six', "svn", "binaryornot",
-                      'flask'],
+                      'flask',
+                      # dependencies for `python setup.py build_sphinx`
+                      'sphinx',
+                      'recommonmark',
+                      'sphinx_rtd_theme'],
 
     entry_points={
         'console_scripts': [
