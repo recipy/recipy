@@ -36,7 +36,7 @@
           <tr>
             <td>
               <form class="form" role="form" action="{{ url_for('run_details') }}" method="get">
-                <input type="hidden" name="id" value="{{ run.eid }}"></input>
+                <input type="hidden" name="id" value="{{ run.doc_id }}"></input>
                 <input type="hidden" name="query" value="{{ query }}"></input>
                 <button type="submit" class="btn btn-info">View details</button>
               </form>

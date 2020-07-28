@@ -55,7 +55,7 @@
             <div class="col-md-2 col-md-offset-4">
                 <div class="pull-right align-with-header">
                     <form role="form" action="{{ url_for('runs2json') }}" method="post">
-                        <input type="hidden" name="run_ids" value="[{{ run.eid }}]"></input>
+                        <input type="hidden" name="run_ids" value="[{{ run.doc_id }}]"></input>
                         <button type="submit" class="btn btn-info">Save as JSON</button>
                     </form>
                 </div>
@@ -148,7 +148,7 @@
                             <form class="form-inline" role="form" action="{{ url_for('annotate') }}" method="post">
                                 <div class="input-group">
                                     <textarea class="form-control" id="notes" name="notes" rows="5" cols="80">{{ run.notes }}</textarea>
-                                    {{ annotateRunForm.run_id(value=run.eid) }}
+                                    {{ annotateRunForm.run_id(value=run.doc_id) }}
                                 </div>
                                 <div class="input-group bottom-box">
                                     <button type="submit" class="btn btn-info">Save notes</button>

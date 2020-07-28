@@ -82,7 +82,7 @@ def get_log(database, log_id):
     except Exception as exception:
         raise DatabaseError("Query error", exception)
     if len(results) > 0:
-        return (results[0].eid, dict(results[0]))
+        return (results[0].doc_id, dict(results[0]))
     else:
         return None
 

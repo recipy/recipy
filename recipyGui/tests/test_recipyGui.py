@@ -200,7 +200,7 @@ class TestRecipyGui(TestCase):
             self.assertEqual(run.get(k), v)
 
     def test_index_view_test_runs(self):
-        self.testRuns = sorted(self.testRuns, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['eid'], reverse=True)
+        self.testRuns = sorted(self.testRuns, key = lambda x: parse(x['date'].replace('{TinyDate}:', '')) if x['date'] is not None else x['doc_id'], reverse=True)
         for run in self.testRuns:
             self.db.insert(run)
 
@@ -212,9 +212,9 @@ class TestRecipyGui(TestCase):
 
     def test_details_view(self):
         for run in self.testRuns:
-            eid = self.db.insert(run)
+            doc_id = self.db.insert(run)
 
-            response = self.client.get('/run_details?id={}'.format(eid))
+            response = self.client.get('/run_details?id={}'.format(doc_id))
             self.assert200(response)
 
             run2 = self.get_context_variable('run')
@@ -226,9 +226,9 @@ class TestRecipyGui(TestCase):
         """The database file should be displayed in the index, and run_details
         views.
         """
-        eid = self.db.insert(self.testRuns[0])
+        doc_id = self.db.insert(self.testRuns[0])
 
-        views = ['/', '/run_details?id={}'.format(eid)]
+        views = ['/', '/run_details?id={}'.format(doc_id)]
 
         for v in views:
             response = self.client.get(v)
@@ -243,8 +243,8 @@ class TestRecipyGui(TestCase):
         and run_details view.
         """
         for run in self.testRuns:
-            eid = self.db.insert(run)
-            response = self.client.get('/run_details?id={}'.format(eid))
+            doc_id = self.db.insert(run)
+            response = self.client.get('/run_details?id={}'.format(doc_id))
             if 'warnings' in run.keys():
                 if run['warnings'] != []:
                     for w in run['warnings']:

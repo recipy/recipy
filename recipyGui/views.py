@@ -41,7 +41,7 @@ def index():
     for run in runs:
         if 'notes' in run.keys():
             run['notes'] = str(escape(run['notes']))
-        run_ids.append(run.eid)
+        run_ids.append(run.doc_id)
 
     db.close()
 
@@ -59,7 +59,7 @@ def run_details():
     run_id = int(request.args.get('id'))
 
     db = utils.open_or_create_db()
-    r = db.get(eid=run_id)
+    r = db.get(doc_id=run_id)
 
     if r is not None:
         diffs = db.table('filediffs').search(Query().run_id == run_id)
@@ -85,7 +85,7 @@ def latest_run():
     r = get_latest_run()
 
     if r is not None:
-        diffs = db.table('filediffs').search(Query().run_id == r.eid)
+        diffs = db.table('filediffs').search(Query().run_id == r.doc_id)
     else:
         flash('No latest run (database is empty).', 'danger')
         diffs = []
@@ -108,7 +108,7 @@ def annotate():
     query = request.args.get('query', '')
 
     db = utils.open_or_create_db()
-    db.update({'notes': notes}, eids=[run_id])
+    db.update({'notes': notes}, doc_ids=[run_id])
     db.close()
 
     return redirect(url_for('run_details', id=run_id, query=query))
@@ -118,7 +118,7 @@ def annotate():
 def runs2json():
     run_ids = literal_eval(request.form['run_ids'])
     db = db = utils.open_or_create_db()
-    runs = [db.get(eid=run_id) for run_id in run_ids]
+    runs = [db.get(doc_id=run_id) for run_id in run_ids]
     db.close()
 
     response = make_response(dumps(runs, indent=2, sort_keys=True,
