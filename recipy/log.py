@@ -132,7 +132,7 @@ def log_values(custom_values=None, **kwargs):
 
     # Update object in DB
     db = open_or_create_db()
-    db.update(add_dict("custom_values", custom_values), eids=[RUN_ID])
+    db.update(add_dict("custom_values", custom_values), doc_ids=[RUN_ID])
     db.close()
 
 
@@ -165,8 +165,8 @@ def log_input(filename, source):
     #Update object in DB
     version = get_version(source)
     db = open_or_create_db()
-    db.update(append("inputs", record, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("inputs", record, no_duplicates=True), doc_ids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), doc_ids=[RUN_ID])
     db.close()
 
 
@@ -202,8 +202,8 @@ def log_output(filename, source):
         print("Output to %s using %s" % (filename, source))
     #Update object in DB
     # data hash will be hashed at script exit, if enabled
-    db.update(append("outputs", filename, no_duplicates=True), eids=[RUN_ID])
-    db.update(append("libraries", version, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("outputs", filename, no_duplicates=True), doc_ids=[RUN_ID])
+    db.update(append("libraries", version, no_duplicates=True), doc_ids=[RUN_ID])
     db.close()
 
 
@@ -215,7 +215,7 @@ def log_exception(typ, value, traceback):
                  'traceback': ''.join(format_tb(traceback))}
     # Update object in DB
     db = open_or_create_db()
-    db.update({"exception": exception}, eids=[RUN_ID])
+    db.update({"exception": exception}, doc_ids=[RUN_ID])
     db.close()
     # Done logging, call default exception handler
     sys.__excepthook__(typ, value, traceback)
@@ -234,7 +234,7 @@ def log_warning(msg, typ, script, lineno, file=None, line=None):
 
     # Update object in DB
     db = open_or_create_db()
-    db.update(append("warnings", warning, no_duplicates=True), eids=[RUN_ID])
+    db.update(append("warnings", warning, no_duplicates=True), doc_ids=[RUN_ID])
     db.close()
 
     # Done logging, print warning to stderr
@@ -300,7 +300,7 @@ def log_exit():
         print("recipy run complete")
     exit_date = datetime.datetime.utcnow()
     db = open_or_create_db()
-    db.update({'exit_date': exit_date}, eids=[RUN_ID])
+    db.update({'exit_date': exit_date}, doc_ids=[RUN_ID])
     db.close()
 
 
@@ -310,10 +310,10 @@ def hash_outputs():
         return
 
     db = open_or_create_db()
-    run = db.get(eid=RUN_ID)
+    run = db.get(doc_id=RUN_ID)
     new_outputs = [(filename, hash_file(filename))
                    for filename in run.get('outputs')]
-    db.update({'outputs': new_outputs}, eids=[RUN_ID])
+    db.update({'outputs': new_outputs}, doc_ids=[RUN_ID])
     db.close()
 
 
@@ -354,7 +354,7 @@ def output_file_diffs():
                                         tofile='after this run')
             with open_or_create_db() as db:
                 diffs_table.update({'diff': ''.join([l for l in diff])},
-                                   eids=[item.eid])
+                                   doc_ids=[item.doc_id])
         else:
             msg = ('Unable to read file "{}" using supported encodings ({}). '
                    'To be able to store file diffs, use one of the supported '
@@ -380,7 +380,7 @@ def dedupe_inputs():
     if option_set('ignored metadata', 'input_hashes'):
         return
     db = open_or_create_db()
-    run = db.get(eid=RUN_ID)
+    run = db.get(doc_id=RUN_ID)
     new_inputs = list(set([tuple(inp) for inp in run['inputs']]))
-    db.update({'inputs': new_inputs}, eids=[RUN_ID])
+    db.update({'inputs': new_inputs}, doc_ids=[RUN_ID])
     db.close()
