@@ -6,7 +6,7 @@ flask
 Flask-Script
 flask_bootstrap
 flask-wtf>=0.13
-tinydb
+tinydb>=4.0.0
 tinydb-serialization
 docopt
 flask-testing
