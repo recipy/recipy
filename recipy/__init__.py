@@ -2,6 +2,7 @@
 from . import PatchWarnings
 from . import PatchBaseScientific
 from . import PatchScientific
+from . import PatchAI
 
 from .log import *
 

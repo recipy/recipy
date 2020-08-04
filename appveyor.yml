@@ -1,16 +1,15 @@
 build: off
 
 environment:
-
   matrix:
-    - PYTHON_VERSION: 2.7
-      MINICONDA: C:\Miniconda
-    - PYTHON_VERSION: 3.4
-      MINICONDA: C:\Miniconda3
+    # - PYTHON_VERSION: 2.7
+    #   MINICONDA: C:\Miniconda-x64
+    # - PYTHON_VERSION: 3.4
+    #   MINICONDA: C:\Miniconda3-x64
     - PYTHON_VERSION: 3.5
-      MINICONDA: C:\Miniconda3
+      MINICONDA: C:\Miniconda3-x64
     - PYTHON_VERSION: 3.6
-      MINICONDA: C:\Miniconda3
+      MINICONDA: C:\Miniconda3-x64
 
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
@@ -39,8 +38,22 @@ install:
     scikit-image
     nibabel
     gdal imageio tifffile xarray rasterio netCDF4
-    iris"
+    iris
+    joblib"
   - activate test-environment
+  # Install dependencies for keras if the python version allows it
+  # If statement error suggests that python version and temp var might be
+  # empty - this checks that it isn't
+  - ECHO %PYTHON_VERSION%
+  - set TEMP_VAR=0
+  - IF %PYTHON_VERSION%==3.5 set TEMP_VAR=1
+  - IF %PYTHON_VERSION%==3.6 set TEMP_VAR=1
+  - ECHO %TEMP_VAR%
+  - IF %TEMP_VAR%==1 (
+      conda install tensorflow keras>=2.2.4 pytables
+      ) else (
+        ECHO Not installing keras.
+      )
   # Copy matplotlib configuration so it does not try and plot to 
   # screen, which can cause matplotlib tests to fail.
   - copy integration_test\packages\matplotlibrc .
@@ -58,3 +71,6 @@ test_script:
   # Run py.test with 'v' (verbose) to show test function names and  
   # 'rs' to show reasons for skipped tests
   - py.test -v -rs integration_test
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

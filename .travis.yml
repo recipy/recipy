@@ -40,7 +40,13 @@ install:
     nibabel
     gdal imageio tifffile xarray rasterio netCDF4
     iris
+    joblib
   - source activate test-environment
+  # Install packages conditionally depending on python version
+  - if [[ ("$TRAVIS_PYTHON_VERSION" == "2.7" ) || ( "$TRAVIS_PYTHON_VERSION" == "3.5" ) || ( "$TRAVIS_PYTHON_VERSION" == "3.6" ) ]];
+    then
+      conda install tensorflow keras>=2.2.4;
+    fi
   # Copy matplotlib configuration so it does not try and plot to
   # screen, which can cause matplotlib tests to fail.
   - cp integration_test/packages/matplotlibrc .
@@ -56,7 +62,6 @@ install:
   - python --version
   - python -c "import sys, pprint; pprint.pprint(sys.path)"
   - python -c "import tinydb"
-
 
 script:
   # Run py.test with 'v' (verbose) to show test function names and

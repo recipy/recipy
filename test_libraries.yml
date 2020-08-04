@@ -1,0 +1,29 @@
+name: recipy-test
+
+dependencies:
+  - numpy
+  - pyyaml
+  - git
+  - matplotlib
+  - pandas
+  - pytables
+  - xlrd
+  - xlwt
+  - lxml
+  - beautifulsoup4
+  - pillow
+  - scikit-learn
+  - scikit-image
+  - gdal
+  - imageio
+  - xarray
+  - rasterio
+  - netCDF4
+  - joblib
+  - tensorflow
+  - keras=2.2.4
+  - iris
+  - pip:
+    - git+https://github.com/jmcgeheeiv/pyfakefs.git
+    - tifffile
+    - nibabel
