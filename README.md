@@ -237,7 +237,7 @@ However, the code example above shows how easy it is to write a class to wrap a 
 
 ## Test framework
 
-recipy's test framework is in `integration_test`. The test framework has been designed to run under both Python 2.7+ and Python 3+. For more information see [recipy test framework](./docs/TestFramework.md).
+recipy's test framework is in `integration_test`. The test framework has been designed to run under both Python 2.7+ and Python 3+. For more information see [recipy test framework](./docs/TestFramework.rst).
 
 The test framework is run on the following platforms:
 
